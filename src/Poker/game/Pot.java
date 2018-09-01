@@ -32,14 +32,6 @@ public class Pot
       }
    }
    
-   /*public void clear()
-   {
-      currentBet = 0;
-      bettingCapped = false;
-      players.clear();
-      totalSize = 0;
-   }*/
-   
    public int getSize()
    {
       return totalSize;
