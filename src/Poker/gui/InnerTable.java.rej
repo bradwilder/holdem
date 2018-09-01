@@ -1,0 +1,31 @@
+***************
+*** 20,33 ****
+     protected BoardComponent board;
+     protected InfoComponent info;
+     
+-    public InnerTable()
+     {
+        setLayout(new BorderLayout());
+-       
+        board = new BoardComponent();
+        info = new InfoComponent();
+        
+-       add(info, BorderLayout.NORTH);
+        add(board, BorderLayout.CENTER);
+     }
+     
+--- 20,33 ----
+     protected BoardComponent board;
+     protected InfoComponent info;
+     
++    public InnerTable(Table oTable)
+     {
+        setLayout(new BorderLayout());
++             
+        board = new BoardComponent();
+        info = new InfoComponent();
+        
++       add(info, BorderLayout.SOUTH);
+        add(board, BorderLayout.CENTER);
+     }
+     

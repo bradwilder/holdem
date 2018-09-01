@@ -1,0 +1,16 @@
+***************
+*** 10,15 ****
+  import Poker.game.Player;
+  import Poker.gui.HoldEmGUI;
+  import Poker.gui.HoldEmGUISim;
+  
+  public class Poker
+  {
+--- 10,16 ----
+  import Poker.game.Player;
+  import Poker.gui.HoldEmGUI;
+  import Poker.gui.HoldEmGUISim;
++ import Poker.hand.Hand;
+  
+  public class Poker
+  {

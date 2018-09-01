@@ -1,0 +1,21 @@
+***************
+*** 14,22 ****
+     
+     private ButtonPanel buttons;
+     
+-    public InnerTableComponentSim()
+     {
+-       super();
+        buttons = new ButtonPanel();
+        add(buttons, BorderLayout.SOUTH);
+        clear();
+--- 14,22 ----
+     
+     private ButtonPanel buttons;
+     
++    public InnerTableComponentSim(Table oTable)
+     {
++       super(oTable);
+        buttons = new ButtonPanel();
+        add(buttons, BorderLayout.SOUTH);
+        clear();

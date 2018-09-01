@@ -1,0 +1,17 @@
+***************
+*** 25,31 ****
+     public TableComponent(HoldEm game)
+     {
+        super(game);
+-       inner = new InnerTableComponent();
+        add(inner, BorderLayout.CENTER);
+        
+        init();
+--- 25,31 ----
+     public TableComponent(HoldEm game)
+     {
+        super(game);
++       inner = new InnerTableComponent(this);
+        add(inner, BorderLayout.CENTER);
+        
+        init();

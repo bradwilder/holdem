@@ -1,0 +1,17 @@
+***************
+*** 21,27 ****
+     public TableComponentSim(HoldEm game)
+     {
+        super(game);
+-       inner = new InnerTableComponentSim();
+        add(inner, BorderLayout.CENTER);
+        
+        game.startHand();
+--- 21,27 ----
+     public TableComponentSim(HoldEm game)
+     {
+        super(game);
++       inner = new InnerTableComponentSim(this);
+        add(inner, BorderLayout.CENTER);
+        
+        game.startHand();
