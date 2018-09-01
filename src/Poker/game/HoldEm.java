@@ -22,9 +22,9 @@ public class HoldEm
    private boolean checkOption; // whether the big blind has checked the option
    private boolean checkAround; // whether the table has checked around; TODO: move to Pots if necessary
    private boolean potsRight; // whether the pot's right; TODO: move to Pots
-   private Pots pots; // the main pot, and any side pots
-   private Deck deck; // the deck of cards
-   private Board board; // the community cards
+   private Pots pots;
+   private Deck deck;
+   private Board board;
    //   private Player lastAggressor; // last Player to raise during last betting round
    private ArrayList<HoldEmEvents> eventListeners = new ArrayList<HoldEmEvents>();
    
