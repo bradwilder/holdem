@@ -115,7 +115,9 @@ public class PotsTest extends TestCase
       assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player5) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 175);
       
+      assertTrue(player5.getChips() == 25);
       m_oPotMgr.foldPlayer(player1);
+      assertTrue(player5.getChips() == 50);
       iTotalPotSize -= 25;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
       assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player5) == 150);

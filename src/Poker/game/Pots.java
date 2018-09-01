@@ -149,6 +149,11 @@ public class Pots
       {
          player.Fold();
          
+         for (Pot pot : potList)
+         {
+            pot.removePlayer(player);
+         }
+         
          int currentBet = getCurrentBet();
          
          Player playerMatchingCurrBet = null;
@@ -260,10 +265,7 @@ public class Pots
       {
          Pot pot = potList.get(iPotNum);
          
-         if (pot.findPlayer(oPlayer) == null)
-         {
-            pot.addPlayer(oPlayer);
-         }
+         pot.addPlayer(oPlayer);
          
          int iAmountOwedToCurrentPot = pot.getPlayerRoundOwed(oPlayer);
          

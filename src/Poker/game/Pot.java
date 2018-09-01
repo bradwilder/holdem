@@ -7,6 +7,7 @@ import Poker.hand.Hand;
 
 public class Pot
 {
+   private int totalSize = 0; 
    private boolean bettingCapped = false;
    private ArrayList<PlayerCounter> players = new ArrayList<PlayerCounter>();
    
@@ -27,6 +28,10 @@ public class Pot
    {
       this.players = players;
       this.bettingCapped = bettingCapped;
+      for (PlayerCounter player : players)
+      {
+         totalSize += player.getRoundCount();
+      }
    }
    
    /*public void clear()
@@ -34,16 +39,12 @@ public class Pot
       currentBet = 0;
       bettingCapped = false;
       players.clear();
+      totalSize = 0;
    }*/
    
    public int getSize()
    {
-      int size = 0;
-      for (PlayerCounter player : players)
-      {
-         size += player.getTotalCount();
-      }
-      return size;
+      return totalSize;
    }
    
    public boolean isBettingCapped()
@@ -56,10 +57,7 @@ public class Pot
       int maxBet = 0;
       for (PlayerCounter player : players)
       {
-         if (player.player.hasHoleCards())
-         {
-            maxBet = Math.max(maxBet, player.getRoundCount());
-         }
+         maxBet = Math.max(maxBet, player.getRoundCount());
       }
       
       return maxBet;
@@ -81,7 +79,7 @@ public class Pot
             PlayerCounter newPlayer = new PlayerCounter(player.player, deduction);
             newPlayers.add(newPlayer);
             
-            player.removeFromRound(deduction);
+            removeFromRound(player, deduction);
          }
       }
       
@@ -207,11 +205,11 @@ public class Pot
       
       if (player != null)
       {
-         player.addToRound(toAdd);
+         addToRound(player, toAdd);
       }
       else
       {
-         players.add(new PlayerCounter(oPlayer, toAdd));
+         addToRound(oPlayer, toAdd);
       }
       
       Pot newPot = null;
@@ -223,29 +221,54 @@ public class Pot
       return newPot;
    }
    
-   public void addPlayer(Player oPlayer) throws Exception
+   private void addToRound(PlayerCounter player, int toAdd)
    {
-      PlayerCounter player = findPlayer(oPlayer);
-      if (player != null)
+      player.addToRound(toAdd);
+      totalSize += toAdd;
+   }
+   
+   private void addToRound(Player player, int toAdd)
+   {
+      PlayerCounter newPlayer = new PlayerCounter(player, toAdd);
+      addToRound(newPlayer, toAdd);
+   }
+   
+   private void removeFromRound(PlayerCounter player, int deduction) throws Exception
+   {
+      if (deduction > totalSize)
       {
-         throw new Exception("Attempted to add player that already exists");
+         throw new Exception("Tried to remove " + deduction + " from pot with size " + totalSize);
       }
-      else
-      {
-         players.add(new PlayerCounter(oPlayer, 0));
-      }
+      
+      player.removeFromRound(deduction);
+      totalSize -= deduction;
    }
    
    public void sub(int iChipsToRemove, Player oPlayer) throws Exception
    {
       PlayerCounter player = findPlayer(oPlayer);
-      
+      removeFromRound(player, iChipsToRemove);
+   }
+   
+   public void addPlayer(Player oPlayer)
+   {
+      PlayerCounter player = findPlayer(oPlayer);
       if (player == null)
       {
-         throw new Exception("Tried to remove " + iChipsToRemove + " from pot for player that is not in the pot");
-      }      
-      
-      player.removeFromRound(iChipsToRemove);
+         players.add(new PlayerCounter(oPlayer, 0));
+      }
+   }
+   
+   public void removePlayer(Player player)
+   {
+      for (int i = 0; i < players.size(); i++)
+      {
+         PlayerCounter playerCounter = players.get(i);
+         if (playerCounter.player == player)
+         {
+            players.remove(i);
+         }
+      }
    }
    
    public boolean isPotEven()
@@ -254,7 +277,7 @@ public class Pot
       
       for (PlayerCounter player : players)
       {
-         if (player.player.hasHoleCards() && currentBet != player.getRoundCount())
+         if (currentBet != player.getRoundCount())
          {
             return false;
          }
@@ -322,7 +345,6 @@ public class Pot
       return oPotAwardString.toString();
    }*/
    
-   
    public String toString(String sPotName)
    {
       return sPotName + " (" + getSize() + ")";
@@ -332,18 +354,15 @@ public class Pot
    {
       public Player player;
       private int roundCount;
-      private int totalCount;
       
       public PlayerCounter(Player player, int count)
       {
          this.player = player;
          this.roundCount = count;
-         this.totalCount = count;
       }
       
       public void addToRound(int toAdd)
       {
-         totalCount += toAdd;
          roundCount += toAdd;
       }
       
@@ -359,7 +378,6 @@ public class Pot
             throw new Exception("Tried to remove " + toRemove + " from player with only " + roundCount);
          }
          
-         totalCount -= toRemove;
          roundCount -= toRemove;
       }
       
@@ -371,11 +389,6 @@ public class Pot
       public void clearRoundCount()
       {
          roundCount = 0;
-      }
-      
-      public int getTotalCount()
-      {
-         return totalCount;
       }
    }
 }
