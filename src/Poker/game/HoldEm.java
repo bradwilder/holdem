@@ -588,22 +588,12 @@ public class HoldEm
       return isSimulation;
    }
    
-   public int getBigBlind()
+   private int getBigBlind()
    {
       return bigBlind;
    }
    
-   public void changeBigBlind(int newBigBlind)
-   {
-      bigBlind = newBigBlind;
-   }
-   
-   public void incrBigBlind(int incr)
-   {
-      bigBlind += incr;
-   }
-   
-   public int getSmallBlind()
+   private int getSmallBlind()
    {
       // TODO: change so this isn't always half
       return bigBlind / 2;

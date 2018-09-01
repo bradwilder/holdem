@@ -53,8 +53,8 @@ public class HoldEmTest extends TestCase
       Player dadPlayer = m_oHoldEm.getPlayer(4);
       Player brendaPlayer = m_oHoldEm.getPlayer(5);
       
-      assertTrue(m_oHoldEm.getSmallBlind() == Chip.BIG_BLIND / 2);
-      assertTrue(m_oHoldEm.getBigBlind() == Chip.BIG_BLIND);
+      //assertTrue(m_oHoldEm.getSmallBlind() == Chip.BIG_BLIND / 2);
+      //assertTrue(m_oHoldEm.getBigBlind() == Chip.BIG_BLIND);
       assertTrue(m_oHoldEm.getDealerPos() == 0);
       assertTrue(m_oHoldEm.getMainPlayersCount() == 6);
       assertTrue(m_oHoldEm.getMainPlayer(0).getName().equals("jeff"));
