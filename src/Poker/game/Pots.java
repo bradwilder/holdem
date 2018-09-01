@@ -6,12 +6,12 @@ import java.util.NoSuchElementException;
 
 public class Pots
 {
-   private ArrayList<Pot> potList = new ArrayList<Pot>();
+   private List<Pot> potList = new ArrayList<Pot>();
    private int currentPotIndex = 0;
    //private int shortStackOverraise = 0;
    //private int currentRaise = 0;
    
-   public Pots(ArrayList<Player> players)
+   public Pots(List<Player> players)
    {
       potList.add(new Pot(players));
    }
@@ -333,7 +333,7 @@ public class Pots
          }
          if (iRem > 0)
          {
-            ArrayList<Player> oPlayers = getFirstPlayersInPotByPosition(iRem, oPot);
+            List<Player> oPlayers = getFirstPlayersInPotByPosition(iRem, oPot);
             for (int i = 0; i < oPlayers.size(); i++)
             {
                oPlayers.get(i).changeChips(1);
@@ -343,7 +343,7 @@ public class Pots
       removePot(oPot);
    }
    
-   private ArrayList<Player> getFirstPlayersInPotByPosition(int iNumPlayersNeeded, Pot oPot)
+   private List<Player> getFirstPlayersInPotByPosition(int iNumPlayersNeeded, Pot oPot)
    {
       if (iNumPlayersNeeded > oPot.getNumPlayers())
       {
