@@ -3,10 +3,6 @@ package Poker.tests;
 import java.util.ArrayList;
 
 import junit.framework.TestCase;
-import Poker.game.Card;
-import Poker.game.DeckConstants.Value;
-import Poker.game.DeckConstants.Suit;
-import Poker.hand.*;
 import Poker.game.Player;
 import Poker.game.Pot;
 
@@ -147,8 +143,6 @@ toString()
 
 public class PotTest extends TestCase
 {
-   //private Pot m_oPot;
-   
    private Player m_oPlayer1;
    private Player m_oPlayer2;
    private Player m_oPlayer3;
@@ -157,36 +151,9 @@ public class PotTest extends TestCase
    private Player m_oPlayer6;
    private ArrayList<Player> players;
    
-   private PlayerHelper m_oPlayerHelper1;
-   private PlayerHelper m_oPlayerHelper2;
-   private PlayerHelper m_oPlayerHelper3;
-   private PlayerHelper m_oPlayerHelper4;
-   private PlayerHelper m_oPlayerHelper5;
-   private PlayerHelper m_oPlayerHelper6;
-   private ArrayList<PlayerHelper> m_oPlayerList;
-   
-   private class PlayerHelper
-   {
-      public Player m_oPlayer;
-      public int m_iExpectedChipsInPot;
-      
-      public PlayerHelper(Player oPlayer)
-      {
-         m_oPlayer = oPlayer;
-         m_iExpectedChipsInPot = 0;
-      }
-      
-      public void reset()
-      {
-         m_iExpectedChipsInPot = 0;
-      }
-   }
-   
    protected void setUp() throws Exception
    {
       super.setUp();
-      
-      //m_oPot = new Pot();
       
       m_oPlayer1 = new Player("brad", 0);
       m_oPlayer2 = new Player("jeff", 1);
@@ -202,21 +169,6 @@ public class PotTest extends TestCase
       players.add(m_oPlayer4);
       players.add(m_oPlayer5);
       players.add(m_oPlayer6);
-      
-      m_oPlayerHelper1 = new PlayerHelper(m_oPlayer1);
-      m_oPlayerHelper2 = new PlayerHelper(m_oPlayer2);
-      m_oPlayerHelper3 = new PlayerHelper(m_oPlayer3);
-      m_oPlayerHelper4 = new PlayerHelper(m_oPlayer4);
-      m_oPlayerHelper5 = new PlayerHelper(m_oPlayer5);
-      m_oPlayerHelper6 = new PlayerHelper(m_oPlayer6);
-      
-      m_oPlayerList = new ArrayList<PlayerHelper>();
-      m_oPlayerList.add(m_oPlayerHelper1);
-      m_oPlayerList.add(m_oPlayerHelper2);
-      m_oPlayerList.add(m_oPlayerHelper3);
-      m_oPlayerList.add(m_oPlayerHelper4);
-      m_oPlayerList.add(m_oPlayerHelper5);
-      m_oPlayerList.add(m_oPlayerHelper6);
    }
    
    protected void tearDown() throws Exception
@@ -226,10 +178,7 @@ public class PotTest extends TestCase
    
    public void testConstructors()
    {
-      Pot pot = new Pot();
-      verifyEmpty(pot, 0);
-      
-      pot = new Pot(players);
+      Pot pot = new Pot(players);
       verifyEmpty(pot, players.size());
    }
    
@@ -266,6 +215,7 @@ public class PotTest extends TestCase
       // 2. Simple raise
       // 3. Simple split
       // 0 bets 200
+      player0.Bet(200);
       try
       {
          newPot = pot.add(200, player0);
@@ -279,6 +229,7 @@ public class PotTest extends TestCase
       assertNull(newPot);
       
       // 1 bets 400
+      player1.Bet(400);
       try
       {
          newPot = pot.add(400, player1);
@@ -292,6 +243,7 @@ public class PotTest extends TestCase
       assertNull(newPot);
       
       // 2 bets 100 (all in)
+      player2.Bet(100);
       try
       {
          newPot = pot.add(100, player2);
@@ -810,15 +762,6 @@ public class PotTest extends TestCase
          assertTrue(m_oPot.getSize() == iTotalBet);
       }
    }*/
-      
-   
-   /*private void resetPlayerHelpers()
-   {
-      for (int i = 0; i < m_oPlayerList.size(); i++)
-      {
-         m_oPlayerList.get(i).reset();
-      }
-   }*/
    
    /*private void verifyPot(int iSize, boolean bIsContested, boolean bIsBettingCapped, int currentBet, int iNumPlayers, String sPotString)
    {
@@ -861,7 +804,6 @@ public class PotTest extends TestCase
       assertTrue(pot.isBettingCapped() == bIsBettingCapped);
       assertTrue(pot.getCurrentBet() == currentBet);
    }
-   
    
    private void verifyEmpty(Pot pot, int players)
    {

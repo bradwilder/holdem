@@ -11,11 +11,6 @@ public class Pot
    private boolean bettingCapped = false;
    private ArrayList<PlayerCounter> players = new ArrayList<PlayerCounter>();
    
-   public Pot()
-   {
-      
-   }
-   
    public Pot(ArrayList<Player> players)
    {
       for (Player player : players)
@@ -73,18 +68,23 @@ public class Pot
       ArrayList<PlayerCounter> newPlayers = new ArrayList<PlayerCounter>(); 
       for (PlayerCounter player : players)
       {
-         int deduction = player.getRoundCount() - iCap;
+         int deduction = Math.max(player.getRoundCount() - iCap, 0);
          if (deduction > 0)
+         {
+            removeFromRound(player, deduction);
+         }
+         
+         int surplus = player.player.getChips() + player.getRoundCount() - iCap; 
+         
+         if (surplus > 0 || deduction > 0)
          {
             PlayerCounter newPlayer = new PlayerCounter(player.player, deduction);
             newPlayers.add(newPlayer);
-            
-            removeFromRound(player, deduction);
          }
       }
       
       Pot newPot = null;
-      if (newPlayers.size() > 0)
+      if (newPlayers.size() >= 2)
       {
          newPot = new Pot(newPlayers, bettingCapped);
       }
@@ -248,15 +248,6 @@ public class Pot
    {
       PlayerCounter player = findPlayer(oPlayer);
       removeFromRound(player, iChipsToRemove);
-   }
-   
-   public void addPlayer(Player oPlayer)
-   {
-      PlayerCounter player = findPlayer(oPlayer);
-      if (player == null)
-      {
-         players.add(new PlayerCounter(oPlayer, 0));
-      }
    }
    
    public void removePlayer(Player player)

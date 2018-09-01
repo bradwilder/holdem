@@ -7,7 +7,7 @@ public class Pots
 {
    private ArrayList<Pot> potList = new ArrayList<Pot>();
    private int currentPotIndex = 0;
-   //private int lastRaise = 0;
+   //private int shortStackOverraise = 0;
    //private int currentRaise = 0;
    
    public Pots(ArrayList<Player> players)
@@ -59,11 +59,6 @@ public class Pots
    {
       Pot main = getMainPot();
       return main.findPlayer(oPlayer) != null;
-   }
-   
-   private void addPot()
-   {
-      potList.add(new Pot());
    }
    
    public Pot getLastPot()
@@ -250,12 +245,6 @@ public class Pots
       // TODO: think about where this should be done
       oPlayer.Bet(iChips);
       
-      Pot oCurrPot = getCurrentPot();
-      if (oCurrPot == null)
-      {
-         addPot();
-      }
-      
       addToPot(iChips, oPlayer, currentPotIndex);
    }
    
@@ -265,17 +254,10 @@ public class Pots
       {
          Pot pot = potList.get(iPotNum);
          
-         pot.addPlayer(oPlayer);
-         
          int iAmountOwedToCurrentPot = pot.getPlayerRoundOwed(oPlayer);
          
          if (iAmountOwedToCurrentPot == 0 && pot.isBettingCapped())
          {
-            if (iPotNum == potList.size() - 1)
-            {
-               addPot();
-            }
-            
             addToPot(iChips, oPlayer, iPotNum + 1);
          }
          else
@@ -299,11 +281,6 @@ public class Pots
                   
                   if (iRemaingChips > 0)
                   {
-                     if (iPotNum == potList.size() - 1)
-                     {
-                        addPot();
-                     }
-                     
                      addToPot(iRemaingChips, oPlayer, iPotNum + 1);
                   }
                }
