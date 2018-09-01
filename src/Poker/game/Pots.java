@@ -1,6 +1,7 @@
 package Poker.game;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Pots
@@ -35,7 +36,7 @@ public class Pots
       return main.getNumPlayers();
    }
    
-   private ArrayList<Player> getMainPlayers()
+   private List<Player> getMainPlayers()
    {
       Pot main = getMainPot();
       if (main == null)
@@ -58,7 +59,7 @@ public class Pots
    private boolean hasMainPlayer(Player oPlayer)
    {
       Pot main = getMainPot();
-      return main.findPlayer(oPlayer) != null;
+      return main.playerExists(oPlayer);
    }
    
    public Pot getLastPot()
@@ -152,7 +153,7 @@ public class Pots
          int currentBet = getCurrentBet();
          
          Player playerMatchingCurrBet = null;
-         ArrayList<Player> players = getMainPlayers();
+         List<Player> players = getMainPlayers();
          for (Player oPlayer : players)
          {
             if (getChipsThisRoundForPlayer(oPlayer) == currentBet)
@@ -356,7 +357,7 @@ public class Pots
       while (i < iNumPlayers)
       {
          Player oPlayer = getMainPlayer(i);
-         if (oPot.findPlayer(oPlayer) != null)
+         if (oPot.playerExists(oPlayer))
          {
             oPlayers.add(oPlayer);
             iPlayersFound++;

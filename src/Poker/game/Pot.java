@@ -2,6 +2,9 @@ package Poker.game;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import Poker.hand.Hand;
 
@@ -9,23 +12,23 @@ public class Pot
 {
    private int totalSize = 0; 
    private boolean bettingCapped = false;
-   private ArrayList<PlayerCounter> players = new ArrayList<PlayerCounter>();
+   private LinkedHashMap<Player, Integer> playerCounts = new LinkedHashMap<Player, Integer>();
    
-   public Pot(ArrayList<Player> players)
+   public Pot(List<Player> players)
    {
       for (Player player : players)
       {
-         this.players.add(new PlayerCounter(player, 0));
+         this.playerCounts.put(player, 0);
       }
    }
    
-   private Pot(ArrayList<PlayerCounter> players, boolean bettingCapped)
+   private Pot(LinkedHashMap<Player, Integer> playerCounts, boolean bettingCapped)
    {
-      this.players = players;
+      this.playerCounts = playerCounts;
       this.bettingCapped = bettingCapped;
-      for (PlayerCounter player : players)
+      for (Map.Entry<Player, Integer> playerCount : playerCounts.entrySet())
       {
-         totalSize += player.getRoundCount();
+         totalSize += playerCount.getValue();
       }
    }
    
@@ -50,43 +53,49 @@ public class Pot
    public int getCurrentBet()
    {
       int maxBet = 0;
-      for (PlayerCounter player : players)
+      for (Map.Entry<Player, Integer> playerCount : playerCounts.entrySet())
       {
-         maxBet = Math.max(maxBet, player.getRoundCount());
+         maxBet = Math.max(maxBet, playerCount.getValue());
       }
       
       return maxBet;
    }
    
-   private Pot capBetting(int iCap) throws Exception
+   private Pot capBetting(int cap) throws Exception
    {
-      if (iCap <= 0)
+      if (cap <= 0)
       {
-         throw new Exception("Tried to cap betting at " + iCap);
+         throw new Exception("Tried to cap betting at " + cap);
       }
       
-      ArrayList<PlayerCounter> newPlayers = new ArrayList<PlayerCounter>(); 
-      for (PlayerCounter player : players)
+      LinkedHashMap<Player, Integer> newPlayerCounters = new LinkedHashMap<Player, Integer>();
+      for (Map.Entry<Player, Integer> playerCount : playerCounts.entrySet())
       {
-         int deduction = Math.max(player.getRoundCount() - iCap, 0);
+         Player player = playerCount.getKey();
+         Integer value = playerCount.getValue();
+         int roundCount = 0;
+         if (value != null)
+         {
+            roundCount = value;
+         }
+         int deduction = Math.max(roundCount - cap, 0);
          if (deduction > 0)
          {
-            removeFromRound(player, deduction);
+            sub(deduction, player);
          }
          
-         int surplus = player.player.getChips() + player.getRoundCount() - iCap; 
+         int surplus = player.getChips() + roundCount - cap; 
          
          if (surplus > 0 || deduction > 0)
          {
-            PlayerCounter newPlayer = new PlayerCounter(player.player, deduction);
-            newPlayers.add(newPlayer);
+            newPlayerCounters.put(player, deduction);
          }
       }
       
       Pot newPot = null;
-      if (newPlayers.size() >= 2)
+      if (newPlayerCounters.entrySet().size() >= 2)
       {
-         newPot = new Pot(newPlayers, bettingCapped);
+         newPot = new Pot(newPlayerCounters, bettingCapped);
       }
       
       bettingCapped = true;
@@ -99,37 +108,22 @@ public class Pot
       return getNumPlayers() >= 2;
    }
    
-   public ArrayList<Player> getPlayers()
+   public List<Player> getPlayers()
    {
-      // TODO: use map here
-      ArrayList<Player> playerList = new ArrayList<Player>();
-      for (int i = 0; i < players.size(); i++)
-      {
-         playerList.add(players.get(i).player);
-      }
-      return playerList;
+      return new ArrayList<Player>(playerCounts.keySet());
    }
    
-   public PlayerCounter findPlayer(Player oPlayer)
+   public boolean playerExists(Player player)
    {
-      for (int i = 0; i < players.size(); i++)
-      {
-         PlayerCounter player = players.get(i); 
-         if (player.player.equals(oPlayer))
-         {
-            return player;
-         }
-      }
-      
-      return null;
+      return playerCounts.containsKey(player);
    }
    
    public int getNumPlayers()
    {
-      return players.size();
+      return playerCounts.size();
    }
    
-   public Hand getBestHand(Card[] aoBoardCards, ArrayList<Player> oPlayersOut)
+   public Hand getBestHand(Card[] boardCards, List<Player> playersOut)
    {
       // TODO: return players array
       if (getNumPlayers() == 0)
@@ -139,9 +133,9 @@ public class Pot
       
       Hand oCurrentBestHand = null;
       
-      if (oPlayersOut == null)
+      if (playersOut == null)
       {
-         oPlayersOut = new ArrayList<Player>();
+         playersOut = new ArrayList<Player>();
       }
       
       Iterator<Player> oPlayers = getPlayers().iterator();
@@ -151,49 +145,43 @@ public class Pot
       }
       
       // Add the first player into the list; this will start as the best hand
-      oPlayersOut.add(oPlayers.next());
-      oCurrentBestHand = oPlayersOut.get(0).getHand(aoBoardCards);
+      playersOut.add(oPlayers.next());
+      oCurrentBestHand = playersOut.get(0).getHand(boardCards);
       
       // If the best hand is null, that means there aren't enough board cards to make a hand, so return null
       if (oCurrentBestHand == null)
       {
-         oPlayersOut.clear();
+         playersOut.clear();
          return null;
       }
       
       while (oPlayers.hasNext())
       {
          Player oPlayer = oPlayers.next();
-         Hand oPlayerHand = oPlayer.getHand(aoBoardCards);
+         Hand oPlayerHand = oPlayer.getHand(boardCards);
          int iComp = oCurrentBestHand.compare(oPlayerHand);
          if (iComp <= 0)
          {
             if (iComp < 0)
             {
-               oPlayersOut.clear();
+               playersOut.clear();
             }
             oCurrentBestHand = oPlayerHand;
-            oPlayersOut.add(oPlayer);
+            playersOut.add(oPlayer);
          }
       }
       
       return oCurrentBestHand;
    }
    
-   public Pot add(int toAdd, Player oPlayer) throws Exception
+   public Pot add(int toAdd, Player player) throws Exception
    {
       if (toAdd <= 0)
       {
          throw new Exception("Attempted to add non-positive chip value " + toAdd);
       }
       
-      PlayerCounter player = findPlayer(oPlayer);
-      
-      int currentCount = 0;
-      if (player != null)
-      {
-         currentCount = player.getRoundCount();
-      }
+      int currentCount = getPlayerRoundCount(player);
       int totalCount = currentCount + toAdd;
       
       int currentBet = getCurrentBet();
@@ -203,17 +191,10 @@ public class Pot
          throw new Exception("Attempted to add " + toAdd + " chips to pot with current bet at " + currentBet + " and player's current bet at " + currentCount);
       }
       
-      if (player != null)
-      {
-         addToRound(player, toAdd);
-      }
-      else
-      {
-         addToRound(oPlayer, toAdd);
-      }
+      addToRound(player, toAdd);
       
       Pot newPot = null;
-      if (totalCount < currentBet || oPlayer.getChips() == 0)
+      if (totalCount < currentBet || player.getChips() == 0)
       {
          newPot = capBetting(totalCount);
       }
@@ -221,54 +202,57 @@ public class Pot
       return newPot;
    }
    
-   private void addToRound(PlayerCounter player, int toAdd)
+   private void addToRound(Player player, int toAdd)
    {
-      player.addToRound(toAdd);
+      int currentCount = getPlayerRoundCount(player);
+      int newCount = currentCount + toAdd;
+      playerCounts.put(player, newCount);
       totalSize += toAdd;
    }
    
-   private void addToRound(Player player, int toAdd)
-   {
-      PlayerCounter newPlayer = new PlayerCounter(player, toAdd);
-      addToRound(newPlayer, toAdd);
-   }
-   
-   private void removeFromRound(PlayerCounter player, int deduction) throws Exception
+   public void sub(int deduction, Player player) throws Exception
    {
       if (deduction > totalSize)
       {
          throw new Exception("Tried to remove " + deduction + " from pot with size " + totalSize);
       }
       
-      player.removeFromRound(deduction);
+      if (deduction <= 0)
+      {
+         throw new Exception("Attempted to remove non-positive value " + deduction);
+      }
+      
+      Integer roundCount = playerCounts.get(player);
+      
+      if (roundCount == null)
+      {
+         throw new Exception("Attempted to remove chips from player that doesn't exist");
+      }
+      
+      if (roundCount < deduction)
+      {
+         throw new Exception("Tried to remove " + deduction + " from player with only " + roundCount);
+      }
+      
+      roundCount -= deduction;
+      playerCounts.put(player, roundCount);
+      
       totalSize -= deduction;
-   }
-   
-   public void sub(int iChipsToRemove, Player oPlayer) throws Exception
-   {
-      PlayerCounter player = findPlayer(oPlayer);
-      removeFromRound(player, iChipsToRemove);
    }
    
    public void removePlayer(Player player)
    {
-      for (int i = 0; i < players.size(); i++)
-      {
-         PlayerCounter playerCounter = players.get(i);
-         if (playerCounter.player == player)
-         {
-            players.remove(i);
-         }
-      }
+      playerCounts.remove(player);
    }
    
    public boolean isPotEven()
    {
       int currentBet = getCurrentBet();
       
-      for (PlayerCounter player : players)
+      for (Map.Entry<Player, Integer> playerCount : playerCounts.entrySet())
       {
-         if (currentBet != player.getRoundCount())
+         Player player = playerCount.getKey();
+         if (currentBet != getPlayerRoundCount(player))
          {
             return false;
          }
@@ -277,29 +261,27 @@ public class Pot
       return true;
    }
    
-   public int getPlayerRoundCount(Player oPlayer)
+   public int getPlayerRoundCount(Player player)
    {
-      try
+      Integer value = playerCounts.get(player);
+      if (value != null)
       {
-         PlayerCounter player = findPlayer(oPlayer);
-         return player.getRoundCount();
+         return value;
       }
-      catch (Exception x)
-      {
-         return 0;
-      }
+      
+      return 0;
    }
    
-   public int getPlayerRoundOwed(Player oPlayer)
+   public int getPlayerRoundOwed(Player player)
    {
-      return getCurrentBet() - getPlayerRoundCount(oPlayer);
+      return getCurrentBet() - getPlayerRoundCount(player);
    }
    
    public void clearRound()
    {
-      for (PlayerCounter player : players)
+      for (Map.Entry<Player, Integer> playerCount : playerCounts.entrySet())
       {
-         player.clearRoundCount();
+         playerCount.setValue(0);
       }
    }
    
@@ -336,50 +318,8 @@ public class Pot
       return oPotAwardString.toString();
    }*/
    
-   public String toString(String sPotName)
+   public String toString(String potName)
    {
-      return sPotName + " (" + getSize() + ")";
-   }
-   
-   private class PlayerCounter
-   {
-      public Player player;
-      private int roundCount;
-      
-      public PlayerCounter(Player player, int count)
-      {
-         this.player = player;
-         this.roundCount = count;
-      }
-      
-      public void addToRound(int toAdd)
-      {
-         roundCount += toAdd;
-      }
-      
-      public void removeFromRound(int toRemove) throws Exception
-      {
-         if (toRemove <= 0)
-         {
-            throw new Exception("Attempted to remove non-positive value " + toRemove);
-         }
-         
-         if (roundCount < toRemove)
-         {
-            throw new Exception("Tried to remove " + toRemove + " from player with only " + roundCount);
-         }
-         
-         roundCount -= toRemove;
-      }
-      
-      public int getRoundCount()
-      {
-         return roundCount;
-      }
-      
-      public void clearRoundCount()
-      {
-         roundCount = 0;
-      }
+      return potName + " (" + getSize() + ")";
    }
 }
