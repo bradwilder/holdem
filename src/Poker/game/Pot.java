@@ -105,7 +105,12 @@ public class Pot
       return new ArrayList<Player>(playerCounts.keySet());
    }
    
-   public boolean playerExists(Player player)
+   public Player getPlayer(int index)
+   {
+      return getPlayers().get(index);
+   }
+   
+   public boolean contains(Player player)
    {
       return playerCounts.containsKey(player);
    }
@@ -173,7 +178,7 @@ public class Pot
          throw new Exception("Attempted to add non-positive chip value " + toAdd);
       }
       
-      int currentCount = getPlayerRoundCount(player);
+      int currentCount = getRoundCount(player);
       int totalCount = currentCount + toAdd;
       
       int currentBet = getCurrentBet();
@@ -183,7 +188,8 @@ public class Pot
          throw new Exception("Attempted to add " + toAdd + " chips to pot with current bet at " + currentBet + " and player's current bet at " + currentCount);
       }
       
-      addToRound(player, toAdd);
+      playerCounts.put(player, totalCount);
+      totalSize += toAdd;
       
       Pot newPot = null;
       if (totalCount < currentBet || player.getChips() == 0)
@@ -192,14 +198,6 @@ public class Pot
       }
       
       return newPot;
-   }
-   
-   private void addToRound(Player player, int toAdd)
-   {
-      int currentCount = getPlayerRoundCount(player);
-      int newCount = currentCount + toAdd;
-      playerCounts.put(player, newCount);
-      totalSize += toAdd;
    }
    
    public void sub(int deduction, Player player) throws Exception
@@ -232,7 +230,7 @@ public class Pot
       totalSize -= deduction;
    }
    
-   public void removePlayer(Player player)
+   public void fold(Player player)
    {
       playerCounts.remove(player);
    }
@@ -244,7 +242,7 @@ public class Pot
       for (Map.Entry<Player, Integer> playerCount : playerCounts.entrySet())
       {
          Player player = playerCount.getKey();
-         if (currentBet != getPlayerRoundCount(player))
+         if (currentBet != getRoundCount(player))
          {
             return false;
          }
@@ -253,7 +251,7 @@ public class Pot
       return true;
    }
    
-   public int getPlayerRoundCount(Player player)
+   public int getRoundCount(Player player)
    {
       Integer value = playerCounts.get(player);
       if (value != null)
@@ -264,9 +262,9 @@ public class Pot
       return 0;
    }
    
-   public int getPlayerRoundOwed(Player player)
+   public int getRoundOwed(Player player)
    {
-      return getCurrentBet() - getPlayerRoundCount(player);
+      return getCurrentBet() - getRoundCount(player);
    }
    
    public void clearRound()

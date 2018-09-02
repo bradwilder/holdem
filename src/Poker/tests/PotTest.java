@@ -225,7 +225,7 @@ public class PotTest extends TestCase
          assertTrue(false);
       }
       verify(pot, 200, false, 200);
-      assertTrue(pot.getPlayerRoundCount(player0) == 200);
+      assertTrue(pot.getRoundCount(player0) == 200);
       assertNull(newPot);
       
       // 1 bets 400
@@ -239,7 +239,7 @@ public class PotTest extends TestCase
          assertTrue(false);
       }
       verify(pot, 600, false, 400);
-      assertTrue(pot.getPlayerRoundCount(player1) == 400);
+      assertTrue(pot.getRoundCount(player1) == 400);
       assertNull(newPot);
       
       // 2 bets 100 (all in)
@@ -253,12 +253,12 @@ public class PotTest extends TestCase
          assertTrue(false);
       }
       verify(pot, 300, true, 100);
-      assertTrue(pot.getPlayerRoundCount(player0) == 100);
-      assertTrue(pot.getPlayerRoundCount(player1) == 100);
-      assertTrue(pot.getPlayerRoundCount(player2) == 100);
+      assertTrue(pot.getRoundCount(player0) == 100);
+      assertTrue(pot.getRoundCount(player1) == 100);
+      assertTrue(pot.getRoundCount(player2) == 100);
       verify(newPot, 400, false, 300);
-      assertTrue(newPot.getPlayerRoundCount(player0) == 100);
-      assertTrue(newPot.getPlayerRoundCount(player1) == 300);
+      assertTrue(newPot.getRoundCount(player0) == 100);
+      assertTrue(newPot.getRoundCount(player1) == 300);
    }
    
    public void testCurrentRound()

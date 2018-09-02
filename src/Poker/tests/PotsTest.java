@@ -3,6 +3,8 @@ package Poker.tests;
 import java.util.ArrayList;
 
 import Poker.game.Card;
+import Poker.game.Chip;
+import Poker.game.HoldEmState;
 import Poker.game.Player;
 import Poker.game.Pots;
 import junit.framework.TestCase;
@@ -43,7 +45,7 @@ public class PotsTest extends TestCase
       
       cards = new Card[2];
       
-      m_oPotMgr = new Pots(m_oPlayerList);
+      m_oPotMgr = new Pots(m_oPlayerList, Chip.BIG_BLIND, HoldEmState.BET_TURN);
    }
    
    protected void tearDown() throws Exception
@@ -74,58 +76,108 @@ public class PotsTest extends TestCase
 	   int thisBet = 0;
 	   
 	   thisBet = 100;
-	   m_oPotMgr.addToPot(thisBet, player0);
+	   try
+      {
+	      m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
 	   iTotalPotSize += thisBet;
 	   assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-	   assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player0) == thisBet);
+	   assertTrue(m_oPotMgr.getChipsThisRound(player0) == thisBet);
 	   assertTrue(m_oPotMgr.getCurrentBet() == 100);
 	   
 	   thisBet = 100;
-	   m_oPotMgr.addToPot(thisBet, player1);
+	   try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
 	   iTotalPotSize += thisBet;
 	   assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-	   assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player1) == thisBet);
+	   assertTrue(m_oPotMgr.getChipsThisRound(player1) == thisBet);
 	   assertTrue(m_oPotMgr.getCurrentBet() == 100);
 	   
 	   thisBet = 50;
-	   m_oPotMgr.addToPot(thisBet, player2);
+	   try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
 	   iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player2) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player2) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       
       thisBet = 150;
-      m_oPotMgr.addToPot(thisBet, player3);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player3) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player3) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 150);
       
       thisBet = 80;
-      m_oPotMgr.addToPot(thisBet, player4);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player4) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player4) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 150);
       
       thisBet = 175;
-      m_oPotMgr.addToPot(thisBet, player5);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player5) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player5) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 175);
       
       assertTrue(player5.getChips() == 25);
-      m_oPotMgr.foldPlayer(player1);
+      try
+      {
+         m_oPotMgr.fold();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       assertTrue(player5.getChips() == 50);
+      assertTrue(!player1.hasHoleCards());
       iTotalPotSize -= 25;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player5) == 150);
+      assertTrue(m_oPotMgr.getChipsThisRound(player5) == 150);
       assertTrue(m_oPotMgr.getCurrentBet() == 150);
       assertTrue(m_oPotMgr.isPotEven());
 	}
 	
-	public void testClearRounds()
+	public void testStartRound()
    {
       player0.setChips(10000);
       player1.setChips(10000);
@@ -148,82 +200,469 @@ public class PotsTest extends TestCase
       int thisBet = 0;
       
       thisBet = 100;
-      m_oPotMgr.addToPot(thisBet, player0);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player0) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player0) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 100;
-      m_oPotMgr.addToPot(thisBet, player1);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player1) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player1) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 100;
-      m_oPotMgr.addToPot(thisBet, player2);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player2) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player2) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 150;
-      m_oPotMgr.addToPot(thisBet, player3);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player3) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player3) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 150);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 50;
-      m_oPotMgr.addToPot(thisBet, player4);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player4) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player4) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 150);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 150;
-      m_oPotMgr.addToPot(thisBet, player5);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player5) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player5) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 150);
       assertTrue(!m_oPotMgr.isPotEven());
       
-      m_oPotMgr.foldPlayer(player0);
+      try
+      {
+         m_oPotMgr.fold();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(!player0.hasHoleCards());
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
       assertTrue(m_oPotMgr.getCurrentBet() == 150);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 50;
-      m_oPotMgr.addToPot(thisBet, player1);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
       assertTrue(m_oPotMgr.getCurrentBet() == 150);
       assertTrue(m_oPotMgr.isPotEven());
       
-      m_oPotMgr.clearRound();
+      m_oPotMgr.startRound(HoldEmState.BET_RIVER);
       
       thisBet = 500;
-      m_oPotMgr.addToPot(thisBet, player1);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player1) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player1) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 500);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 500;
-      m_oPotMgr.addToPot(thisBet, player5);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player5) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player5) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 500);
       assertTrue(m_oPotMgr.isPotEven());
+   }
+	
+	public void testAddEmptyPot()
+   {
+      player0.setChips(10000);
+      player1.setChips(10000);
+      player2.setChips(100);
+      player3.setChips(150);
+      player4.setChips(50);
+      player5.setChips(10000);
+      
+      cards[0] = new Card();
+      cards[1] = new Card();
+      
+      player0.DealHoleCards(cards);
+      player1.DealHoleCards(cards);
+      player2.DealHoleCards(cards);
+      player3.DealHoleCards(cards);
+      player4.DealHoleCards(cards);
+      player5.DealHoleCards(cards);
+            
+      int iTotalPotSize = 0;
+      int thisBet = 0;
+      
+      thisBet = 100;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player0) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 100);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 100;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player1) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 100);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 100;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player2) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 100);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 150;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player3) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 50;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player4) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 150;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player5) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 50;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 50;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(m_oPotMgr.isPotEven());
+      
+      m_oPotMgr.startRound(HoldEmState.BET_RIVER);
+      
+      thisBet = 500;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player0) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 500);
+      assertTrue(!m_oPotMgr.isPotEven());
+   }
+	
+	public void testAddMiddleAmount()
+   {
+      player0.setChips(120);
+      player1.setChips(10000);
+      player2.setChips(100);
+      player3.setChips(150);
+      player4.setChips(50);
+      player5.setChips(10000);
+      
+      cards[0] = new Card();
+      cards[1] = new Card();
+      
+      player0.DealHoleCards(cards);
+      player1.DealHoleCards(cards);
+      player2.DealHoleCards(cards);
+      player3.DealHoleCards(cards);
+      player4.DealHoleCards(cards);
+      player5.DealHoleCards(cards);
+            
+      int iTotalPotSize = 0;
+      int thisBet = 0;
+      
+      thisBet = 100;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player0) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 100);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 100;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player1) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 100);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 100;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player2) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 100);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 150;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player3) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 50;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player4) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 150;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player5) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 20;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(!m_oPotMgr.isPotEven());
+      
+      thisBet = 50;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getCurrentBet() == 150);
+      assertTrue(m_oPotMgr.isPotEven());
+      
+      m_oPotMgr.startRound(HoldEmState.BET_RIVER);
+      
+      thisBet = 500;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      iTotalPotSize += thisBet;
+      assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+      assertTrue(m_oPotMgr.getChipsThisRound(player1) == thisBet);
+      assertTrue(m_oPotMgr.getCurrentBet() == 500);
+      assertTrue(!m_oPotMgr.isPotEven());
    }
 	
 	public void testAllIn()
@@ -249,51 +688,108 @@ public class PotsTest extends TestCase
       int thisBet = 0;
       
       thisBet = 100;
-      m_oPotMgr.addToPot(thisBet, player0);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player0) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player0) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 100;
-      m_oPotMgr.addToPot(thisBet, player1);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player1) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player1) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 100;
-      m_oPotMgr.addToPot(thisBet, player2);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player2) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player2) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 100;
-      m_oPotMgr.addToPot(thisBet, player3);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player3) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player3) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 100;
-      m_oPotMgr.addToPot(thisBet, player4);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player4) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player4) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       assertTrue(!m_oPotMgr.isPotEven());
       
       thisBet = 100;
-      m_oPotMgr.addToPot(thisBet, player5);
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
       iTotalPotSize += thisBet;
       assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
-      assertTrue(m_oPotMgr.getChipsThisRoundForPlayer(player5) == thisBet);
+      assertTrue(m_oPotMgr.getChipsThisRound(player5) == thisBet);
       assertTrue(m_oPotMgr.getCurrentBet() == 100);
       assertTrue(m_oPotMgr.isPotEven());
+      
+      m_oPotMgr.startRound(HoldEmState.BET_RIVER);
+      
+      thisBet = 500;
+      try
+      {
+         m_oPotMgr.addToPot(thisBet);
+         assertTrue(false);
+      }
+      catch (Exception x)
+      {
+         assertTrue(m_oPotMgr.getTotalSize() == iTotalPotSize);
+         assertTrue(m_oPotMgr.getCurrentBet() == 0);
+         assertTrue(m_oPotMgr.isPotEven());
+      }
    }
 }
