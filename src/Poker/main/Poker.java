@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import Poker.game.HoldEm;
-import Poker.game.HoldEmGame;
 import Poker.game.HoldEmGames;
 import Poker.game.Player;
 import Poker.gui.HoldEmGUI;
@@ -32,7 +31,7 @@ public class Poker
    {
       int playersCnt = 0;
       
-      HoldEmGame gameType = HoldEmGames.SIMULATION;
+      //HoldEmGame gameType = HoldEmGames.SIMULATION;
       boolean isSimulation = JOptionPane.showOptionDialog(null, "Is this a simulation?", "Simulation?", 0, 3, null, null, null) == 0;
       
       if (!isSimulation)
@@ -42,7 +41,7 @@ public class Poker
          {
             System.exit(0);
          }
-         gameType = HoldEmGames.getGame(sGameType);
+         //gameType = HoldEmGames.getGame(sGameType);
       }
       
       while (true)
