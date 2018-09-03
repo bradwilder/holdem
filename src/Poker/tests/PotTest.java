@@ -171,11 +171,6 @@ public class PotTest extends TestCase
       players.add(m_oPlayer6);
    }
    
-   protected void tearDown() throws Exception
-   {
-      super.tearDown();
-   }
-   
    public void testConstructors()
    {
       Pot pot = new Pot(players);

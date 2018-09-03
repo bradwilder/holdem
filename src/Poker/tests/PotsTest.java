@@ -48,11 +48,6 @@ public class PotsTest extends TestCase
       m_oPotMgr = new Pots(m_oPlayerList, Chip.BIG_BLIND, HoldEmState.BET_TURN);
    }
    
-   protected void tearDown() throws Exception
-   {
-      super.tearDown();
-   }
-   
 	public void testFoldPlayer()
 	{
 	   player0.setChips(100);
