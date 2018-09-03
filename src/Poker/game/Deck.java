@@ -1,20 +1,22 @@
 package Poker.game;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Deck
 {
-   private static Card[] CARDS = new Card[DeckConstants.NUM_CARDS];
+   private static List<Card> CARDS = new ArrayList<Card>();
    
    private Card[] deck = new Card[DeckConstants.NUM_CARDS];
    private int cardIndex;
    private Random random;
    
-   static
+   static void createCards()
    {
       for (int i = 0; i < DeckConstants.NUM_CARDS; i++)
       {
-         CARDS[i] = new Card(i);
+         CARDS.add(new Card(i));
       }
    }
    
@@ -25,6 +27,8 @@ public class Deck
    
    public void shuffle()
    {
+      createCards();
+      
       cardIndex = 0;
       long lSeed = System.nanoTime() / 1000;
       random = new Random(lSeed);
@@ -33,7 +37,7 @@ public class Deck
       for (int i = 0; i < DeckConstants.NUM_CARDS; i++)
       {
          int randomIndex = random.nextInt(remaining);
-         deck[i] = CARDS[randomIndex];
+         deck[i] = CARDS.remove(randomIndex);
          remaining--;
       }
    }
