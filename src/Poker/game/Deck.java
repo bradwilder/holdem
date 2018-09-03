@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Deck
 {
-   private static Card[] CARDS;
+   private static Card[] CARDS = new Card[DeckConstants.NUM_CARDS];
    
    private Card[] deck = new Card[DeckConstants.NUM_CARDS];
    private int cardIndex;
@@ -45,6 +45,6 @@ public class Deck
          return null;
       }
       
-      return CARDS[cardIndex++];
+      return deck[cardIndex++];
    }
 }
