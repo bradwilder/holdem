@@ -43,7 +43,8 @@ public class TableComponent extends Table
    
    private void addDealerButton()
    {
-      Players[m_oGame.getDealerPos()].addDealer();
+      Player player = m_oGame.getDealerPlayer();
+      Players[player.getPosition()].addDealer();
    } // :)
    
    private class UpdateTask extends TimerTask
@@ -454,7 +455,8 @@ public class TableComponent extends Table
    public void sendFold()
    {
       timer = new Timer();
-      Players[m_oGame.getActionPos()].Fold();
+      Player player = m_oGame.getActionPlayer();
+      Players[player.getPosition()].Fold();
       Audio.playFoldAudio();
       disableActionComponents();
       timer.schedule(new FoldTask(), 1500);
@@ -470,21 +472,23 @@ public class TableComponent extends Table
    public void sendCall(boolean call)
    {
       timer = new Timer();
-      PlayerComponent player = Players[m_oGame.getActionPos()];
+      
+      Player player = m_oGame.getActionPlayer();
+      PlayerComponent playerComponent = Players[player.getPosition()];
       if (!call)
       {
          Audio.playCheckAudio();
-         player.Check();
+         playerComponent.Check();
          m_oGame.Check();
       }
       else
       {
          Audio.playCallAudio();
          int Call = m_oGame.getCall();
-         player.Call(Call);
+         playerComponent.Call(Call);
          m_oGame.Bet(Call);
       }
-      player.updateChipInfo();
+      playerComponent.updateChipInfo();
       disableActionComponents();
       timer.schedule(new UpdateTask(), 1500);
    } // :)
@@ -492,14 +496,15 @@ public class TableComponent extends Table
    public void sendRaise()
    {
       timer = new Timer();
-      PlayerComponent player = Players[m_oGame.getActionPos()];
+      Player player = m_oGame.getActionPlayer();
+      PlayerComponent playerComponent = Players[player.getPosition()];
       int raise = ((InnerTableComponent) inner).getRaiseAmount();
       raise = Math.max(raise, m_oGame.getMinRaise());
       raise = Math.min(raise, m_oGame.getMaxRaise());
       Audio.playRaiseAudio();
-      player.Raise(raise);
+      playerComponent.Raise(raise);
       m_oGame.Bet(raise);
-      player.updateChipInfo();
+      playerComponent.updateChipInfo();
       disableActionComponents();
       timer.schedule(new UpdateTask(), 1500);
    } // :)

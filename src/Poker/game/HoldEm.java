@@ -2,27 +2,27 @@ package Poker.game;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 import Poker.hand.Hand;
 
 public class HoldEm
 {
-   // TODO: make this an array, so we don't have to keep the position in the player object; or, use empty players to signify empty seats
    private ArrayList<Player> Players;
    private HoldEmState state;
    private boolean isSimulation;
-   private int dealer; // position within Players of dealer button
+   private int dealer;
    private Pots pots;
    private Deck deck;
    private Board board;
    private ArrayList<HoldEmEvents> eventListeners = new ArrayList<HoldEmEvents>();
    
-   public HoldEm(ArrayList<Player> Players, boolean isSimulation)
+   public HoldEm(ArrayList<Player> Players, boolean isSimulation, Deck deck)
    {
       this.isSimulation = isSimulation;
       this.Players = Players;
       
-      deck = new Deck();
+      this.deck = deck;
       board = new Board();
       
       dealer = Players.size() - 1;
@@ -54,6 +54,13 @@ public class HoldEm
       deck.shuffle();
       board.clear();
       
+      List<Player> players = getPlayersForMainPot();
+      if (players.size() < 2)
+      {
+         return false;
+      }
+      pots = new Pots(players, Chip.BIG_BLIND, state);
+      
       if (isSimulation())
       {
          state = HoldEmState.DEAL_HOLES;
@@ -67,18 +74,12 @@ public class HoldEm
       {
          Players.get(i).Fold();
       }
-      clearRound();
+      pots.startRound(state);
       
       if (!changeDealer())
       {
          return false;
       }
-      ArrayList<Player> players = getPlayersForMainPot();
-      if (players.size() < 2)
-      {
-         return false;
-      }
-      pots = new Pots(players, Chip.BIG_BLIND, state);
       
       return true;
    }
@@ -88,20 +89,15 @@ public class HoldEm
       return (dealer = nextPlayerNotSittingOut(dealer)) >= 0;
    }
    
-   private ArrayList<Player> getPlayersForMainPot()
+   private List<Player> getPlayersForMainPot()
    {
-      ArrayList<Player> players = new ArrayList<Player>();
+      List<Player> players = new ArrayList<Player>();
       for (int i = nextPlayerNotSittingOut(dealer); i != dealer; i = nextPlayerNotSittingOut(i))
       {
          players.add(getPlayer(i));
       }
       players.add(getPlayer(dealer));
       return players;
-   }
-   
-   private void clearRound()
-   {
-      pots.startRound(state);
    }
    
    public String getNextAction()
@@ -176,7 +172,7 @@ public class HoldEm
       }
       
       addToPot(bet);
-      if (pots.isPotEven() && !isHandOver())
+      if (pots.isPotEven() && !pots.isHandOver())
       {
          changeState();
       }
@@ -194,7 +190,7 @@ public class HoldEm
       }
       if (pots.isPotEven())
       {
-         if (!isHandOver())
+         if (!pots.isHandOver())
          {
             changeState();
          }
@@ -211,23 +207,10 @@ public class HoldEm
       {
          // TODO: what to do here?
       }
-      if (pots.isPotEven() && !isHandOver())
+      if (pots.isPotEven() && !pots.isHandOver())
       {
          changeState();
       }
-   }
-   
-   private boolean hasEligibleMainPlayers()
-   {
-      int count = 0;
-      for (int i = 0; i < getMainPlayersCount(); i++)
-      {
-         if (!getMainPlayer(i).isAllIn())
-         {
-            count++;
-         }
-      }
-      return count >= 2;
    }
    
    private void addToPot(int chips)
@@ -252,72 +235,79 @@ public class HoldEm
       {
          switch (state)
          {
-         case BLINDS:
-            state = HoldEmState.DEAL_HOLES;
-            break;
-         case DEAL_HOLES:
-         case BET_PREFLOP:
-            state = HoldEmState.DEAL_FLOP;
-            break;
-         case DEAL_FLOP:
-         case BET_FLOP:
-            state = HoldEmState.DEAL_TURN;
-            break;
-         case DEAL_TURN:
-         case BET_TURN:
-            state = HoldEmState.DEAL_RIVER;
-            break;
-         case DEAL_RIVER:
-         case BET_RIVER:
-            state = HoldEmState.WINNER;
-            break;
-         case WINNER:
-            state = state.getNextState();
-            break;
-         default:
-            // TODO: throw exception here
+            case BLINDS:
+               state = HoldEmState.DEAL_HOLES;
+               break;
+            case DEAL_HOLES:
+            case BET_PREFLOP:
+               state = HoldEmState.DEAL_FLOP;
+               break;
+            case DEAL_FLOP:
+            case BET_FLOP:
+               state = HoldEmState.DEAL_TURN;
+               break;
+            case DEAL_TURN:
+            case BET_TURN:
+               state = HoldEmState.DEAL_RIVER;
+               break;
+            case DEAL_RIVER:
+            case BET_RIVER:
+               state = HoldEmState.WINNER;
+               break;
+            case WINNER:
+               state = state.getNextState();
+               break;
+            default:
+               // TODO: throw exception here
          }
       }
    }
    
-   public HoldEmState deal()
+   public void deal()
    {
       switch (state)
       {
-      case DEAL_HOLES:
-         dealHoles();
-         break;
-      case DEAL_FLOP:
-         dealFlop();
-         break;
-      case DEAL_TURN:
-         dealTurn();
-         break;
-      case DEAL_RIVER:
-         dealRiver();
-         break;
-      default:
-         startHand();
-         if (isSimulation())
-         {
-            deal();
-         }
+         case DEAL_HOLES:
+            dealHoles();
+            break;
+         case DEAL_FLOP:
+            dealFlop();
+            break;
+         case DEAL_TURN:
+            dealTurn();
+            break;
+         case DEAL_RIVER:
+            dealRiver();
+            break;
+         default:
+            startHand();
+            if (isSimulation())
+            {
+               deal();
+            }
+            return;
       }
-      return state;
+      
+      changeState();
+      if (isSimulation)
+      {
+         changeState();
+      }
+      pots.startRound(state);
    }
    
    private void dealHoles()
    {
-      for (int i = 0; i < getMainPlayersCount(); i++)
+      List<Player> players = pots.getMainPot().getPlayers();
+      for (Player player : players)
       {
          Card cards[] = new Card[2];
          for (int j = 0; j < 2; j++)
          {
             cards[j] = deck.dealCard();
          }
-         getMainPlayer(i).DealHoleCards(cards);
+         player.DealHoleCards(cards);
       }
-      changeState();
       emitEvent("holesDealt");
    }
    
@@ -329,24 +319,18 @@ public class HoldEm
          cards[i] = deck.dealCard();
       }
       board.addFlop(cards);
-      changeState();
-      clearRound();
       emitEvent("flopDealt");
    }
    
    private void dealTurn()
    {
       board.addTurn(deck.dealCard());
-      changeState();
-      clearRound();
       emitEvent("turnRiverDealt");
    }
    
    private void dealRiver()
    {
       board.addRiver(deck.dealCard());
-      changeState();
-      clearRound();
       emitEvent("turnRiverDealt");
    }
    
@@ -379,14 +363,14 @@ public class HoldEm
    {
       switch (state)
       {
-      case DEAL_HOLES:
-      case DEAL_FLOP:
-      case DEAL_TURN:
-      case DEAL_RIVER:
-      case WINNER:
-         return 0;
-      default:
-         // TODO: throw exception here maybe?
+         case DEAL_HOLES:
+         case DEAL_FLOP:
+         case DEAL_TURN:
+         case DEAL_RIVER:
+         case WINNER:
+            return 0;
+         default:
+            // TODO: throw exception here maybe?
       }
       
       int call = 0;
@@ -406,15 +390,15 @@ public class HoldEm
    {
       switch (state)
       {
-      case BLINDS:
-      case DEAL_HOLES:
-      case DEAL_FLOP:
-      case DEAL_TURN:
-      case DEAL_RIVER:
-      case WINNER:
-         return 0;
-      default:
-         // TODO: throw exception here maybe?
+         case BLINDS:
+         case DEAL_HOLES:
+         case DEAL_FLOP:
+         case DEAL_TURN:
+         case DEAL_RIVER:
+         case WINNER:
+            return 0;
+         default:
+            // TODO: throw exception here maybe?
       }
       
       int minRaise = 0;
@@ -433,15 +417,15 @@ public class HoldEm
    {
       switch (state)
       {
-      case BLINDS:
-      case DEAL_HOLES:
-      case DEAL_FLOP:
-      case DEAL_TURN:
-      case DEAL_RIVER:
-      case WINNER:
-         return 0;
-      default:
-         // TODO: Throw exception here maybe?
+         case BLINDS:
+         case DEAL_HOLES:
+         case DEAL_FLOP:
+         case DEAL_TURN:
+         case DEAL_RIVER:
+         case WINNER:
+            return 0;
+         default:
+            // TODO: Throw exception here maybe?
       }
       
       int maxRaise = 0;
@@ -456,14 +440,9 @@ public class HoldEm
       return maxRaise;
    }
    
-   public int getDealerPos()
+   public Player getDealerPlayer()
    {
-      return getPlayer(dealer).getPosition();
-   }
-   
-   public int getActionPos()
-   {
-      return getActionPlayer().getPosition();
+      return getPlayer(dealer);
    }
    
    public Player getActionPlayer()
@@ -478,32 +457,12 @@ public class HoldEm
    
    public Player getPlayer(int i)
    {
-      return (Player) Players.get(i);
-   }
-   
-   public Pots getPots()
-   {
-      return pots;
-   }
-   
-   public int getMainPlayersCount()
-   {
-      return pots.getMainPot().getPlayers().size();
-   }
-   
-   public Player getMainPlayer(int index)
-   {
-      return pots.getMainPot().getPlayers().get(index);
-   }
-   
-   private boolean isHandOver()
-   {
-      return pots.isPotEven() && getMainPlayersCount() == 1;
+      return Players.get(i);
    }
    
    public boolean isBettingOver()
    {
-      return pots.isPotEven() && !hasEligibleMainPlayers();
+      return pots.isBettingOver();
    }
    
    public String potsToString()
@@ -514,6 +473,11 @@ public class HoldEm
    public Pot getMainPot()
    {
       return pots.getMainPot();
+   }
+   
+   public int getChipsThisRound(Player player)
+   {
+      return pots.getChipsThisRound(player);
    }
    
    public Pot awardPot()

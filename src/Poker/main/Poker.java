@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
 
+import Poker.game.Deck;
 import Poker.game.HoldEm;
 import Poker.game.HoldEmGames;
 import Poker.game.Player;
@@ -97,7 +98,7 @@ public class Poker
             players.add(new Player("Player " + (i + 1), i));
          }
       }
-      return new HoldEm(players, isSimulation);
+      return new HoldEm(players, isSimulation, new Deck());
    }
    
    public static void main(String args[])

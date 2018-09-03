@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 
 import javax.swing.BorderFactory;
@@ -463,9 +464,10 @@ public class Table extends JComponent implements HoldEmEvents
    
    protected void peekPlayers()
    {
-      for (int i = 0; i < m_oGame.getMainPlayersCount(); i++)
+      List<Player> players = m_oGame.getMainPot().getPlayers();
+      for (Player player : players)
       {
-         Players[m_oGame.getMainPlayer(i).getPosition()].Peek();
+         Players[player.getPosition()].Peek();
       }
    }
    

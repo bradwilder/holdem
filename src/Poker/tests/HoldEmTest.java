@@ -4,220 +4,334 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 import Poker.game.Chip;
+import Poker.game.Deck;
 import Poker.game.HoldEm;
 import Poker.game.HoldEmState;
 import Poker.game.Player;
 
 public class HoldEmTest extends TestCase
 {
-   private HoldEm m_oHoldEm;
-   private ArrayList<Player> m_oPlayerList;
+   private HoldEm game;
+   private ArrayList<Player> playerList;
    
-   public HoldEmTest(String name)
+   public void testNoLimit()
    {
-      super(name);
-   }
-   
-   protected void setUp() throws Exception
-   {
-      super.setUp();
       Player[] players = new Player[6];
-      players[0] = new Player("brad", 0);
-      players[1] = new Player("jeff", 1);
-      players[2] = new Player("matt", 2);
-      players[3] = new Player("mitch", 3);
-      players[4] = new Player("dad", 4);
-      players[5] = new Player("brenda", 5);
+      players[0] = new Player("0", 0);
+      players[1] = new Player("1", 1);
+      players[2] = new Player("2", 2);
+      players[3] = new Player("3", 3);
+      players[4] = new Player("4", 4);
+      players[5] = new Player("5", 5);
       
-      m_oPlayerList = new ArrayList<Player>();
+      playerList = new ArrayList<Player>();
       for (int i = 0; i < 6; i++)
       {
-         m_oPlayerList.add(players[i]);
+         playerList.add(players[i]);
       }
-   }
-   
-   protected void tearDown() throws Exception
-   {
-      super.tearDown();
-   }
-   
-   public void testPotLimit()
-   {
-      m_oHoldEm = new HoldEm(m_oPlayerList, false);
-      m_oHoldEm.startHand();
       
-      Player bradPlayer = m_oHoldEm.getPlayer(0);
-      Player jeffPlayer = m_oHoldEm.getPlayer(1);
-      Player mattPlayer = m_oHoldEm.getPlayer(2);
-      Player mitchPlayer = m_oHoldEm.getPlayer(3);
-      Player dadPlayer = m_oHoldEm.getPlayer(4);
-      Player brendaPlayer = m_oHoldEm.getPlayer(5);
+      game = new HoldEm(playerList, false, new Deck());
+      game.startHand();
       
-      //assertTrue(m_oHoldEm.getSmallBlind() == Chip.BIG_BLIND / 2);
-      //assertTrue(m_oHoldEm.getBigBlind() == Chip.BIG_BLIND);
-      assertTrue(m_oHoldEm.getDealerPos() == 0);
-      assertTrue(m_oHoldEm.getMainPlayersCount() == 6);
-      assertTrue(m_oHoldEm.getMainPlayer(0).getName().equals("jeff"));
-      assertTrue(m_oHoldEm.getMainPlayer(1).getName().equals("matt"));
-      assertTrue(m_oHoldEm.getMainPlayer(2).getName().equals("mitch"));
-      assertTrue(m_oHoldEm.getMainPlayer(3).getName().equals("dad"));
-      assertTrue(m_oHoldEm.getMainPlayer(4).getName().equals("brenda"));
-      assertTrue(m_oHoldEm.getMainPlayer(5).getName().equals("brad"));
-      verifyHoldEm(HoldEmState.BLINDS, 1, 0, 0, Chip.BIG_BLIND / 2, "jeff\nPost Small Blind Of " + m_oHoldEm.getCall() + "?", 0, "Main Pot (0)");
+      Player player0 = game.getPlayer(0);
+      Player player1 = game.getPlayer(1);
+      Player player2 = game.getPlayer(2);
+      Player player3 = game.getPlayer(3);
+      Player player4 = game.getPlayer(4);
+      Player player5 = game.getPlayer(5);
       
-      m_oHoldEm.Bet(m_oHoldEm.getCall());
-      assertTrue(jeffPlayer.getChips() == 1990);
-      verifyHoldEm(HoldEmState.BLINDS, 2, 0, 0, Chip.BIG_BLIND, "matt\nPost Big Blind Of " + m_oHoldEm.getCall() + "?", 10, "Main Pot (10)");
+      verifyHoldEm(HoldEmState.BLINDS, 0, 0, Chip.BIG_BLIND / 2, 0);
       
-      m_oHoldEm.Bet(m_oHoldEm.getCall());
-      assertTrue(mattPlayer.getChips() == 1980);
-      verifyHoldEm(HoldEmState.DEAL_HOLES, 3, 0, 0, 0, "", 30, "Main Pot (30)");
+      game.Bet(game.getCall());
+      assertTrue(player0.getChips() == 1990);
+      verifyHoldEm(HoldEmState.BLINDS, 0, 0, Chip.BIG_BLIND, 10);
       
-      m_oHoldEm.deal();
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 3, 40, 70, 20, "mitch\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 30, "Main Pot (30)");
+      game.Bet(game.getCall());
+      assertTrue(player1.getChips() == 1980);
+      verifyHoldEm(HoldEmState.DEAL_HOLES, 0, 0, 0, 30);
       
-      m_oHoldEm.Bet(50);
-      assertTrue(mitchPlayer.getChips() == 1950);
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 4, 80, 180, 50, "dad\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 80, "Main Pot (80)");
+      game.deal();
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 40, 2000, 20, 30);
       
-      m_oHoldEm.Fold();
-      assertTrue(dadPlayer.getChips() == 2000);
-      assertTrue(m_oHoldEm.getMainPlayersCount() == 5);
-      assertTrue(m_oHoldEm.getMainPlayer(0).getName().equals("jeff"));
-      assertTrue(m_oHoldEm.getMainPlayer(1).getName().equals("matt"));
-      assertTrue(m_oHoldEm.getMainPlayer(2).getName().equals("mitch"));
-      assertTrue(m_oHoldEm.getMainPlayer(3).getName().equals("brenda"));
-      assertTrue(m_oHoldEm.getMainPlayer(4).getName().equals("brad"));
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 5, 80, 180, 50, "brenda\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 80, "Main Pot (80)");
+      game.Bet(50);
+      assertTrue(player2.getChips() == 1950);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 80, 2000, 50, 80);
       
-      m_oHoldEm.Bet(90);
-      assertTrue(brendaPlayer.getChips() == 1910);
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 0, 130, 350, 90, "brad\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 170, "Main Pot (170)");
+      game.Fold();
+      assertTrue(player3.getChips() == 2000);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 80, 2000, 50, 80);
       
-      m_oHoldEm.Bet(90);
-      assertTrue(bradPlayer.getChips() == 1910);
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 1, 120, 420, 80, "jeff\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 260, "Main Pot (260)");
+      game.Bet(90);
+      assertTrue(player4.getChips() == 1910);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 130, 2000, 90, 170);
       
-      m_oHoldEm.Fold();
-      assertTrue(jeffPlayer.getChips() == 1990);
-      assertTrue(m_oHoldEm.getMainPlayersCount() == 4);
-      assertTrue(m_oHoldEm.getMainPlayer(0).getName().equals("matt"));
-      assertTrue(m_oHoldEm.getMainPlayer(1).getName().equals("mitch"));
-      assertTrue(m_oHoldEm.getMainPlayer(2).getName().equals("brenda"));
-      assertTrue(m_oHoldEm.getMainPlayer(3).getName().equals("brad"));
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 2, 110, 400, 70, "matt\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 260, "Main Pot (260)");
+      game.Bet(90);
+      assertTrue(player5.getChips() == 1910);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 120, 1990, 80, 260);
       
-      m_oHoldEm.Fold();
-      assertTrue(mattPlayer.getChips() == 1980);
-      assertTrue(m_oHoldEm.getMainPlayersCount() == 3);
-      assertTrue(m_oHoldEm.getMainPlayer(0).getName().equals("mitch"));
-      assertTrue(m_oHoldEm.getMainPlayer(1).getName().equals("brenda"));
-      assertTrue(m_oHoldEm.getMainPlayer(2).getName().equals("brad"));
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 3, 80, 340, 40, "mitch\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 260, "Main Pot (260)");
+      game.Fold();
+      assertTrue(player0.getChips() == 1990);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 110, 1980, 70, 260);
       
-      m_oHoldEm.Bet(40);
-      assertTrue(mitchPlayer.getChips() == 1910);
-      verifyHoldEm(HoldEmState.DEAL_FLOP, 3, 0, 0, 0, "", 300, "Main Pot (300)");
+      game.Fold();
+      assertTrue(player1.getChips() == 1980);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 80, 1950, 40, 260);
       
-      m_oHoldEm.deal();
-      verifyHoldEm(HoldEmState.BET_FLOP, 3, 20, 300, 0, "mitch\nCheck or Open?", 300, "Main Pot (300)");
+      game.Bet(40);
+      assertTrue(player2.getChips() == 1910);
+      verifyHoldEm(HoldEmState.DEAL_FLOP, 0, 0, 0, 300);
       
-      m_oHoldEm.Check();
-      assertTrue(mitchPlayer.getChips() == 1910);
-      verifyHoldEm(HoldEmState.BET_FLOP, 5, 20, 300, 0, "brenda\nCheck or Open?", 300, "Main Pot (300)");
+      game.deal();
+      verifyHoldEm(HoldEmState.BET_FLOP, 20, 1910, 0, 300);
       
-      m_oHoldEm.Bet(70);
-      assertTrue(brendaPlayer.getChips() == 1840);
-      verifyHoldEm(HoldEmState.BET_FLOP, 0, 140, 510, 70, "brad\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 370, "Main Pot (370)");
+      game.Check();
+      assertTrue(player2.getChips() == 1910);
+      verifyHoldEm(HoldEmState.BET_FLOP, 20, 1910, 0, 300);
       
-      m_oHoldEm.Bet(470);
-      assertTrue(bradPlayer.getChips() == 1440);
-      verifyHoldEm(HoldEmState.BET_FLOP, 3, 870, 1780, 470, "mitch\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 840, "Main Pot (840)");
+      game.Bet(70);
+      assertTrue(player4.getChips() == 1840);
+      verifyHoldEm(HoldEmState.BET_FLOP, 140, 1910, 70, 370);
       
-      m_oHoldEm.Fold();
-      assertTrue(mitchPlayer.getChips() == 1910);
-      assertTrue(m_oHoldEm.getMainPlayersCount() == 2);
-      assertTrue(m_oHoldEm.getMainPlayer(0).getName().equals("brenda"));
-      assertTrue(m_oHoldEm.getMainPlayer(1).getName().equals("brad"));
-      verifyHoldEm(HoldEmState.BET_FLOP, 5, 800, 1640, 400, "brenda\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 840, "Main Pot (840)");
+      game.Bet(470);
+      assertTrue(player5.getChips() == 1440);
+      verifyHoldEm(HoldEmState.BET_FLOP, 870, 1910, 470, 840);
       
-      m_oHoldEm.Fold();
-      assertTrue(brendaPlayer.getChips() == 1840);
-      assertTrue(m_oHoldEm.getState() == HoldEmState.WINNER);
+      game.Fold();
+      assertTrue(player2.getChips() == 1910);
+      verifyHoldEm(HoldEmState.BET_FLOP, 800, 1840, 400, 840);
+      
+      game.Fold();
+      assertTrue(player4.getChips() == 1840);
+      
+      
+      // TODO: figure out how to award player 5 the hand and move on to next hand
+      //assertTrue(game.);
+      //assertTrue(game.getState() == HoldEmState.WINNER);
       // TODO: is this necessary?
-      while (!m_oHoldEm.isMainAwarded())
-      {
-         m_oHoldEm.awardPot();
-      }
-      assertTrue(bradPlayer.getChips() == 2280);
+      //while (!game.isMainAwarded())
+      //{
+      //   game.awardPot();
+      //}
+      //assertTrue(player0.getChips() == 2280);
       
-      m_oHoldEm.startHand();
-      assertTrue(m_oHoldEm.getDealerPos() == 1);
-      assertTrue(m_oHoldEm.getMainPlayersCount() == 6);
-      assertTrue(m_oHoldEm.getMainPlayer(0).getName().equals("matt"));
-      assertTrue(m_oHoldEm.getMainPlayer(1).getName().equals("mitch"));
-      assertTrue(m_oHoldEm.getMainPlayer(2).getName().equals("dad"));
-      assertTrue(m_oHoldEm.getMainPlayer(3).getName().equals("brenda"));
-      assertTrue(m_oHoldEm.getMainPlayer(4).getName().equals("brad"));
-      assertTrue(m_oHoldEm.getMainPlayer(5).getName().equals("jeff"));
-      verifyHoldEm(HoldEmState.BLINDS, 2, 0, 0, 10, "matt\nPost Small Blind Of " + m_oHoldEm.getCall() + "?", 0, "Main Pot (0)");
+      /*game.startHand();
+      verifyHoldEm(HoldEmState.BLINDS, 0, 0, 10, 0);
       
-      m_oHoldEm.Bet(m_oHoldEm.getCall());
-      assertTrue(mattPlayer.getChips() == 1970);
-      verifyHoldEm(HoldEmState.BLINDS, 3, 0, 0, 20, "mitch\nPost Big Blind Of " + m_oHoldEm.getCall() + "?", 10, "Main Pot (10)");
+      game.Bet(game.getCall());
+      assertTrue(player2.getChips() == 1970);
+      verifyHoldEm(HoldEmState.BLINDS, 0, 0, 20, 10);
       
-      m_oHoldEm.Bet(m_oHoldEm.getCall());
-      assertTrue(mitchPlayer.getChips() == 1890);
-      verifyHoldEm(HoldEmState.DEAL_HOLES, 4, 0, 0, 0, "", 30, "Main Pot (30)");
+      game.Bet(game.getCall());
+      assertTrue(player3.getChips() == 1890);
+      verifyHoldEm(HoldEmState.DEAL_HOLES, 0, 0, 0, 30);
       
-      m_oHoldEm.deal();
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 4, 40, 70, 20, "dad\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 30, "Main Pot (30)");
+      game.deal();
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 40, 70, 20, 30);
       
-      m_oHoldEm.Bet(20);
-      assertTrue(dadPlayer.getChips() == 1980);
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 5, 40, 90, 20, "brenda\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 50, "Main Pot (50)");
+      game.Bet(20);
+      assertTrue(player4.getChips() == 1980);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 40, 90, 20, 50);
       
-      m_oHoldEm.Bet(20);
-      assertTrue(brendaPlayer.getChips() == 1820);
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 0, 40, 110, 20, "brad\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 70, "Main Pot (70)");
+      game.Bet(20);
+      assertTrue(player5.getChips() == 1820);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 40, 110, 20, 70);
       
-      m_oHoldEm.Bet(20);
-      assertTrue(bradPlayer.getChips() == 2260);
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 1, 40, 130, 20, "jeff\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 90, "Main Pot (90)");
+      game.Bet(20);
+      assertTrue(player0.getChips() == 2260);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 40, 130, 20, 90);
       
-      m_oHoldEm.Bet(20);
-      assertTrue(jeffPlayer.getChips() == 1970);
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 2, 30, 130, 10, "matt\nCall " + m_oHoldEm.getCall() + ", Raise, or Fold?", 110, "Main Pot (110)");
+      game.Bet(20);
+      assertTrue(player1.getChips() == 1970);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 30, 130, 10, 110);
       
-      m_oHoldEm.Bet(10);
-      assertTrue(mattPlayer.getChips() == 1960);
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 3, 20, 120, 0, "mitch\nOption: Check or Raise?", 120, "Main Pot (120)");
+      game.Bet(10);
+      assertTrue(player2.getChips() == 1960);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 20, 120, 0, 120);
       
-      m_oHoldEm.Check();
-      assertTrue(mitchPlayer.getChips() == 1890);
-      verifyHoldEm(HoldEmState.DEAL_FLOP, 4, 0, 0, 0, "", 120, "Main Pot (120)");
-      
+      game.Check();
+      assertTrue(player3.getChips() == 1890);
+      verifyHoldEm(HoldEmState.DEAL_FLOP, 0, 0, 0, 120);
+      */
    }
    
-   private void verifyHoldEm(HoldEmState iGameState, int iActionPos, int iMinRaise, int iMaxRaise, int iCall, String sNextAction, int iTotalPotSize, String sPotsString)
+   public void testFoldYieldsWinner()
    {
-      assertTrue(m_oHoldEm.getState() == iGameState);
-      assertTrue(m_oHoldEm.getActionPos() == iActionPos);
-      int minRaise = 0;
-      try
+      Player[] players = new Player[6];
+      players[0] = new Player("0", 0);
+      players[1] = new Player("1", 1);
+      players[2] = new Player("2", 2);
+      players[3] = new Player("3", 3);
+      players[4] = new Player("4", 4);
+      players[5] = new Player("5", 5);
+      
+      playerList = new ArrayList<Player>();
+      for (int i = 0; i < 6; i++)
       {
-         minRaise = m_oHoldEm.getMaxRaise();
+         playerList.add(players[i]);
       }
-      catch (Exception x)
-      {
-         assertTrue(false);
-      }
-      assertTrue(minRaise == iMinRaise);
-      assertTrue(m_oHoldEm.getMaxRaise() == iMaxRaise);
-      assertTrue(m_oHoldEm.getCall() == iCall);
-      assertTrue(m_oHoldEm.getNextAction().equals(sNextAction));
-      assertTrue(m_oHoldEm.getTotalPotSize() == iTotalPotSize);
-      assertTrue(m_oHoldEm.potsToString().equals(sPotsString));
+      
+      game = new HoldEm(playerList, false, new Deck());
+      game.startHand();
+      
+      Player player0 = game.getPlayer(0);
+      Player player1 = game.getPlayer(1);
+      Player player2 = game.getPlayer(2);
+      Player player3 = game.getPlayer(3);
+      Player player4 = game.getPlayer(4);
+      Player player5 = game.getPlayer(5);
+      
+      verifyHoldEm(HoldEmState.BLINDS, 0, 0, Chip.BIG_BLIND / 2, 0);
+      
+      game.Bet(game.getCall());
+      assertTrue(player0.getChips() == 1990);
+      verifyHoldEm(HoldEmState.BLINDS, 0, 0, Chip.BIG_BLIND, 10);
+      
+      game.Bet(game.getCall());
+      assertTrue(player1.getChips() == 1980);
+      verifyHoldEm(HoldEmState.DEAL_HOLES, 0, 0, 0, 30);
+      
+      game.deal();
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 40, 2000, 20, 30);
+      
+      game.Bet(50);
+      assertTrue(player2.getChips() == 1950);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 80, 2000, 50, 80);
+      
+      game.Fold();
+      assertTrue(player3.getChips() == 2000);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 80, 2000, 50, 80);
+      
+      game.Fold();
+      assertTrue(player4.getChips() == 2000);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 80, 2000, 50, 80);
+      
+      game.Fold();
+      assertTrue(player5.getChips() == 2000);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 70, 1990, 40, 80);
+      
+      game.Fold();
+      assertTrue(player0.getChips() == 1990);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 60, 1980, 30, 80);
+      
+      game.Fold();
+      assertTrue(player1.getChips() == 1980);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 0, 0, 0, 0);
+      
+      // TODO: figure out how to jump to winner state and award pot(s)
+      //assertTrue(game.);
+      //assertTrue(game.getState() == HoldEmState.WINNER);
+      // TODO: is this necessary?
+      //while (!game.isMainAwarded())
+      //{
+      //   game.awardPot();
+      //}
+      //assertTrue(player0.getChips() == 2280);
    }
    
+   public void testAllInShowdown()
+   {
+      Player[] players = new Player[6];
+      players[0] = new Player("0", 0, 100);
+      players[1] = new Player("1", 1, 100);
+      players[2] = new Player("2", 2, 100);
+      players[3] = new Player("3", 3, 100);
+      players[4] = new Player("4", 4, 10000);
+      players[5] = new Player("5", 5, 100);
+      
+      playerList = new ArrayList<Player>();
+      for (int i = 0; i < 6; i++)
+      {
+         playerList.add(players[i]);
+      }
+      
+      game = new HoldEm(playerList, false, new Deck());
+      game.startHand();
+      
+      Player player0 = game.getPlayer(0);
+      Player player1 = game.getPlayer(1);
+      Player player2 = game.getPlayer(2);
+      Player player3 = game.getPlayer(3);
+      Player player4 = game.getPlayer(4);
+      Player player5 = game.getPlayer(5);
+      
+      verifyHoldEm(HoldEmState.BLINDS, 0, 0, Chip.BIG_BLIND / 2, 0);
+      
+      game.Bet(game.getCall());
+      assertTrue(player0.getChips() == 90);
+      verifyHoldEm(HoldEmState.BLINDS, 0, 0, Chip.BIG_BLIND, 10);
+      
+      game.Bet(game.getCall());
+      assertTrue(player1.getChips() == 80);
+      verifyHoldEm(HoldEmState.DEAL_HOLES, 0, 0, 0, 30);
+      
+      game.deal();
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 40, 100, 20, 30);
+      
+      game.Bet(100);
+      assertTrue(player2.getChips() == 0);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 0, 0, 100, 130);
+      
+      game.Bet(100);
+      assertTrue(player3.getChips() == 0);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 0, 0, 100, 230);
+      
+      game.Bet(100);
+      assertTrue(player4.getChips() == 9900);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 0, 0, 100, 330);
+      
+      game.Bet(100);
+      assertTrue(player5.getChips() == 0);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 0, 0, 90, 430);
+      
+      game.Bet(90);
+      assertTrue(player0.getChips() == 0);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, 0, 0, 80, 520);
+      
+      game.Bet(80);
+      assertTrue(player1.getChips() == 0);
+      verifyHoldEm(HoldEmState.DEAL_FLOP, 0, 0, 0, 600);
+      
+      game.deal();
+      verifyHoldEm(HoldEmState.DEAL_TURN, 0, 0, 0, 600);
+      
+      game.deal();
+      verifyHoldEm(HoldEmState.DEAL_RIVER, 0, 0, 0, 600);
+      
+      game.deal();
+      verifyHoldEm(HoldEmState.WINNER, 0, 0, 0, 600);
+      
+      // TODO: award winner
+      //assertTrue(game.);
+      //assertTrue(game.getState() == HoldEmState.WINNER);
+      // TODO: is this necessary?
+      //while (!game.isMainAwarded())
+      //{
+      //   game.awardPot();
+      //}
+      //assertTrue(player0.getChips() == 2280);
+   }
+   
+   public void testRefundIncontestableBet()
+   {
+      
+   }
+   
+   public void testRefundDeatPot()
+   {
+      
+   }
+   
+   public void testListeners()
+   {
+      
+   }
+   
+   private void verifyHoldEm(HoldEmState iGameState, int iMinRaise, int iMaxRaise, int iCall, int iTotalPotSize)
+   {
+      assertTrue(game.getState() == iGameState);
+      assertTrue(game.getMinRaise() == iMinRaise);
+      assertTrue(game.getMaxRaise() == iMaxRaise);
+      assertTrue(game.getCall() == iCall);
+      assertTrue(game.getTotalPotSize() == iTotalPotSize);
+   }
 }

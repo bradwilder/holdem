@@ -48,16 +48,6 @@ public class Pots
       return main.getNumPlayers();
    }
    
-   private List<Player> getMainPlayers()
-   {
-      Pot main = getMainPot();
-      if (main == null)
-      {
-         return null;
-      }
-      return main.getPlayers();
-   }
-   
    private Player getMainPlayer(int index) throws NoSuchElementException
    {
       int count = getMainPlayersCount();
@@ -111,6 +101,33 @@ public class Pots
       }
       
       return null;
+   }
+   
+   private boolean hasEligiblePlayers()
+   {
+      int count = 0;
+      Pot currentPot = getCurrentPot();
+      if (currentPot != null)
+      {
+         for (int i = 0; i < currentPot.getNumPlayers(); i++)
+         {
+            if (!currentPot.getPlayer(i).isAllIn())
+            {
+               count++;
+            }
+         }
+      }
+      return count >= 2;
+   }
+   
+   public boolean isBettingOver()
+   {
+      return isPotEven() && !hasEligiblePlayers();
+   }
+   
+   public boolean isHandOver()
+   {
+      return getMainPlayersCount() <= 1;
    }
    
    public int getTotalSize()
@@ -206,16 +223,30 @@ public class Pots
          throw new Exception("Tried to fold with no action player");
       }
       
-      int ret = fold(player);
+      fold(player);
       
       // actionIndex should always point to a valid index within the current pot
       // If we remove the last player, this will reset the index back to 0 instead of leaving it pointing to nothing
-      actionIndex = actionIndex % getCurrentPot().getNumPlayers();
+      int currentPlayerCount = getCurrentPlayerCount();
+      if (currentPlayerCount > 0)
+      {
+         actionIndex = actionIndex % getCurrentPlayerCount();
+      }
       
-      return ret;
+      return currentPlayerCount;
    }
    
-   public int fold(Player player)
+   private int getCurrentPlayerCount()
+   {
+      Pot currentPot = getCurrentPot();
+      if (currentPot != null)
+      {
+         return currentPot.getNumPlayers();
+      }
+      return 0;
+   }
+   
+   private void fold(Player player)
    {
       if (player.hasHoleCards())
       {
@@ -226,10 +257,8 @@ public class Pots
             pot.fold(player);
          }
          
-         return refundIncontestableBet();
+         refundIncontestableBet();
       }
-      
-      return 0;
    }
    
    public int getChipsThisRound(Player player)
@@ -247,24 +276,24 @@ public class Pots
       int currentBet = getCurrentBet();
       
       Player playerMatchingCurrBet = null;
-      List<Player> players = getMainPlayers();
-      for (Player oPlayer : players)
+      List<Player> players = getCurrentPot().getPlayers();
+      for (Player player : players)
       {
-         if (getChipsThisRound(oPlayer) == currentBet)
+         if (getChipsThisRound(player) == currentBet)
          {
             // If we just found a second player matching the current bet, we can exit now
             if (playerMatchingCurrBet != null)
             {
                return 0;
             }
-            playerMatchingCurrBet = oPlayer;
+            playerMatchingCurrBet = player;
          }
       }
       
       if (playerMatchingCurrBet != null)
       {
-         int iThisPotBet = getLastPot().getRoundCount(playerMatchingCurrBet);
-         int iRefund = iThisPotBet;
+         int lastPotBet = getLastPot().getRoundCount(playerMatchingCurrBet);
+         int refund = lastPotBet;
          for (Player oPlayer : players)
          {
             if (oPlayer.hasHoleCards() && oPlayer != playerMatchingCurrBet)
@@ -273,22 +302,22 @@ public class Pots
                int iChipsThisRound = getChipsThisRound(oPlayer);
                int iCurrOwed = currentBet - iChipsThisRound;
                int iAmountUnder = (iCurrOwed > iPlayerChips ? iCurrOwed - iPlayerChips : 0);
-               iRefund = Math.min(iRefund, iAmountUnder);
+               refund = Math.min(refund, iAmountUnder);
             }
          }
          
-         if (iRefund > 0)
+         if (refund > 0)
          {
-            if (iRefund == iThisPotBet)
+            if (refund == lastPotBet)
             {
                return refundDeadPot(playerMatchingCurrBet);
             }
             else
             {
-               playerMatchingCurrBet.changeChips(iRefund);
+               playerMatchingCurrBet.changeChips(refund);
                try
                {
-                  getLastPot().sub(iRefund, playerMatchingCurrBet);
+                  getLastPot().sub(refund, playerMatchingCurrBet);
                }
                catch (Exception x)
                {
@@ -296,7 +325,7 @@ public class Pots
                   x.printStackTrace();
                   return 0;
                }
-               return iRefund;
+               return refund;
             }
          }
       }
@@ -307,7 +336,7 @@ public class Pots
    private int refundDeadPot(Player player)
    {
       Pot lastPot = getLastPot();
-      if (lastPot == getMainPot() || lastPot.isContested())
+      if (lastPot.isContested())
       {
          return 0;
       }
@@ -339,7 +368,7 @@ public class Pots
       {
          player.Bet(toAdd);
          
-         int chipsThisRound = getChipsThisRound(player);
+         int chipsThisRound = getChipsThisRound(player) + toAdd;
          int currBet = getCurrentBet();
          int incrAmount = chipsThisRound - currBet;
          int raise = chipsThisRound - (currBet - shortStackOverraise);
@@ -457,8 +486,6 @@ public class Pots
                bettingOver = true;
             }
       }
-      
-      moveActionIndex();
    }
    
    public int getCall() throws Exception
@@ -486,8 +513,12 @@ public class Pots
             }
             break;
          default:
-            int trueCurrentBet = Math.max(getCurrentBet(), bigBlind); 
-            currOwed = trueCurrentBet - getChipsThisRound(player);
+            int currentBet = getCurrentBet();
+            if (currentBet > 0)
+            {
+               int trueCurrentBet = Math.max(getCurrentBet(), bigBlind);
+               currOwed = trueCurrentBet - getChipsThisRound(player);
+            }
       }
       
       return Math.min(playerChips, currOwed);
@@ -522,7 +553,8 @@ public class Pots
       
       int newRaise = call - shortStackOverraise + currentRaise;
       newRaise = Math.min(newRaise, maxChipsRemainingPlayers() - getChipsThisRound(player));
-      return Math.min(playerChips, newRaise);
+      int minRaise = Math.min(playerChips, newRaise); 
+      return minRaise == call ? 0 : minRaise;
    }
    
    public int getMaxRaise() throws Exception
@@ -538,7 +570,8 @@ public class Pots
       }
       
       int maxChipsRemainingPlayers = maxChipsRemainingPlayers();
-      return Math.min(playerChips, maxChipsRemainingPlayers);
+      int maxRaise = Math.min(playerChips, maxChipsRemainingPlayers); 
+      return maxRaise == call ? 0 : maxRaise;
    }
    
    public Pot awardPot(Card[] boardCards)

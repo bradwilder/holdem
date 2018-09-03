@@ -519,7 +519,7 @@ public class PlayerComponent extends JComponent implements MouseListener
    
    public void updateChipsThisRound()
    {
-      int chipsThisRound = game.getPots().getChipsThisRound(player);
+      int chipsThisRound = game.getChipsThisRound(player);
       if (chipsThisRound == 0)
       {
          clearChipsThisRound();
