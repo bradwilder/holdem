@@ -120,9 +120,8 @@ public class Pot
       return playerCounts.size();
    }
    
-   public Hand getBestHand(Card[] boardCards, List<Player> playersOut)
+   public Hand getBestHand(Card[] boardCards)
    {
-      // TODO: return players array
       if (getNumPlayers() == 0)
       {
          return null;
@@ -130,10 +129,7 @@ public class Pot
       
       Hand oCurrentBestHand = null;
       
-      if (playersOut == null)
-      {
-         playersOut = new ArrayList<Player>();
-      }
+      List<Player> playersOut = new ArrayList<Player>();
       
       Iterator<Player> oPlayers = getPlayers().iterator();
       if (!oPlayers.hasNext())
@@ -169,6 +165,53 @@ public class Pot
       }
       
       return oCurrentBestHand;
+   }
+   
+   public List<Player> getWinners(Card[] boardCards)
+   {
+      if (getNumPlayers() == 0)
+      {
+         return null;
+      }
+      
+      Hand oCurrentBestHand = null;
+      
+      ArrayList<Player> playersOut = new ArrayList<Player>();
+      
+      Iterator<Player> oPlayers = getPlayers().iterator();
+      if (!oPlayers.hasNext())
+      {
+         return null;
+      }
+      
+      // Add the first player into the list; this will start as the best hand
+      playersOut.add(oPlayers.next());
+      oCurrentBestHand = playersOut.get(0).getHand(boardCards);
+      
+      // If the best hand is null, that means there aren't enough board cards to make a hand, so return null
+      if (oCurrentBestHand == null)
+      {
+         playersOut.clear();
+         return null;
+      }
+      
+      while (oPlayers.hasNext())
+      {
+         Player oPlayer = oPlayers.next();
+         Hand oPlayerHand = oPlayer.getHand(boardCards);
+         int iComp = oCurrentBestHand.compare(oPlayerHand);
+         if (iComp <= 0)
+         {
+            if (iComp < 0)
+            {
+               playersOut.clear();
+            }
+            oCurrentBestHand = oPlayerHand;
+            playersOut.add(oPlayer);
+         }
+      }
+      
+      return playersOut;
    }
    
    public Pot add(int toAdd, Player player) throws Exception

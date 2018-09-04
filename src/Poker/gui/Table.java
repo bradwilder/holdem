@@ -49,12 +49,6 @@ public class Table extends JComponent implements HoldEmEvents
    protected InnerTable inner;            // the inner part of the table
    protected Timer timer;
    
-   /**
-    * Basic constructor
-    * @param game the HoldEm game to play on this component
-    * @param screenHeight the height of the component
-    * @param screenWidth the width of the component
-    */
    public Table(HoldEm game)
    {
       m_oGame = game;
@@ -118,10 +112,6 @@ public class Table extends JComponent implements HoldEmEvents
       private PlayerComponent players[];
       private Dimension m_oDimension;
       
-      /**
-       * Default constructor
-       * @param players the Players this component represents
-       */
       public PlayerStripComponent(PlayerComponent players[], Dimension oDimension)
       {
          setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -489,7 +479,7 @@ public class Table extends JComponent implements HoldEmEvents
       }
    }
    
-   protected void setWinnerBorder(ArrayList<Player> winner)
+   protected void setWinnerBorder(List<Player> winner)
    {
       for (int i = 0; i < winner.size(); i++)
       {
@@ -497,7 +487,7 @@ public class Table extends JComponent implements HoldEmEvents
       }
    }
    
-   protected void resetWinnerBorder(ArrayList<Player> winner)
+   protected void resetWinnerBorder(List<Player> winner)
    {
       for (int i = 0; i < winner.size(); i++)
       {

@@ -579,38 +579,35 @@ public class Pots
    public Pot awardPot(Card[] boardCards)
    {
       Pot pot = getLastPot();
-      awardChips(pot, boardCards);
-      return pot;
-   }
-   
-   private void awardChips(Pot pot, Card[] boardCards)
-   {
-      ArrayList<Player> oWinners = new ArrayList<Player>();
-      pot.getBestHand(boardCards, oWinners);
-      int iNumWinners = oWinners.size();
-      int iPotSize = pot.getSize();
-      if (iNumWinners == 1)
+      if (pot != null)
       {
-         oWinners.get(0).changeChips(iPotSize);
-      }
-      else
-      {
-         int iRem = iPotSize % iNumWinners;
-         int iChipsPerWinner = iPotSize / iNumWinners;
-         for (int i = 0; i < iNumWinners; i++)
+         List<Player> oWinners = pot.getWinners(boardCards);
+         int iNumWinners = oWinners.size();
+         int iPotSize = pot.getSize();
+         if (iNumWinners == 1)
          {
-            oWinners.get(i).changeChips(iChipsPerWinner);
+            oWinners.get(0).changeChips(iPotSize);
          }
-         if (iRem > 0)
+         else
          {
-            List<Player> oPlayers = getFirstPlayersInPotByPosition(iRem, pot);
-            for (int i = 0; i < oPlayers.size(); i++)
+            int iRem = iPotSize % iNumWinners;
+            int iChipsPerWinner = iPotSize / iNumWinners;
+            for (int i = 0; i < iNumWinners; i++)
             {
-               oPlayers.get(i).changeChips(1);
+               oWinners.get(i).changeChips(iChipsPerWinner);
+            }
+            if (iRem > 0)
+            {
+               List<Player> oPlayers = getFirstPlayersInPotByPosition(iRem, pot);
+               for (int i = 0; i < oPlayers.size(); i++)
+               {
+                  oPlayers.get(i).changeChips(1);
+               }
             }
          }
+         removePot(pot);
       }
-      removePot(pot);
+      return pot;
    }
    
    private List<Player> getFirstPlayersInPotByPosition(int playersNeeded, Pot pot)

@@ -2,6 +2,7 @@ package Poker.gui;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.List;
 
 import Poker.game.HoldEm;
 import Poker.game.Player;
@@ -10,13 +11,7 @@ import Poker.hand.Hand;
 public class TableComponentSim extends Table
 {
    private static final long serialVersionUID = -881700383175876558L;
-
-   /**
-    * Basic constructor
-    * @param game the HoldEm game to play on this component
-    * @param screenHeight the height of the component
-    * @param screenWidth the width of the component
-    */
+   
    public TableComponentSim(HoldEm game)
    {
       super(game);
@@ -71,21 +66,21 @@ public class TableComponentSim extends Table
    
    private void showBestHands()
    {
-      ArrayList<Player> oWinners = new ArrayList<Player>();
-      ((InnerTableComponentSim) inner).changeWinner(m_oGame.getWinningHand(oWinners).toString());
+      List<Player> oWinners = m_oGame.getWinners();
+      ((InnerTableComponentSim) inner).changeWinner(oWinners.toString());
       updatePlayerHands();
    }
    
    private void showWinners()
    {
-      ArrayList<Player> oWinners = new ArrayList<Player>();
-      Hand oBestHand = m_oGame.getWinningHand(oWinners);
+      List<Player> oWinners = m_oGame.getWinners();
+      Hand oBestHand = m_oGame.getWinningHand();
       ((InnerTableComponentSim) inner).changeWinner(oBestHand.toString() + "\n" + getPlayerNames(oWinners));
       updatePlayerHands();
       setWinnerBorder(oWinners);
    }
    
-   private static String getPlayerNames(ArrayList<Player> oPlayers)
+   private static String getPlayerNames(List<Player> oPlayers)
    {
       int iPlayerCnt = oPlayers.size();
       if (iPlayerCnt == 0)
@@ -113,8 +108,7 @@ public class TableComponentSim extends Table
    {
       ((InnerTableComponentSim) inner).clearWinner();
       resetPlayers();
-      ArrayList<Player> oWinners = new ArrayList<Player>();
-      m_oGame.getWinningHand(oWinners);
+      List<Player> oWinners = m_oGame.getWinners();
       resetWinnerBorder(oWinners);
    }
 }

@@ -379,7 +379,7 @@ public class HoldEmTest extends TestCase
          assertTrue(false);
       }
       assertTrue(player1.getChips() == 1980);
-      verifyHoldEm(HoldEmState.BET_PREFLOP, 0);
+      verifyHoldEm(HoldEmState.WINNER, 0);
       
       // TODO: figure out how to jump to winner state and award pot(s)
       //assertTrue(game.);

@@ -204,6 +204,10 @@ public class HoldEm
       {
          changeState();
       }
+      else if (pots.isHandOver())
+      {
+         state = HoldEmState.WINNER;
+      }
       
       return generateNextAction();
    }
@@ -502,8 +506,13 @@ public class HoldEm
       return i;
    }
    
-   public Hand getWinningHand(ArrayList<Player> oPlayersOut)
+   public Hand getWinningHand()
    {
-      return getMainPot().getBestHand(getBoard(), oPlayersOut);
+      return getMainPot().getBestHand(getBoard());
+   }
+   
+   public List<Player> getWinners()
+   {
+      return getMainPot().getWinners(getBoard());
    }
 }

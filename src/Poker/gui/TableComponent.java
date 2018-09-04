@@ -2,6 +2,7 @@ package Poker.gui;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,13 +16,7 @@ import Poker.gui.custom.Audio;
 public class TableComponent extends Table
 {
    private static final long serialVersionUID = 4824404789987018328L;
-
-   /**
-    * Basic constructor
-    * @param game the HoldEm game to play on this component
-    * @param screenHeight the height of the component
-    * @param screenWidth the width of the component
-    */
+   
    public TableComponent(HoldEm game)
    {
       super(game);
@@ -402,8 +397,7 @@ public class TableComponent extends Table
          }
          clearAllBorders();
          Card[] aoBoardCards = m_oGame.getBoard();
-         ArrayList<Player> oWinners = new ArrayList<Player>();
-         pot.getBestHand(aoBoardCards, oWinners);
+         List<Player> oWinners = pot.getWinners(aoBoardCards);
          setWinnerBorder(oWinners);
          //updateWinner(m_oGame.getPots().awardPotString(aoBoardCards, pot));
          timer.schedule(new ShowWinnerAllInTask(), 5000);
@@ -449,8 +443,7 @@ public class TableComponent extends Table
       clearActionComponents();
       peekPlayers(pot);
       Card[] aoBoardCards = m_oGame.getBoard();
-      ArrayList<Player> oWinners = new ArrayList<Player>();
-      pot.getBestHand(aoBoardCards, oWinners);
+      List<Player> oWinners = pot.getWinners(aoBoardCards);
       setWinnerBorder(oWinners);
       //updateWinner(m_oGame.getPots().awardPotString(aoBoardCards, pot));
    } // :)
