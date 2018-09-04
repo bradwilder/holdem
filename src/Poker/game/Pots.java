@@ -62,7 +62,7 @@ public class Pots
    {
       int startingIndex = actionIndex;
       Pot currentPot = getCurrentPot();
-      while (true)
+      while (currentPot != null)
       {
          Player player = currentPot.getPlayer(actionIndex);
          if (player.getChips() > 0)
@@ -76,6 +76,8 @@ public class Pots
             return null;
          }
       }
+      
+      return null;
    }
    
    private void moveActionIndex()

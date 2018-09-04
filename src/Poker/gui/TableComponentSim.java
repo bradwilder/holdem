@@ -28,7 +28,7 @@ public class TableComponentSim extends Table
    
    public void deal()
    {
-      switch (m_oGame.getState())
+      switch (m_oGame.generateNextAction().getState())
       {
          case DEAL_HOLES:
             break;
@@ -52,7 +52,7 @@ public class TableComponentSim extends Table
    
    private void updateBestHands()
    {
-      switch (m_oGame.getState())
+      switch (m_oGame.generateNextAction().getState())
       {
          case BET_FLOP:
          case DEAL_TURN:

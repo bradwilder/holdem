@@ -49,7 +49,7 @@ public class HoldEm
       }
    }
    
-   public boolean startHand()
+   public GameState startHand()
    {
       deck.shuffle();
       board.clear();
@@ -57,7 +57,7 @@ public class HoldEm
       List<Player> players = getPlayersForMainPot();
       if (players.size() < 2)
       {
-         return false;
+         return null;
       }
       pots = new Pots(players, Chip.BIG_BLIND, state);
       
@@ -78,10 +78,10 @@ public class HoldEm
       
       if (!changeDealer())
       {
-         return false;
+         return null;
       }
-      
-      return true;
+       
+      return generateNextAction();
    }
    
    private boolean changeDealer()
@@ -163,66 +163,49 @@ public class HoldEm
       return "";
    }
    
-   public void Bet(int bet)
+   public GameState generateNextAction()
    {
-      if (bet == 0)
+      boolean isBettingRound = false;
+      switch (state)
       {
-         Check();
-         return;
+         case BLINDS:
+         case BET_PREFLOP:
+         case BET_FLOP:
+         case BET_TURN:
+         case BET_RIVER:
+            isBettingRound = true;
+            break;
+         default:
       }
       
-      addToPot(bet);
+      return isBettingRound ? new GameState(state, getActionPlayer(), getCall(), getMinRaise(), getMaxRaise()) : new GameState(state);
+   }
+   
+   public GameState Bet(int bet) throws Exception
+   {
+      pots.addToPot(bet);
       if (pots.isPotEven() && !pots.isHandOver())
       {
          changeState();
       }
+      
+      return generateNextAction();
    }
    
-   public void Check()
+   public GameState Check() throws Exception
    {
-      try
-      {
-         pots.addToPot(0);
-      }
-      catch (Exception x)
-      {
-         // TODO: how will this be handled?
-      }
-      if (pots.isPotEven())
-      {
-         if (!pots.isHandOver())
-         {
-            changeState();
-         }
-      }
+      return Bet(0);
    }
    
-   public void Fold()
+   public GameState Fold() throws Exception
    {
-      try
-      {
-         pots.fold();
-      }
-      catch (Exception x)
-      {
-         // TODO: what to do here?
-      }
+      pots.fold();
       if (pots.isPotEven() && !pots.isHandOver())
       {
          changeState();
       }
-   }
-   
-   private void addToPot(int chips)
-   {
-      try
-      {
-         pots.addToPot(chips);
-      }
-      catch (Exception x)
-      {
-         
-      }
+      
+      return generateNextAction();
    }
    
    private void changeState()
@@ -263,7 +246,8 @@ public class HoldEm
       }
    }
    
-   public void deal()
+   // TODO: throw exception here?
+   public GameState deal()
    {
       switch (state)
       {
@@ -285,7 +269,7 @@ public class HoldEm
             {
                deal();
             }
-            return;
+            return generateNextAction();
       }
       
       changeState();
@@ -294,6 +278,8 @@ public class HoldEm
          changeState();
       }
       pots.startRound(state);
+      
+      return generateNextAction();
    }
    
    private void dealHoles()
@@ -359,7 +345,7 @@ public class HoldEm
       return isSimulation;
    }
    
-   public int getCall()
+   private int getCall()
    {
       switch (state)
       {
@@ -380,13 +366,13 @@ public class HoldEm
       }
       catch (Exception x)
       {
-         // TODO: ???
+         
       }
       
       return call;
    }
    
-   public int getMinRaise()
+   private int getMinRaise()
    {
       switch (state)
       {
@@ -413,7 +399,7 @@ public class HoldEm
       return minRaise;
    }
    
-   public int getMaxRaise()
+   private int getMaxRaise()
    {
       switch (state)
       {
@@ -445,7 +431,7 @@ public class HoldEm
       return getPlayer(dealer);
    }
    
-   public Player getActionPlayer()
+   private Player getActionPlayer()
    {
       return pots.getNextActionPlayer();
    }
@@ -485,11 +471,6 @@ public class HoldEm
       return pots.awardPot(getBoard());
    }
    
-   public int getMainPotSize()
-   {
-      return getMainPot().getSize();
-   }
-   
    public boolean isMainAwarded()
    {
       //return !pots.hasMainPot();
@@ -499,11 +480,6 @@ public class HoldEm
    public int getTotalPotSize()
    {
       return pots.getTotalSize();
-   }
-   
-   public HoldEmState getState()
-   {
-      return state;
    }
    
    private int nextPlayerNotSittingOut(int i) throws IllegalArgumentException
