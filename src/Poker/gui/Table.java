@@ -377,7 +377,7 @@ public class Table extends JComponent implements HoldEmEvents
    
    protected void updateBoard()
    {
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case BET_FLOP:
          case DEAL_TURN:
@@ -542,7 +542,7 @@ public class Table extends JComponent implements HoldEmEvents
    
    private void refreshBoard()
    {
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case WINNER:
          case BET_RIVER:

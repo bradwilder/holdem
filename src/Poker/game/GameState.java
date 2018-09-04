@@ -1,33 +1,29 @@
 package Poker.game;
 
+import java.util.List;
+
 public class GameState
 {
-   private HoldEmState state;
-   private PlayerState playerAction;
+   public HoldEmState state;
+   public PlayerAction playerAction;
+   public int potSize;
+   public List<PlayerSimple> players;
    
-   public GameState(HoldEmState state, Player player, int call, int minRaise, int maxRaise)
+   public GameState(HoldEmState state, Player player, int call, int minRaise, int maxRaise, int potSize, List<PlayerSimple> players)
    {
-      init(state, player, call, minRaise, maxRaise);
+      init(state, player, call, minRaise, maxRaise, potSize, players);
    }
    
-   public GameState(HoldEmState state)
+   public GameState(HoldEmState state, int potSize, List<PlayerSimple> players)
    {
-      init(state, null, 0, 0, 0);
+      init(state, null, 0, 0, 0, potSize, players);
    }
    
-   private void init(HoldEmState state, Player player, int call, int minRaise, int maxRaise)
+   private void init(HoldEmState state, Player player, int call, int minRaise, int maxRaise, int potSize, List<PlayerSimple> players)
    {
       this.state = state;
-      this.playerAction = new PlayerState(player, call, minRaise, maxRaise);
-   }
-   
-   public HoldEmState getState()
-   {
-      return state;
-   }
-   
-   public PlayerState getAction()
-   {
-      return playerAction;
+      this.playerAction = new PlayerAction(player, call, minRaise, maxRaise);
+      this.potSize = potSize;
+      this.players = players;
    }
 }

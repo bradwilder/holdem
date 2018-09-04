@@ -9,7 +9,7 @@ import java.util.TimerTask;
 import Poker.game.Card;
 import Poker.game.HoldEm;
 import Poker.game.Player;
-import Poker.game.PlayerState;
+import Poker.game.PlayerAction;
 import Poker.game.Pot;
 import Poker.gui.custom.Audio;
 
@@ -105,7 +105,7 @@ public class TableComponent extends Table
          showDownAllIn();
          return;
       }
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case DEAL_HOLES:
          case DEAL_FLOP:
@@ -133,7 +133,7 @@ public class TableComponent extends Table
    private void deal()
    {
       timer = new Timer();
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case DEAL_HOLES:
             dealHoles();
@@ -184,7 +184,7 @@ public class TableComponent extends Table
       {
          Player player = m_oGame.getPlayer(i);
          int position = player.getPosition();
-         if (player != m_oGame.generateNextAction().getAction().getPlayer())
+         if (player != m_oGame.generateNextAction().playerAction.player)
          {
             deselectPlayer(Players[position]);
          }
@@ -199,7 +199,7 @@ public class TableComponent extends Table
    {
       player.setBorderStandard();
       player.disablePeek();
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case BET_PREFLOP:
          case BET_FLOP:
@@ -216,7 +216,7 @@ public class TableComponent extends Table
    {
       player.setBorderSelected();
       player.clearAction();
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case BET_PREFLOP:
          case BET_FLOP:
@@ -252,8 +252,8 @@ public class TableComponent extends Table
    
    private void updateRaiseSlider()
    {
-      PlayerState playerState = m_oGame.generateNextAction().getAction();
-      ((InnerTableComponent) inner).setRaiseValue(playerState.getMinRaise(), playerState.getMaxRaise());
+      PlayerAction playerState = m_oGame.generateNextAction().playerAction;
+      ((InnerTableComponent) inner).setRaiseValue(playerState.minRaise, playerState.maxRaise);
    }
    
    public void updateRaiseAmount()
@@ -273,10 +273,10 @@ public class TableComponent extends Table
    
    private void updateButtons()
    {
-      PlayerState playerState = m_oGame.generateNextAction().getAction();
-      boolean raise = (playerState.getMinRaise() > 0);
-      boolean call = (playerState.getCall() > 0);
-      boolean check = (playerState.getCall() == 0);
+      PlayerAction playerState = m_oGame.generateNextAction().playerAction;
+      boolean raise = (playerState.minRaise > 0);
+      boolean call = (playerState.call > 0);
+      boolean check = (playerState.call == 0);
       boolean fold = true;
       ((InnerTableComponent) inner).setButtons(raise, call, check, fold);
    } // :)
@@ -333,7 +333,7 @@ public class TableComponent extends Table
    private void showDownAllIn()
    {
       timer = new Timer();
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case DEAL_HOLES:
          case DEAL_FLOP:
@@ -351,7 +351,7 @@ public class TableComponent extends Table
    private void dealAllIn()
    {
       timer = new Timer();
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case DEAL_HOLES:
             dealHoles();
@@ -451,8 +451,8 @@ public class TableComponent extends Table
    public void sendFold()
    {
       timer = new Timer();
-      PlayerState playerState = m_oGame.generateNextAction().getAction();
-      Player player = playerState.getPlayer();
+      PlayerAction playerState = m_oGame.generateNextAction().playerAction;
+      Player player = playerState.player;
       if (player != null)
       {
          Players[player.getPosition()].Fold();
@@ -481,9 +481,9 @@ public class TableComponent extends Table
    {
       timer = new Timer();
       
-      PlayerState playerState = m_oGame.generateNextAction().getAction();
+      PlayerAction playerState = m_oGame.generateNextAction().playerAction;
       
-      Player player = playerState.getPlayer();
+      Player player = playerState.player;
       
       PlayerComponent playerComponent = Players[player.getPosition()];
       if (!call)
@@ -502,7 +502,7 @@ public class TableComponent extends Table
       else
       {
          Audio.playCallAudio();
-         int Call = playerState.getCall();
+         int Call = playerState.call;
          playerComponent.Call(Call);
          try
          {
@@ -521,14 +521,14 @@ public class TableComponent extends Table
    public void sendRaise()
    {
       timer = new Timer();
-      PlayerState playerState = m_oGame.generateNextAction().getAction();
-      Player player = playerState.getPlayer();
+      PlayerAction playerState = m_oGame.generateNextAction().playerAction;
+      Player player = playerState.player;
       if (player != null)
       {
          PlayerComponent playerComponent = Players[player.getPosition()];
          int raise = ((InnerTableComponent) inner).getRaiseAmount();
-         raise = Math.max(raise, playerState.getMinRaise());
-         raise = Math.min(raise, playerState.getMaxRaise());
+         raise = Math.max(raise, playerState.minRaise);
+         raise = Math.min(raise, playerState.maxRaise);
          Audio.playRaiseAudio();
          playerComponent.Raise(raise);
          try

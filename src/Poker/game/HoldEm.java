@@ -178,7 +178,20 @@ public class HoldEm
          default:
       }
       
-      return isBettingRound ? new GameState(state, getActionPlayer(), getCall(), getMinRaise(), getMaxRaise()) : new GameState(state);
+      return isBettingRound ? new GameState(state, getActionPlayer(), getCall(), getMinRaise(), getMaxRaise(), getTotalPotSize(), getPlayersSimple()) : new GameState(state, getTotalPotSize(), getPlayersSimple());
+   }
+   
+   private List<PlayerSimple> getPlayersSimple()
+   {
+      List<PlayerSimple> playersSimple = new ArrayList<PlayerSimple>();
+      
+      for (Player player : Players)
+      {
+         PlayerSimple playerSimple = new PlayerSimple(player.getName(), player.getChips(), player.hasHoleCards(), pots.getChipsThisRound(player));
+         playersSimple.add(playerSimple);
+      }
+      
+      return playersSimple;
    }
    
    public GameState Bet(int bet) throws Exception

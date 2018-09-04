@@ -1,7 +1,6 @@
 package Poker.gui;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
 import java.util.List;
 
 import Poker.game.HoldEm;
@@ -23,7 +22,7 @@ public class TableComponentSim extends Table
    
    public void deal()
    {
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case DEAL_HOLES:
             break;
@@ -47,7 +46,7 @@ public class TableComponentSim extends Table
    
    private void updateBestHands()
    {
-      switch (m_oGame.generateNextAction().getState())
+      switch (m_oGame.generateNextAction().state)
       {
          case BET_FLOP:
          case DEAL_TURN:

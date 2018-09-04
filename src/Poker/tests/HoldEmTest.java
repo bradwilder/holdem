@@ -9,7 +9,7 @@ import Poker.game.HoldEm;
 import Poker.game.HoldEmState;
 import Poker.game.GameState;
 import Poker.game.Player;
-import Poker.game.PlayerState;
+import Poker.game.PlayerAction;
 
 public class HoldEmTest extends TestCase
 {
@@ -44,12 +44,11 @@ public class HoldEmTest extends TestCase
       
       verifyHoldEm(HoldEmState.BLINDS, player0, 0, 0, Chip.BIG_BLIND / 2, 0);
       
-      GameState gameState;
+      GameState gameState = game.generateNextAction();
       
-      gameState = game.generateNextAction();
       try
       {
-         game.Bet(gameState.getAction().getCall());
+         gameState = game.Bet(gameState.playerAction.call);
       }
       catch (Exception x)
       {
@@ -58,10 +57,9 @@ public class HoldEmTest extends TestCase
       assertTrue(player0.getChips() == 1990);
       verifyHoldEm(HoldEmState.BLINDS, player1, 0, 0, Chip.BIG_BLIND, 10);
       
-      gameState = game.generateNextAction();
       try
       {
-         game.Bet(gameState.getAction().getCall());
+         gameState = game.Bet(gameState.playerAction.call);
       }
       catch (Exception x)
       {
@@ -70,12 +68,12 @@ public class HoldEmTest extends TestCase
       assertTrue(player1.getChips() == 1980);
       verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
       
-      game.deal();
+      gameState = game.deal();
       verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 40, 2000, 20, 30);
       
       try
       {
-         game.Bet(50);
+         gameState = game.Bet(50);
       }
       catch (Exception x)
       {
@@ -86,7 +84,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -97,7 +95,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(90);
+         gameState = game.Bet(90);
       }
       catch (Exception x)
       {
@@ -108,7 +106,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(90);
+         gameState = game.Bet(90);
       }
       catch (Exception x)
       {
@@ -119,7 +117,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -130,7 +128,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -141,7 +139,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(40);
+         gameState = game.Bet(40);
       }
       catch (Exception x)
       {
@@ -150,12 +148,12 @@ public class HoldEmTest extends TestCase
       assertTrue(player2.getChips() == 1910);
       verifyHoldEm(HoldEmState.DEAL_FLOP, 300);
       
-      game.deal();
+      gameState = game.deal();
       verifyHoldEm(HoldEmState.BET_FLOP, player2, 20, 1910, 0, 300);
       
       try
       {
-         game.Check();
+         gameState = game.Check();
       }
       catch (Exception x)
       {
@@ -166,7 +164,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(70);
+         gameState = game.Bet(70);
       }
       catch (Exception x)
       {
@@ -177,7 +175,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(470);
+         gameState = game.Bet(470);
       }
       catch (Exception x)
       {
@@ -188,7 +186,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -199,7 +197,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -286,12 +284,11 @@ public class HoldEmTest extends TestCase
       
       verifyHoldEm(HoldEmState.BLINDS, player0, 0, 0, Chip.BIG_BLIND / 2, 0);
       
-      GameState gameState;
+      GameState gameState = game.generateNextAction();
       
-      gameState = game.generateNextAction();
       try
       {
-         game.Bet(gameState.getAction().getCall());
+         gameState = game.Bet(gameState.playerAction.call);
       }
       catch (Exception x)
       {
@@ -300,10 +297,9 @@ public class HoldEmTest extends TestCase
       assertTrue(player0.getChips() == 1990);
       verifyHoldEm(HoldEmState.BLINDS, player1, 0, 0, Chip.BIG_BLIND, 10);
       
-      gameState = game.generateNextAction();
       try
       {
-         game.Bet(gameState.getAction().getCall());
+         gameState = game.Bet(gameState.playerAction.call);
       }
       catch (Exception x)
       {
@@ -312,12 +308,12 @@ public class HoldEmTest extends TestCase
       assertTrue(player1.getChips() == 1980);
       verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
       
-      game.deal();
+      gameState = game.deal();
       verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 40, 2000, 20, 30);
       
       try
       {
-         game.Bet(50);
+         gameState = game.Bet(50);
       }
       catch (Exception x)
       {
@@ -328,7 +324,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -339,7 +335,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -350,7 +346,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -361,7 +357,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -372,7 +368,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Fold();
+         gameState = game.Fold();
       }
       catch (Exception x)
       {
@@ -420,12 +416,11 @@ public class HoldEmTest extends TestCase
       
       verifyHoldEm(HoldEmState.BLINDS, player0, 0, 0, Chip.BIG_BLIND / 2, 0);
       
-      GameState gameState;
+      GameState gameState = game.generateNextAction();
       
-      gameState = game.generateNextAction();
       try
       {
-         game.Bet(gameState.getAction().getCall());
+         gameState = game.Bet(gameState.playerAction.call);
       }
       catch (Exception x)
       {
@@ -434,10 +429,9 @@ public class HoldEmTest extends TestCase
       assertTrue(player0.getChips() == 90);
       verifyHoldEm(HoldEmState.BLINDS, player1, 0, 0, Chip.BIG_BLIND, 10);
       
-      gameState = game.generateNextAction();
       try
       {
-         game.Bet(gameState.getAction().getCall());
+         gameState = game.Bet(gameState.playerAction.call);
       }
       catch (Exception x)
       {
@@ -446,12 +440,12 @@ public class HoldEmTest extends TestCase
       assertTrue(player1.getChips() == 80);
       verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
       
-      game.deal();
+      gameState = game.deal();
       verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 40, 100, 20, 30);
       
       try
       {
-         game.Bet(100);
+         gameState = game.Bet(100);
       }
       catch (Exception x)
       {
@@ -462,7 +456,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(100);
+         gameState = game.Bet(100);
       }
       catch (Exception x)
       {
@@ -473,7 +467,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(100);
+         gameState = game.Bet(100);
       }
       catch (Exception x)
       {
@@ -484,7 +478,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(100);
+         gameState = game.Bet(100);
       }
       catch (Exception x)
       {
@@ -495,7 +489,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(90);
+         gameState = game.Bet(90);
       }
       catch (Exception x)
       {
@@ -506,7 +500,7 @@ public class HoldEmTest extends TestCase
       
       try
       {
-         game.Bet(80);
+         gameState = game.Bet(80);
       }
       catch (Exception x)
       {
@@ -515,13 +509,13 @@ public class HoldEmTest extends TestCase
       assertTrue(player1.getChips() == 0);
       verifyHoldEm(HoldEmState.DEAL_FLOP, 600);
       
-      game.deal();
+      gameState = game.deal();
       verifyHoldEm(HoldEmState.DEAL_TURN, 600);
       
-      game.deal();
+      gameState = game.deal();
       verifyHoldEm(HoldEmState.DEAL_RIVER, 600);
       
-      game.deal();
+      gameState = game.deal();
       verifyHoldEm(HoldEmState.WINNER, 600);
       
       // TODO: award winner
@@ -553,7 +547,7 @@ public class HoldEmTest extends TestCase
    private void verifyHoldEm(HoldEmState expectedGameState, Player player, int expectedMinRaise, int expectedMaxRaise, int expectedCall, int expectedTotalPotSize)
    {
       GameState nextAction = game.generateNextAction();
-      PlayerState playerAction = nextAction.getAction();
+      PlayerAction playerAction = nextAction.playerAction;
       
       if (player == null)
       {
@@ -561,23 +555,23 @@ public class HoldEmTest extends TestCase
       }
       else
       {
-         assertTrue(playerAction.getPlayer() == player);
-         assertTrue(playerAction.getMinRaise() == expectedMinRaise);
-         assertTrue(playerAction.getMaxRaise() == expectedMaxRaise);
-         assertTrue(playerAction.getCall() == expectedCall);
+         assertTrue(playerAction.player == player);
+         assertTrue(playerAction.minRaise == expectedMinRaise);
+         assertTrue(playerAction.maxRaise == expectedMaxRaise);
+         assertTrue(playerAction.call == expectedCall);
       }
       
-      assertTrue(nextAction.getState() == expectedGameState);
+      assertTrue(nextAction.state == expectedGameState);
       assertTrue(game.getTotalPotSize() == expectedTotalPotSize);
    }
    
    private void verifyHoldEm(HoldEmState expectedGameState, int expectedTotalPotSize)
    {
       GameState nextAction = game.generateNextAction();
-      PlayerState playerAction = nextAction.getAction();
+      PlayerAction playerAction = nextAction.playerAction;
       
-      assertTrue(playerAction.getPlayer() == null);
-      assertTrue(nextAction.getState() == expectedGameState);
+      assertTrue(playerAction.player == null);
+      assertTrue(nextAction.state == expectedGameState);
       assertTrue(game.getTotalPotSize() == expectedTotalPotSize);
    }
 }
