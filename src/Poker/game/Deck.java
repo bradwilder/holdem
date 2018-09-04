@@ -6,17 +6,17 @@ import java.util.Random;
 
 public class Deck
 {
-   private static List<Card> CARDS = new ArrayList<Card>();
+   private List<Card> cards = new ArrayList<Card>();
    
    private Card[] deck = new Card[DeckConstants.NUM_CARDS];
    private int cardIndex;
    private Random random;
    
-   static void createCards()
+   private void createCards()
    {
       for (int i = 0; i < DeckConstants.NUM_CARDS; i++)
       {
-         CARDS.add(new Card(i));
+         cards.add(new Card(i));
       }
    }
    
@@ -37,7 +37,7 @@ public class Deck
       for (int i = 0; i < DeckConstants.NUM_CARDS; i++)
       {
          int randomIndex = random.nextInt(remaining);
-         deck[i] = CARDS.remove(randomIndex);
+         deck[i] = cards.remove(randomIndex);
          remaining--;
       }
    }
