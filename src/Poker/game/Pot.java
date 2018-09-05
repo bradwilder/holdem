@@ -169,30 +169,37 @@ public class Pot
    
    public List<Player> getWinners(Card[] boardCards)
    {
-      if (getNumPlayers() == 0)
+      if (getNumPlayers() == 0 || !isPotEven())
       {
          return null;
       }
       
       Hand oCurrentBestHand = null;
       
-      ArrayList<Player> playersOut = new ArrayList<Player>();
+      ArrayList<Player> winners = new ArrayList<Player>();
       
-      Iterator<Player> oPlayers = getPlayers().iterator();
+      List<Player> players = getPlayers();
+      Iterator<Player> oPlayers = players.iterator();
       if (!oPlayers.hasNext())
       {
          return null;
       }
       
       // Add the first player into the list; this will start as the best hand
-      playersOut.add(oPlayers.next());
-      oCurrentBestHand = playersOut.get(0).getHand(boardCards);
+      winners.add(oPlayers.next());
+      oCurrentBestHand = winners.get(0).getHand(boardCards);
       
-      // If the best hand is null, that means there aren't enough board cards to make a hand, so return null
+      // If the best hand is null, we must be pre-flop; there's only a winner if there's only 1 player left
       if (oCurrentBestHand == null)
       {
-         playersOut.clear();
-         return null;
+         if (winners.size() == 1)
+         {
+            return winners;
+         }
+         else
+         {
+            return null;
+         }
       }
       
       while (oPlayers.hasNext())
@@ -204,14 +211,14 @@ public class Pot
          {
             if (iComp < 0)
             {
-               playersOut.clear();
+               winners.clear();
             }
             oCurrentBestHand = oPlayerHand;
-            playersOut.add(oPlayer);
+            winners.add(oPlayer);
          }
       }
       
-      return playersOut;
+      return winners;
    }
    
    public Pot add(int toAdd, Player player) throws Exception

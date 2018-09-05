@@ -1,8 +1,10 @@
 package Poker.tests;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
+import Poker.game.ActionLogEntry;
 import Poker.game.Chip;
 import Poker.game.Deck;
 import Poker.game.HoldEm;
@@ -66,9 +68,9 @@ public class HoldEmTest extends TestCase
          assertTrue(false);
       }
       assertTrue(player1.getChips() == 1980);
-      verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
+//      verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
       
-      gameState = game.deal();
+//      gameState = game.deal();
       verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 40, 2000, 20, 30);
       
       try
@@ -146,9 +148,9 @@ public class HoldEmTest extends TestCase
          assertTrue(false);
       }
       assertTrue(player2.getChips() == 1910);
-      verifyHoldEm(HoldEmState.DEAL_FLOP, 300);
+//      verifyHoldEm(HoldEmState.DEAL_FLOP, 300);
       
-      gameState = game.deal();
+//      gameState = game.deal();
       verifyHoldEm(HoldEmState.BET_FLOP, player2, 20, 1910, 0, 300);
       
       try
@@ -205,6 +207,11 @@ public class HoldEmTest extends TestCase
       }
       assertTrue(player4.getChips() == 1840);
       
+      List<ActionLogEntry> entries = game.getLogEntries();
+      for(ActionLogEntry entry : entries)
+      {
+         System.out.println(entry.toString());
+      }
       
       // TODO: figure out how to award player 5 the hand and move on to next hand
       //assertTrue(game.);
@@ -306,9 +313,9 @@ public class HoldEmTest extends TestCase
          assertTrue(false);
       }
       assertTrue(player1.getChips() == 1980);
-      verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
+//      verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
       
-      gameState = game.deal();
+//      gameState = game.deal();
       verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 40, 2000, 20, 30);
       
       try
@@ -377,6 +384,12 @@ public class HoldEmTest extends TestCase
       assertTrue(player1.getChips() == 1980);
       verifyHoldEm(HoldEmState.WINNER, 0);
       
+      List<ActionLogEntry> entries = game.getLogEntries();
+      for(ActionLogEntry entry : entries)
+      {
+         System.out.println(entry.toString());
+      }
+      
       // TODO: figure out how to jump to winner state and award pot(s)
       //assertTrue(game.);
       //assertTrue(game.getState() == HoldEmState.WINNER);
@@ -438,9 +451,9 @@ public class HoldEmTest extends TestCase
          assertTrue(false);
       }
       assertTrue(player1.getChips() == 80);
-      verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
+//      verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
       
-      gameState = game.deal();
+//      gameState = game.deal();
       verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 40, 100, 20, 30);
       
       try
@@ -507,16 +520,13 @@ public class HoldEmTest extends TestCase
          assertTrue(false);
       }
       assertTrue(player1.getChips() == 0);
-      verifyHoldEm(HoldEmState.DEAL_FLOP, 600);
-      
-      gameState = game.deal();
-      verifyHoldEm(HoldEmState.DEAL_TURN, 600);
-      
-      gameState = game.deal();
-      verifyHoldEm(HoldEmState.DEAL_RIVER, 600);
-      
-      gameState = game.deal();
       verifyHoldEm(HoldEmState.WINNER, 600);
+            
+      List<ActionLogEntry> entries = game.getLogEntries();
+      for(ActionLogEntry entry : entries)
+      {
+         System.out.println(entry.toString());
+      }
       
       // TODO: award winner
       //assertTrue(game.);
@@ -529,14 +539,322 @@ public class HoldEmTest extends TestCase
       //assertTrue(player0.getChips() == 2280);
    }
    
-   public void testRefundIncontestableBet()
+   public void testShowdown()
    {
       
    }
    
-   public void testRefundDeatPot()
+   public void testRefundIncontestableBet()
    {
+      Player[] players = new Player[6];
+      players[0] = new Player("0", 0, 100);
+      players[1] = new Player("1", 1, 100);
+      players[2] = new Player("2", 2, 50);
+      players[3] = new Player("3", 3, 50);
+      players[4] = new Player("4", 4, 50);
+      players[5] = new Player("5", 5, 50);
       
+      playerList = new ArrayList<Player>();
+      for (int i = 0; i < 6; i++)
+      {
+         playerList.add(players[i]);
+      }
+      
+      game = new HoldEm(playerList, false, new Deck());
+      game.startHand();
+      
+      Player player0 = game.getPlayer(0);
+      Player player1 = game.getPlayer(1);
+      Player player2 = game.getPlayer(2);
+      Player player3 = game.getPlayer(3);
+      Player player4 = game.getPlayer(4);
+      Player player5 = game.getPlayer(5);
+      
+      verifyHoldEm(HoldEmState.BLINDS, player0, 0, 0, Chip.BIG_BLIND / 2, 0);
+      
+      GameState gameState = game.generateNextAction();
+      
+      try
+      {
+         gameState = game.Bet(gameState.playerAction.call);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player0.getChips() == 90);
+      verifyHoldEm(HoldEmState.BLINDS, player1, 0, 0, Chip.BIG_BLIND, 10);
+      
+      try
+      {
+         gameState = game.Bet(gameState.playerAction.call);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player1.getChips() == 80);
+//      verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
+      
+//      gameState = game.deal();
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 40, 50, 20, 30);
+      
+      try
+      {
+         gameState = game.Check();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player2.getChips() == 50);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player3, 40, 50, 20, 30);
+      
+      try
+      {
+         gameState = game.Check();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player3.getChips() == 50);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player4, 40, 50, 20, 30);
+      
+      try
+      {
+         gameState = game.Check();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player4.getChips() == 50);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player5, 40, 50, 20, 30);
+      
+      try
+      {
+         gameState = game.Check();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player5.getChips() == 50);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player0, 30, 90, 10, 30);
+      
+      try
+      {
+         gameState = game.Bet(90);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player0.getChips() == 0);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player1, 0, 0, 80, 120);
+      
+      try
+      {
+         gameState = game.Fold();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player1.getChips() == 80);
+      assertTrue(player0.getChips() == 50);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 0, 0, 50, 70);
+      
+      List<ActionLogEntry> entries = game.getLogEntries();
+      for(ActionLogEntry entry : entries)
+      {
+         System.out.println(entry.toString());
+      }
+   }
+   
+   public void testRefundDeadPot()
+   {
+      Player[] players = new Player[6];
+      players[0] = new Player("0", 0, 100);
+      players[1] = new Player("1", 1, 175);
+      players[2] = new Player("2", 2, 50);
+      players[3] = new Player("3", 3, 150);
+      players[4] = new Player("4", 4, 80);
+      players[5] = new Player("5", 5, 200);
+      
+      playerList = new ArrayList<Player>();
+      for (int i = 0; i < 6; i++)
+      {
+         playerList.add(players[i]);
+      }
+      
+      game = new HoldEm(playerList, false, new Deck());
+      game.startHand();
+      
+      Player player0 = game.getPlayer(0);
+      Player player1 = game.getPlayer(1);
+      Player player2 = game.getPlayer(2);
+      Player player3 = game.getPlayer(3);
+      Player player4 = game.getPlayer(4);
+      Player player5 = game.getPlayer(5);
+      
+      verifyHoldEm(HoldEmState.BLINDS, player0, 0, 0, Chip.BIG_BLIND / 2, 0);
+      
+      GameState gameState = game.generateNextAction();
+      
+      try
+      {
+         gameState = game.Bet(gameState.playerAction.call);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player0.getChips() == 90);
+      verifyHoldEm(HoldEmState.BLINDS, player1, 0, 0, Chip.BIG_BLIND, 10);
+      
+      try
+      {
+         gameState = game.Bet(gameState.playerAction.call);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player1.getChips() == 155);
+//      verifyHoldEm(HoldEmState.DEAL_HOLES, 30);
+      
+//      gameState = game.deal();
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 40, 50, 20, 30);
+      
+      try
+      {
+         gameState = game.Check();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player2.getChips() == 50);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player3, 40, 150, 20, 30);
+      
+      try
+      {
+         gameState = game.Check();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player3.getChips() == 150);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player4, 40, 80, 20, 30);
+      
+      try
+      {
+         gameState = game.Check();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player4.getChips() == 80);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player5, 40, 175, 20, 30);
+      
+      try
+      {
+         gameState = game.Check();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player5.getChips() == 200);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player0, 30, 90, 10, 30);
+      
+      try
+      {
+         gameState = game.Bet(90);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player0.getChips() == 0);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player1, 155, 155, 80, 120);
+      
+      try
+      {
+         gameState = game.Bet(80);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player1.getChips() == 75);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player2, 0, 0, 50, 200);
+      
+      try
+      {
+         gameState = game.Bet(50);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player2.getChips() == 0);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player3, 150, 150, 100, 250);
+      
+      try
+      {
+         gameState = game.Bet(150);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player3.getChips() == 0);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player4, 0, 0, 80, 400);
+      
+      try
+      {
+         gameState = game.Bet(80);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player4.getChips() == 0);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player5, 175, 175, 150, 480);
+      
+      try
+      {
+         gameState = game.Bet(175);
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player5.getChips() == 25);
+      verifyHoldEm(HoldEmState.BET_PREFLOP, player1, 0, 0, 75, 655);
+      
+      try
+      {
+         gameState = game.Fold();
+      }
+      catch (Exception x)
+      {
+         assertTrue(false);
+      }
+      assertTrue(player1.getChips() == 75);
+      assertTrue(player5.getChips() == 50);
+      verifyHoldEm(HoldEmState.WINNER, 630);
+      
+      List<ActionLogEntry> entries = game.getLogEntries();
+      for(ActionLogEntry entry : entries)
+      {
+         System.out.println(entry.toString());
+      }
    }
    
    public void testListeners()

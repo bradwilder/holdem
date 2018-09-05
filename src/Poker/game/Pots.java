@@ -217,7 +217,7 @@ public class Pots
       shortStackOverraise = 0;
    }
    
-   public int fold() throws Exception
+   public List<ActionLogEntry> fold() throws Exception
    {
       Player player = getNextActionPlayer();
       if (player == null)
@@ -225,17 +225,34 @@ public class Pots
          throw new Exception("Tried to fold with no action player");
       }
       
-      fold(player);
+      List<ActionLogEntry> entries = new ArrayList<ActionLogEntry>();
+      
+      if (player.hasHoleCards())
+      {
+         player.Fold();
+         
+         for (Pot pot : potList)
+         {
+            pot.fold(player);
+         }
+         
+         entries.add(new ActionLogEntry(player, "folded"));
+         
+         ActionLogEntry refund = refundIncontestableBet();
+         if (refund != null)
+         {
+            entries.add(refund);
+         }
+      }
       
       // actionIndex should always point to a valid index within the current pot
       // If we remove the last player, this will reset the index back to 0 instead of leaving it pointing to nothing
-      int currentPlayerCount = getCurrentPlayerCount();
-      if (currentPlayerCount > 0)
+      if (getCurrentPlayerCount() > 0)
       {
          actionIndex = actionIndex % getCurrentPlayerCount();
       }
       
-      return currentPlayerCount;
+      return entries;
    }
    
    private int getCurrentPlayerCount()
@@ -248,21 +265,6 @@ public class Pots
       return 0;
    }
    
-   private void fold(Player player)
-   {
-      if (player.hasHoleCards())
-      {
-         player.Fold();
-         
-         for (Pot pot : potList)
-         {
-            pot.fold(player);
-         }
-         
-         refundIncontestableBet();
-      }
-   }
-   
    public int getChipsThisRound(Player player)
    {
       int chipsThisRound = 0;
@@ -273,8 +275,13 @@ public class Pots
       return chipsThisRound;
    }
    
-   private int refundIncontestableBet()
+   private ActionLogEntry refundIncontestableBet()
    {
+      if (isHandOver())
+      {
+         return null;
+      }
+      
       int currentBet = getCurrentBet();
       
       Player playerMatchingCurrBet = null;
@@ -286,7 +293,7 @@ public class Pots
             // If we just found a second player matching the current bet, we can exit now
             if (playerMatchingCurrBet != null)
             {
-               return 0;
+               return null;
             }
             playerMatchingCurrBet = player;
          }
@@ -294,15 +301,15 @@ public class Pots
       
       if (playerMatchingCurrBet != null)
       {
-         int lastPotBet = getLastPot().getRoundCount(playerMatchingCurrBet);
+         Pot lastPot = getLastPot();
+         int lastPotBet = lastPot.getRoundCount(playerMatchingCurrBet);
          int refund = lastPotBet;
          for (Player oPlayer : players)
          {
             if (oPlayer.hasHoleCards() && oPlayer != playerMatchingCurrBet)
             {
                int iPlayerChips = oPlayer.getChips();
-               int iChipsThisRound = getChipsThisRound(oPlayer);
-               int iCurrOwed = currentBet - iChipsThisRound;
+               int iCurrOwed = currentBet - getChipsThisRound(oPlayer);
                int iAmountUnder = (iCurrOwed > iPlayerChips ? iCurrOwed - iPlayerChips : 0);
                refund = Math.min(refund, iAmountUnder);
             }
@@ -312,7 +319,13 @@ public class Pots
          {
             if (refund == lastPotBet)
             {
-               return refundDeadPot(playerMatchingCurrBet);
+               if (lastPot.isContested())
+               {
+                  return null;
+               }
+               playerMatchingCurrBet.changeChips(refund);
+               removePot(lastPot);
+               return new ActionLogEntry(playerMatchingCurrBet, "refunded " + refund);
             }
             else
             {
@@ -325,30 +338,17 @@ public class Pots
                {
                   System.err.println("ERROR: " + x.getMessage());
                   x.printStackTrace();
-                  return 0;
+                  return null;
                }
-               return refund;
+               return new ActionLogEntry(playerMatchingCurrBet, "refunded " + refund);
             }
          }
       }
       
-      return 0;
+      return null;
    }
    
-   private int refundDeadPot(Player player)
-   {
-      Pot lastPot = getLastPot();
-      if (lastPot.isContested())
-      {
-         return 0;
-      }
-      int iPotSize = lastPot.getSize();
-      player.changeChips(iPotSize);
-      removePot(lastPot);
-      return iPotSize;
-   }
-   
-   public void addToPot(int toAdd) throws Exception
+   public ActionLogEntry addToPot(int toAdd) throws Exception
    {
       Player player = getNextActionPlayer();
       if (player == null)
@@ -356,15 +356,40 @@ public class Pots
          throw new Exception("Tried to add to pot with no action player");
       }
       
-      addToPot(toAdd, player);
+      ActionLogEntry entry = addToPot(toAdd, player);
       moveActionIndex();
+      
+      return entry;
    }
    
-   private void addToPot(int toAdd, Player player)
+   private ActionLogEntry addToPot(int toAdd, Player player)
    {
+      ActionLogEntry entry;
+      
       if (toAdd == 0)
       {
-         check();
+         switch (state)
+         {
+            case BET_PREFLOP:
+               if (actionIndex == 1)
+               {
+                  // This means the big blind (always in the second position) has checked the option
+                  bettingOver = true;
+                  entry = new ActionLogEntry(player, "checked the option");
+               }
+               else
+               {
+                  entry = new ActionLogEntry(player, "checked");
+               }
+               break;
+            default:
+               entry = new ActionLogEntry(player, "checked");
+               if (actionIndex == getCurrentPot().getNumPlayers() - 1)
+               {
+                  // When the last player checks the table has checked around
+                  bettingOver = true;
+               }
+         }
       }
       else
       {
@@ -375,6 +400,7 @@ public class Pots
          int incrAmount = chipsThisRound - currBet;
          int raise = chipsThisRound - (currBet - shortStackOverraise);
          //boolean raised = false;
+         String action;
          if (incrAmount > 0)
          {
          //   raised = true;
@@ -387,7 +413,33 @@ public class Pots
                shortStackOverraise = 0;
             }
             currentRaise = Math.max(currentRaise, raise);
+            if (!gotSmallBlind)
+            {
+               action = "called " + chipsThisRound + " small blind";
+            }
+            else if (!gotBigBlind)
+            {
+               action = "called " + chipsThisRound + " big blind";
+            }
+            else
+            {
+               action = "raised to " + chipsThisRound;
+            }
          }
+         else if (chipsThisRound < currBet)
+         {
+            action = "called " + toAdd;
+         }
+         else
+         {
+            action = "called";
+         }
+         
+         if (player.getChips() == 0)
+         {
+            action += " (all in)";
+         }
+         entry = new ActionLogEntry(player, action);
          
          //if (raised)
          //{
@@ -413,6 +465,8 @@ public class Pots
             bettingOver = true; 
          }
       }
+      
+      return entry;
    }
    
    private void addToPot(int toAdd, Player player, int potIndex)
@@ -467,26 +521,6 @@ public class Pots
       {
          System.err.println("ERROR: " + x.getMessage());
          x.printStackTrace();
-      }
-   }
-   
-   private void check()
-   {
-      switch (state)
-      {
-         case BET_PREFLOP:
-            if (actionIndex == 1)
-            {
-               // This means the big blind (always in the second position) has checked the option
-               bettingOver = true;
-            }
-            break;
-         default:
-            if (actionIndex == getCurrentPot().getNumPlayers() - 1)
-            {
-               // When the last player checks the table has checked around
-               bettingOver = true;
-            }
       }
    }
    
@@ -582,30 +616,33 @@ public class Pots
       if (pot != null)
       {
          List<Player> oWinners = pot.getWinners(boardCards);
-         int iNumWinners = oWinners.size();
-         int iPotSize = pot.getSize();
-         if (iNumWinners == 1)
+         if (oWinners != null)
          {
-            oWinners.get(0).changeChips(iPotSize);
-         }
-         else
-         {
-            int iRem = iPotSize % iNumWinners;
-            int iChipsPerWinner = iPotSize / iNumWinners;
-            for (int i = 0; i < iNumWinners; i++)
+            int iNumWinners = oWinners.size();
+            int iPotSize = pot.getSize();
+            if (iNumWinners == 1)
             {
-               oWinners.get(i).changeChips(iChipsPerWinner);
+               oWinners.get(0).changeChips(iPotSize);
             }
-            if (iRem > 0)
+            else
             {
-               List<Player> oPlayers = getFirstPlayersInPotByPosition(iRem, pot);
-               for (int i = 0; i < oPlayers.size(); i++)
+               int iRem = iPotSize % iNumWinners;
+               int iChipsPerWinner = iPotSize / iNumWinners;
+               for (int i = 0; i < iNumWinners; i++)
                {
-                  oPlayers.get(i).changeChips(1);
+                  oWinners.get(i).changeChips(iChipsPerWinner);
+               }
+               if (iRem > 0)
+               {
+                  List<Player> oPlayers = getFirstPlayersInPotByPosition(iRem, pot);
+                  for (int i = 0; i < oPlayers.size(); i++)
+                  {
+                     oPlayers.get(i).changeChips(1);
+                  }
                }
             }
+            removePot(pot);
          }
-         removePot(pot);
       }
       return pot;
    }

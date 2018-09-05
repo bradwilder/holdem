@@ -36,6 +36,11 @@ public class Board
       m_aoBoard[s_iRiverIndex] = oCard;
    }
    
+   public void addBoard(Card[] aoCard)
+   {
+      System.arraycopy(aoCard, 0, m_aoBoard, 0, s_iBoardSize);
+   }
+   
    public Card getRiver()
    {
       return m_aoBoard[s_iRiverIndex];

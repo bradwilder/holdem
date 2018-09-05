@@ -15,6 +15,7 @@ public class HoldEm
    private Pots pots;
    private Deck deck;
    private Board board;
+   private ActionLog actionLog;
    private ArrayList<HoldEmEvents> eventListeners = new ArrayList<HoldEmEvents>();
    
    public HoldEm(ArrayList<Player> Players, boolean isSimulation, Deck deck)
@@ -24,6 +25,7 @@ public class HoldEm
       
       this.deck = deck;
       board = new Board();
+      actionLog = new ActionLog();
       
       dealer = Players.size() - 1;
    }
@@ -49,6 +51,11 @@ public class HoldEm
       }
    }
    
+   public List<ActionLogEntry> getLogEntries()
+   {
+      return actionLog.getLog();
+   }
+   
    public GameState startHand()
    {
       deck.shuffle();
@@ -61,6 +68,11 @@ public class HoldEm
       }
       pots = new Pots(players, Chip.BIG_BLIND, state);
       
+      for (int i = 0; i < getPlayersCount(); i++)
+      {
+         Players.get(i).Fold();
+      }
+      
       if (isSimulation())
       {
          state = HoldEmState.DEAL_HOLES;
@@ -68,19 +80,17 @@ public class HoldEm
       else
       {
          state = HoldEmState.BLINDS;
+         dealCards();
       }
-
-      for (int i = 0; i < getPlayersCount(); i++)
-      {
-         Players.get(i).Fold();
-      }
+      
       pots.startRound(state);
       
       if (!changeDealer())
       {
          return null;
       }
-       
+      actionLog.addEntry("Started hand");
+      
       return generateNextAction();
    }
    
@@ -196,10 +206,10 @@ public class HoldEm
    
    public GameState Bet(int bet) throws Exception
    {
-      pots.addToPot(bet);
+      actionLog.addEntry(pots.addToPot(bet));
       if (pots.isPotEven() && !pots.isHandOver())
       {
-         changeState();
+         moveState();
       }
       
       return generateNextAction();
@@ -212,19 +222,73 @@ public class HoldEm
    
    public GameState Fold() throws Exception
    {
-      pots.fold();
+      actionLog.addEntries(pots.fold());
       if (pots.isPotEven() && !pots.isHandOver())
       {
-         changeState();
+         moveState();
       }
       else if (pots.isHandOver())
       {
          state = HoldEmState.WINNER;
+         Pot wonMainPot = pots.awardPot(getBoard());
+         List<Player> winners = wonMainPot.getWinners(getBoard());
+         ActionLogEntry entry;
+         if (winners.size() == 1)
+         {
+            entry = new ActionLogEntry(winners.get(0), "won pot of " + wonMainPot.getSize());
+         }
+         else
+         {
+            entry = new ActionLogEntry(winners, "split pot of " + wonMainPot.getSize());
+         }
+         
+         actionLog.addEntry(entry);
       }
       
       return generateNextAction();
    }
    
+   private void moveState()
+   {
+      if (!isBettingOver())
+      {
+         switch (state)
+         {
+            case BLINDS:
+            case DEAL_HOLES:
+               state = HoldEmState.BET_PREFLOP;
+               break;
+            case BET_PREFLOP:
+            case DEAL_FLOP:
+               state = HoldEmState.BET_FLOP;
+               break;
+            case BET_FLOP:
+            case DEAL_TURN:
+               state = HoldEmState.BET_TURN;
+               break;
+            case BET_TURN:
+            case DEAL_RIVER:
+               state = HoldEmState.BET_RIVER;
+               break;
+            case BET_RIVER:
+               state = HoldEmState.WINNER;
+               break;
+            case WINNER:
+               state = state.getNextState();
+               break;
+            default:
+               // TODO: throw exception here
+         }
+      }
+      else
+      {
+         state = HoldEmState.WINNER;
+      }
+      
+      pots.startRound(state);
+   }
+   
+   // TODO: this will be only used by simulation
    private void changeState()
    {
       if (!isBettingOver())
@@ -263,7 +327,28 @@ public class HoldEm
       }
    }
    
-   // TODO: throw exception here?
+   private void dealCards()
+   {
+      List<Player> players = pots.getMainPot().getPlayers();
+      for (Player player : players)
+      {
+         Card cards[] = new Card[2];
+         for (int j = 0; j < 2; j++)
+         {
+            cards[j] = deck.dealCard();
+         }
+         player.DealHoleCards(cards);
+      }
+      
+      Card[] cards = new Card[5];
+      for (int i = 0; i < 5; i++)
+      {
+         cards[i] = deck.dealCard();
+      }
+      board.addBoard(cards);
+   }
+   
+   // TODO: this will be only used by simulation
    public GameState deal()
    {
       switch (state)
@@ -299,6 +384,7 @@ public class HoldEm
       return generateNextAction();
    }
    
+   // TODO: this will be only used by simulation
    private void dealHoles()
    {
       List<Player> players = pots.getMainPot().getPlayers();
@@ -312,8 +398,10 @@ public class HoldEm
          player.DealHoleCards(cards);
       }
       emitEvent("holesDealt");
+      actionLog.addEntry("Dealt hole cards");
    }
    
+   // TODO: this will be only used by simulation
    private void dealFlop()
    {
       Card[] cards = new Card[3];
@@ -323,18 +411,23 @@ public class HoldEm
       }
       board.addFlop(cards);
       emitEvent("flopDealt");
+      actionLog.addEntry("Dealt flop");
    }
    
+   // TODO: this will be only used by simulation
    private void dealTurn()
    {
       board.addTurn(deck.dealCard());
       emitEvent("turnRiverDealt");
+      actionLog.addEntry("Dealt turn");
    }
    
+   // TODO: this will be only used by simulation
    private void dealRiver()
    {
       board.addRiver(deck.dealCard());
       emitEvent("turnRiverDealt");
+      actionLog.addEntry("Dealt river");
    }
    
    public Card[] getFlop()
@@ -354,7 +447,29 @@ public class HoldEm
    
    public Card[] getBoard()
    {
-      return board.getBoard();
+      Card[] cards;
+      switch (state)
+      {
+         case BLINDS:
+         case DEAL_HOLES:
+         case BET_PREFLOP:
+            return null;
+         case DEAL_FLOP:
+         case BET_FLOP:
+            return board.getFlop();
+         case DEAL_TURN:
+         case BET_TURN:
+            cards = new Card[4];
+            System.arraycopy(board.getFlop(), 0, cards, 0, 3);
+            cards[3] = board.getTurn();
+            return cards;
+         default:
+            cards = new Card[5];
+            System.arraycopy(board.getFlop(), 0, cards, 0, 3);
+            cards[3] = board.getTurn();
+            cards[4] = board.getRiver();
+            return cards;
+      }
    }
    
    public boolean isSimulation()
