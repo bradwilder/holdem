@@ -1,0 +1,22 @@
+<h1>Lobby</h1>
+
+<div class="container">
+	<div class="inner-container">
+		<table>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Blinds</th>
+					<th>Players</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let table of tables; let i = index" [ngClass]="{even: i % 2 == 0, odd: i % 2 == 1}" (click)="rowClick(table)">
+					<th>{{ table.name }}</th>
+					<th>{{ table.isSimulation ? 'N/A' : ((table.bigBlind / 2) + '/' + table.bigBlind) }}</th>
+					<th>{{ table.isSimulation ? ('Max ' + table.maxPlayers) : ('0/' + table.maxPlayers) }}</th>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -1,0 +1,56 @@
+h1 {
+	text-align: center;
+}
+
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	background: #eee;
+}
+
+.container {
+	position: relative;
+	padding: 10px 30px;
+}
+
+table {
+	border-collapse: collapse;
+	border: 1px solid #bbb;
+	width: 100%;
+	
+	& th,
+	& td {
+		text-align: left;
+	}
+	
+	& th {
+		font-size: 18px;
+		padding: 4px;
+		border: 1px solid #bbb;
+	}
+	
+	& td {
+		font-size: 16px;
+		padding: 0 4px;
+		border-right: 1px solid #bbb;
+		border-left: 1px solid #bbb;
+	}
+	
+	& tbody tr {
+		height: 28px;
+		cursor: pointer;
+	}
+	
+	thead tr th {
+		background-color: #c4d7e8;
+	}
+	
+	tr.even {
+		background-color: #f8f8ff;
+	}
+	
+	tr.odd {
+		background-color: white;
+	}
+}
