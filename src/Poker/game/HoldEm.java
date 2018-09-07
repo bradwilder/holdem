@@ -68,9 +68,9 @@ public class HoldEm
       }
       pots = new Pots(players, Chip.BIG_BLIND, state);
       
-      for (int i = 0; i < getPlayersCount(); i++)
+      for (Player player : Players)
       {
-         Players.get(i).Fold();
+         player.Fold();
       }
       
       if (isSimulation())
@@ -96,13 +96,13 @@ public class HoldEm
    
    private boolean changeDealer()
    {
-      return (dealer = nextPlayerNotSittingOut(dealer)) >= 0;
+      return (dealer = getNextPlayerAtTable(dealer)) >= 0;
    }
    
    private List<Player> getPlayersForMainPot()
    {
       List<Player> players = new ArrayList<Player>();
-      for (int i = nextPlayerNotSittingOut(dealer); i != dealer; i = nextPlayerNotSittingOut(i))
+      for (int i = getNextPlayerAtTable(dealer); i != dealer; i = getNextPlayerAtTable(i))
       {
          players.add(getPlayer(i));
       }
@@ -614,7 +614,7 @@ public class HoldEm
       return pots.getTotalSize();
    }
    
-   private int nextPlayerNotSittingOut(int i) throws IllegalArgumentException
+   private int getNextPlayerAtTable(int i) throws IllegalArgumentException
    {
       int players = getPlayersCount();
       if (i >= players)

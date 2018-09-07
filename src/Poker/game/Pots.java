@@ -2,7 +2,6 @@ package Poker.game;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import Poker.game.HoldEmState;
 
@@ -48,7 +47,7 @@ public class Pots
       return main.getNumPlayers();
    }
    
-   private Player getMainPlayer(int index) throws NoSuchElementException
+   private Player getMainPlayer(int index)
    {
       int count = getMainPlayersCount();
       if (count == 0 || count <= index)
@@ -172,11 +171,6 @@ public class Pots
       }
       
       return bettingEven && bettingOver;
-   }
-   
-   private int getBigBlind()
-   {
-      return bigBlind;
    }
    
    private int getSmallBlind()
@@ -332,7 +326,7 @@ public class Pots
                playerMatchingCurrBet.changeChips(refund);
                try
                {
-                  getLastPot().sub(refund, playerMatchingCurrBet);
+                  lastPot.sub(refund, playerMatchingCurrBet);
                }
                catch (Exception x)
                {
@@ -545,14 +539,14 @@ public class Pots
             }
             else if (!gotBigBlind)
             {
-               currOwed = Math.min(maxChipsRemainingPlayers, getBigBlind());
+               currOwed = Math.min(maxChipsRemainingPlayers, bigBlind);
             }
             break;
          default:
             int currentBet = getCurrentBet();
             if (currentBet > 0)
             {
-               int trueCurrentBet = Math.max(getCurrentBet(), bigBlind);
+               int trueCurrentBet = Math.max(currentBet, bigBlind);
                currOwed = trueCurrentBet - getChipsThisRound(player);
             }
       }

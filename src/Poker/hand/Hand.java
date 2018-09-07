@@ -168,8 +168,6 @@ public abstract class Hand
    
    private static Value[] getFlush(Card[] aoCards, Suit oSuit)
    {
-      Value[] aoValues = new Value[5];
-      
       int iSuitCount = 0;
       for (int i = 0; i < aoCards.length; i++)
       {
@@ -190,11 +188,8 @@ public abstract class Hand
          }
       }
       sort(aoTemp);
-      for (int i = 0; i < 5; i++)
-      {
-         aoValues[i] = aoTemp[i];
-      }
-      return aoValues;
+      
+      return aoTemp;
    }
    
    // Assumes there is a Flush of given suit

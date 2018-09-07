@@ -127,10 +127,6 @@ public class Pot
          return null;
       }
       
-      Hand oCurrentBestHand = null;
-      
-      List<Player> playersOut = new ArrayList<Player>();
-      
       Iterator<Player> oPlayers = getPlayers().iterator();
       if (!oPlayers.hasNext())
       {
@@ -138,13 +134,12 @@ public class Pot
       }
       
       // Add the first player into the list; this will start as the best hand
-      playersOut.add(oPlayers.next());
-      oCurrentBestHand = playersOut.get(0).getHand(boardCards);
+      Player firstPlayer = oPlayers.next();
+      Hand oCurrentBestHand = firstPlayer.getHand(boardCards);
       
       // If the best hand is null, that means there aren't enough board cards to make a hand, so return null
       if (oCurrentBestHand == null)
       {
-         playersOut.clear();
          return null;
       }
       
@@ -155,12 +150,7 @@ public class Pot
          int iComp = oCurrentBestHand.compare(oPlayerHand);
          if (iComp <= 0)
          {
-            if (iComp < 0)
-            {
-               playersOut.clear();
-            }
             oCurrentBestHand = oPlayerHand;
-            playersOut.add(oPlayer);
          }
       }
       
@@ -174,20 +164,16 @@ public class Pot
          return null;
       }
       
-      Hand oCurrentBestHand = null;
-      
-      ArrayList<Player> winners = new ArrayList<Player>();
-      
-      List<Player> players = getPlayers();
-      Iterator<Player> oPlayers = players.iterator();
+      Iterator<Player> oPlayers = getPlayers().iterator();
       if (!oPlayers.hasNext())
       {
          return null;
       }
       
       // Add the first player into the list; this will start as the best hand
+      List<Player> winners = new ArrayList<Player>();
       winners.add(oPlayers.next());
-      oCurrentBestHand = winners.get(0).getHand(boardCards);
+      Hand oCurrentBestHand = winners.get(0).getHand(boardCards);
       
       // If the best hand is null, we must be pre-flop; there's only a winner if there's only 1 player left
       if (oCurrentBestHand == null)

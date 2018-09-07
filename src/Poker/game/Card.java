@@ -26,8 +26,8 @@ public class Card
    
    private void initializeWithCode(int iCode)
    {
-      m_oSuit = DeckConstants.Suit.suitFromCode(iCode);
-      m_oValue = DeckConstants.Value.valueFromCode(iCode);
+      m_oSuit = Suit.suitFromCode(iCode);
+      m_oValue = Value.valueFromCode(iCode);
    }
    
    public int getCode()

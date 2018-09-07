@@ -34,24 +34,21 @@ public class ActionLogEntry
       {
          return "<" + action + ">";
       }
+      else if (players.size() == 1)
+      {
+         return players.get(0).getName() + " " + action;
+      }
       else
       {
-         if (players.size() == 1)
+         String playerStr = players.get(0).getName();
+         for (int i = 1; i < players.size() - 1; i++)
          {
-            return players.get(0).getName() + " " + action;
+            Player player = players.get(i);
+            playerStr += ", " + player.getName();
          }
-         else
-         {
-            String playerStr = players.get(0).getName();
-            for (int i = 1; i < players.size() - 1; i++)
-            {
-               Player player = players.get(i);
-               playerStr += ", " + player.getName();
-            }
-            playerStr += " and " + players.get(players.size() - 1).getName();
-            
-            return playerStr + " " + action;
-         }
+         playerStr += " and " + players.get(players.size() - 1).getName();
+         
+         return playerStr + " " + action;
       }
    }
 }
