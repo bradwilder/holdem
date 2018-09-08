@@ -42,18 +42,21 @@ export class LobbyComponent implements OnInit
 	ngOnInit()
 	{
 		//console.log(io);
-		let socket = io('http://localhost:8080');
-		/*socket.on('connect', () =>
+		let socket = io('http://localhost:3000');
+		//console.log(socket);
+		//console.log('yo');
+		socket.emit('enterRoom', 'hey');
+		socket.on('connect', () =>
 		{
 			
 		});
 		socket.on('event', (data) =>
 		{
-			
+			console.log('on event', data);
 		});
 		socket.on('disconnect', () =>
 		{
 			
-		});*/
+		});
 	}
 }
