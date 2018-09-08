@@ -30,15 +30,19 @@ let HandFactory = () =>
 		return -1;
 	}
 	
+	let sortAsc = (a, b) => a - b;
+	
+	let sortDesc = (a, b) => b - a;
+	
 	let getFlush = (cards, suit) =>
 	{
-		return cards.filter((card) => card.suit === suit).map((card) => card.value);
+		return cards.filter((card) => card.suit === suit).map((card) => card.value).sort(sortDesc);
 	}
 	
 	let findStraightFlush = (cards, suit) =>
 	{
 		let suitedCards = cards.filter((card) => card.suit === suit);
-		return findFlush(suitedCards);
+		return findStraight(suitedCards);
 	}
 	
 	let findStraight = (cards) =>
@@ -136,6 +140,7 @@ let HandFactory = () =>
 			if (valueCounts[i] == 3)
 			{
 				values[0] = i;
+				valueCounts[i] = 0;
 				break;
 			}
 		}
@@ -172,13 +177,14 @@ let HandFactory = () =>
 	
 	let hasTrip = (valueCounts) =>
 	{
-		valueCounts.forEach((valueCount) =>
+		for (let i = 0; i < valueCounts.length; i++)
 		{
+			valueCount = valueCounts[i];
 			if (valueCount >= 3)
 			{
 				return true;
 			}
-		});
+		}
 		return false;
 	}
 	
@@ -202,26 +208,15 @@ let HandFactory = () =>
 	
 	let hasQuad = (valueCounts) =>
 	{
-		valueCounts.forEach((valueCount) =>
+		for (let i = 0; i < valueCounts.length; i++)
 		{
+			valueCount = valueCounts[i];
 			if (valueCount == 4)
 			{
 				return true;
 			}
-		});
-		return false;
-	}
-	
-	let getHighCard = (cards) =>
-	{
-		cards.sort((a, b) => a - b);
-		
-		let values = [];
-		for (let i = 0; i < 5; i++)
-		{
-			values.push(cards[cards.length - (1 + i)].value);
 		}
-		return values;
+		return false;
 	}
 	
 	let getValueCounts = (cards) =>
@@ -303,7 +298,7 @@ let HandFactory = () =>
 			let pairCount = findPairs(valueCounts);
 			if (pairCount === 0)
 			{
-				return HighCard(getHighCard(cards));
+				return HighCard(getKickers(valueCounts, 5));
 			}
 			
 			if (hasTrip(valueCounts))

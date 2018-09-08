@@ -1,16 +1,20 @@
 let Hand = require('./hand');
 
-let FullHouse = (threeKindValue, pairValue) =>
+let FullHouse = (values) =>
 {
 	const FULL_HOUSE = 6;
 	
 	let rank = Hand(FULL_HOUSE);
 	
+	let threeKindValue = values[0];
+	let pairValue = values[1];
+	
 	let self =
 	{
+		getRank: () => rank,
 		compare: (hand) =>
 		{
-			let rankCompare = rank.compare(hand);
+			let rankCompare = rank.compare(hand.getRank());
 			if (rankCompare)
 			{
 				return rankCompare;
@@ -29,10 +33,7 @@ let FullHouse = (threeKindValue, pairValue) =>
 		},
 		getThreeKindValue: () => threeKindValue,
 		getPairValue: () => pairValue,
-		toString: () =>
-		{
-			
-		}
+		toString: () => "Full house (" + threeKindValue + "'s full of " + pairValue + "'s)"
 	}
 	
 	return self;

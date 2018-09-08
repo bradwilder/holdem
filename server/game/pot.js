@@ -5,13 +5,48 @@ let Pot = (players = null) =>
 {
 	let totalSize = 0;
 	let bettingCapped = false;
-	let playerCounts = new LinkedHashMap();
+	let playerCounts = LinkedHashMap();
+	
 	if (players)
 	{
 		players.forEach(player =>
 		{
 			playerCounts.set(player, 0);
 		});
+	}
+	
+	let capBetting = (cap) =>
+	{
+		let newPlayerCounts = LinkedHashMap();
+		for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
+		{
+			let player = playerCount.key;
+			let count = playerCount.value ? playerCount.value : 0;
+			
+			let deduction = Math.max(count - cap, 0);
+			if (deduction > 0)
+			{
+				self.sub(player, deduction);
+			}
+			
+			let surplus = player.getChips() + count - cap;
+			
+			if (surplus > 0 || deduction > 0)
+			{
+				newPlayerCounts.set(player, deduction);
+			}
+		}
+		
+		let newPot;
+		if (newPlayerCounts.size() >= 2)
+		{
+			newPot = Pot();
+			newPot.initialize(newPlayerCounts, bettingCapped);
+		}
+		
+		bettingCapped = true;
+		
+		return newPot;
 	}
 	
 	let self =
@@ -23,7 +58,7 @@ let Pot = (players = null) =>
 			let maxBet = 0;
 			for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
 			{
-				maxBet += Math.max(maxBet, playerCount.value);
+				maxBet = Math.max(maxBet, playerCount.value);
 			}
 			return maxBet;
 		},
@@ -54,7 +89,7 @@ let Pot = (players = null) =>
 			// If the best hand is null, we must be pre-flop; there's only a winner if there's only 1 player left
 			if (!bestHand)
 			{
-				if (winners.length === 1)
+				if (players.length === 1)
 				{
 					return winners;
 				}
@@ -118,7 +153,7 @@ let Pot = (players = null) =>
 		},
 		add: (player, addition) =>
 		{
-			if (addition < 0)
+			if (addition <= 0)
 			{
 				throw new Exception("Attempted to add " + addition);
 			}
@@ -142,44 +177,6 @@ let Pot = (players = null) =>
 			{
 				newPot = capBetting(totalCount);
 			}
-			
-			return newPot;
-		},
-		capBetting: (cap) =>
-		{
-			let newPlayerCounts = new LinkedHashMap();
-			for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
-			{
-				let player = playerCount.key;
-				let count = playerCount.value ? playerCount.value : 0;
-				
-				let deduction = Math.max(count - cap, 0);
-				if (deduction > 0)
-				{
-					self.sub(player, deduction);
-				}
-				
-				let surplus = player.getChips() + count - cap;
-				
-				if (surplus > 0 || deduction > 0)
-				{
-					newPlayerCounts.set(player, deduction);
-				}
-			}
-			
-			let newPot;
-			if (newPlayerCounts.size() >= 2)
-			{
-				newPot = new Pot();
-				newPot.playerCounts = newPlayerCounts;
-				newPot.bettingCapped = bettingCapped;
-				for (let playerCount = newPlayerCounts.getIterator(); playerCount; playerCount = playerCount.next)
-				{
-					newPot.totalSize += playerCount.value;
-				}
-			}
-			
-			bettingCapped = true;
 			
 			return newPot;
 		},
@@ -207,7 +204,7 @@ let Pot = (players = null) =>
 			
 			roundCount -= deduction;
 			playerCounts.set(player, roundCount);
-			totalSize += deduction;
+			totalSize -= deduction;
 		},
 		fold: (player) =>
 		{
@@ -218,6 +215,7 @@ let Pot = (players = null) =>
 			let currentBet = self.getCurrentBet();
 			for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
 			{
+				let player = playerCount.key;
 				if (currentBet != self.getRoundCount(player))
 				{
 					return false;
@@ -239,6 +237,15 @@ let Pot = (players = null) =>
 			for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
 			{
 				playerCounts.set(playerCount.key, 0);
+			}
+		},
+		initialize: (newPlayerCounts, isBettingCapped) =>
+		{
+			playerCounts = newPlayerCounts;
+			bettingCapped = isBettingCapped;
+			for (let playerCount = newPlayerCounts.getIterator(); playerCount; playerCount = playerCount.next)
+			{
+				totalSize += playerCount.value;
 			}
 		},
 		toString: (name) =>

@@ -2,15 +2,16 @@ let Hand = require('./hand');
 
 let HighCard = (values) =>
 {
-	const HIGH_CARD = 5;
+	const HIGH_CARD = 0;
 	
 	let rank = Hand(HIGH_CARD);
 	
 	let self =
 	{
+		getRank: () => rank,
 		compare: (hand) =>
 		{
-			let rankCompare = rank.compare(hand);
+			let rankCompare = rank.compare(hand.getRank());
 			if (rankCompare)
 			{
 				return rankCompare;
@@ -33,7 +34,14 @@ let HighCard = (values) =>
 		getValue: (i) => values[i],
 		toString: () =>
 		{
+			let valuesStr = '';
+			for (let i = 0; i < 4; i++)
+			{
+				valuesStr += (values[i] + ', ');
+			}
+			valuesStr += values[4];
 			
+			return 'High card (' + valuesStr + ')';
 		}
 	}
 	

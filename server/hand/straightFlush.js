@@ -8,9 +8,10 @@ let StraightFlush = (highValue) =>
 	
 	let self =
 	{
+		getRank: () => rank,
 		compare: (hand) =>
 		{
-			let rankCompare = rank.compare(hand);
+			let rankCompare = rank.compare(hand.getRank());
 			if (rankCompare)
 			{
 				return rankCompare;
@@ -23,10 +24,7 @@ let StraightFlush = (highValue) =>
 			return highValue - straightFlush.getHighValue();
 		},
 		getHighValue: () => highValue,
-		toString: function()
-		{
-			
-		}
+		toString: () => 'Straight flush (' + highValue + ' high)'
 	}
 	
 	return self;

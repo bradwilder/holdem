@@ -1,7 +1,8 @@
 let Player = (name, chips = 0) =>
 {
-	holeCards = [];
-	self =
+	let holeCards = [];
+	
+	let self =
 	{
 		fold: () =>
 		{

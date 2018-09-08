@@ -1,16 +1,20 @@
 let Hand = require('./hand');
 
-let TwoPair = (pairValues, kicker) =>
+let TwoPair = (values) =>
 {
 	const TWO_PAIR = 2;
 	
 	let rank = Hand(TWO_PAIR);
 	
+	let pairValues = values.slice(0, 2);
+	let kicker = values[2];
+	
 	let self =
 	{
+		getRank: () => rank,
 		compare: (hand) =>
 		{
-			let rankCompare = rank.compare(hand);
+			let rankCompare = rank.compare(hand.getRank());
 			if (rankCompare)
 			{
 				return rankCompare;
@@ -18,7 +22,7 @@ let TwoPair = (pairValues, kicker) =>
 			
 			return self.compareSameRank(hand);
 		},
-		compareSameRank: function(twoPair)
+		compareSameRank: (twoPair) =>
 		{
 			for (let i = 0; i < 2; i++)
 			{
@@ -30,12 +34,9 @@ let TwoPair = (pairValues, kicker) =>
 			
 			return kicker - twoPair.getKicker();
 		},
-		getPair: (i) => pairValues[i],
+		getPairValue: (i) => pairValues[i],
 		getKicker: () => kicker,
-		toString: function()
-		{
-			
-		}
+		toString: () => 'Two pair (' + pairValues[0] + "'s and " + pairValues[1] + "'s, " + kicker + ' kicker)'
 	}
 	
 	return self;

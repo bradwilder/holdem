@@ -5,10 +5,11 @@ let PlayerSimple = require('./playerSimple');
 let HoldEmState = require('./holdEmState');
 let GameState = require('./gameState');
 let PlayerAction = require('./playerAction');
+let Pots = require('./pots');
 
-let HoldEm = (players, bigBlind, deck) =>
+let HoldEm = (tablePlayers, bigBlind, deck) =>
 {
-	let players = players.slice();
+	let players = tablePlayers.slice();
 	
 	let state;
 	let dealer = players.length - 1;
@@ -38,10 +39,21 @@ let HoldEm = (players, bigBlind, deck) =>
 		return self.getPlayer(i);
 	}
 	
+	let getNextIndexAtTable = (i) =>
+	{
+		let playersCount = self.getPlayersCount();
+		if (i >= playersCount)
+		{
+			throw new Exception('Invalid index' + i)
+		}
+		
+		return (i + 1) % playersCount;
+	}
+	
 	let getPlayersForMainPot = () =>
 	{
 		let mainPlayers = [];
-		for (let i = getNextPlayerAtTable(dealer); i != dealer; i = getNextPlayerAtTable(i))
+		for (let i = getNextIndexAtTable(dealer); i != dealer; i = getNextIndexAtTable(i))
 		{
 			mainPlayers.push(self.getPlayer(i));
 		}
@@ -105,20 +117,10 @@ let HoldEm = (players, bigBlind, deck) =>
 		let mainPlayers = pots.getMainPot().getPlayers();
 		mainPlayers.forEach((mainPlayer) =>
 		{
-			let cards = [];
-			for (let i = 0; i < 2; i++)
-			{
-				cards.push(deck.dealCard());
-			}
-			mainPlayer.deal(cards);
+			mainPlayer.deal(deck.dealCards(2));
 		});
 		
-		let cards = [];
-		for (let i = 0; i < 5; i++)
-		{
-			cards.push(deck.dealCard());
-		}
-		board = Board(cards);
+		board = Board(deck.dealCards(5));
 	}
 	
 	let getCall = () =>
@@ -215,6 +217,7 @@ let HoldEm = (players, bigBlind, deck) =>
 		potsToString: () => pots.toString(),
 		getMainPot: () => pots.getMainPot(),
 		getChipsThisRound: (player) => pots.getChipsThisRound(player), // TODO: remove and use GameState
+		awardPot: () => pots.awardPot(self.getBoard()),
 		generateNextAction: () =>
 		{
 			let playerAction;
@@ -230,7 +233,7 @@ let HoldEm = (players, bigBlind, deck) =>
 				default:
 			}
 			
-			return GameState(state, playerAction, self.getTotalPotSize(), getPlayersSimple());
+			return GameState(state, self.getTotalPotSize(), getPlayersSimple(), playerAction);
 		},
 		startHand: () =>
 		{
@@ -271,7 +274,7 @@ let HoldEm = (players, bigBlind, deck) =>
 			
 			return self.generateNextAction();
 		},
-		check: () => bet(0),
+		check: () => self.bet(0),
 		fold: () =>
 		{
 			actionLog.addEntries(pots.fold());
@@ -299,7 +302,7 @@ let HoldEm = (players, bigBlind, deck) =>
 				actionLog.addEntry(entry);
 			}
 			
-			return generateNextAction();
+			return self.generateNextAction();
 		},
 		getBoard: () =>
 		{

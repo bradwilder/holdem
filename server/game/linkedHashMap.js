@@ -9,7 +9,7 @@ let LinkedHashMap = () =>
 	{
 		get: (key) =>
 		{
-			let item = map[key.name];
+			let item = map[key.getName()];
 			return item ? item.value : null;
 		},
 		set: (key, value) =>
@@ -36,11 +36,11 @@ let LinkedHashMap = () =>
 				}
 				
 				length++;
-				map[key.name] = item;
+				map[key.getName()] = item;
 			}
 			else
 			{
-				let item = map[key.name];
+				let item = map[key.getName()];
 				item.value = value;
 			}
 		},
@@ -48,7 +48,7 @@ let LinkedHashMap = () =>
 		{
 			if (self.contains(key))
 			{
-				let item = map[key.name];
+				let item = map[key.getName()];
 				
 				if (item.prev)
 				{
@@ -68,7 +68,7 @@ let LinkedHashMap = () =>
 					tail = item.prev;
 				}
 				
-				delete map[key.name];
+				delete map[key.getName()];
 				length--;
 			}
 		},
@@ -102,7 +102,7 @@ let LinkedHashMap = () =>
 		},
 		contains: (key) =>
 		{
-			return map.hasOwnProperty(key.name);
+			return map.hasOwnProperty(key.getName());
 		},
 		size: () =>
 		{

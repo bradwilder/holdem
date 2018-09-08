@@ -1,4 +1,5 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit } from '@angular/core';
+import * as io from 'socket.io-client';
 
 @Component
 ({
@@ -7,7 +8,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 	styleUrls: ['./lobby.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class LobbyComponent
+export class LobbyComponent implements OnInit
 {
 	private tables: {name: string, isSimulation: boolean, bigBlind: number, maxPlayers: number}[] =
 	[
@@ -36,5 +37,23 @@ export class LobbyComponent
 		{
 			
 		}
+	}
+	
+	ngOnInit()
+	{
+		//console.log(io);
+		let socket = io('http://localhost:8080');
+		/*socket.on('connect', () =>
+		{
+			
+		});
+		socket.on('event', (data) =>
+		{
+			
+		});
+		socket.on('disconnect', () =>
+		{
+			
+		});*/
 	}
 }

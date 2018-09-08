@@ -2,17 +2,13 @@ let Pot = require('./pot');
 let HoldEmState = require('./holdEmState');
 let ActionLogEntry = require('./actionLogEntry');
 
-let Pots = (players, bigBlind, holdEmState) =>
+let Pots = (players, bigBlind) =>
 {
 	let potList = [];
 	
 	let pot = Pot(players);
 	potList.push(pot);
-	
-	let bigBlind = bigBlind;
-	
-	let players = players;
-	
+		
 	let currentPotIndex = 0;
 	
 	let currentRaise = 0
@@ -33,7 +29,7 @@ let Pots = (players, bigBlind, holdEmState) =>
 	
 	let getMainPlayersCount = () =>
 	{
-		let main = getMainPot();
+		let main = self.getMainPot();
 		if (!main)
 		{
 			return 0;
@@ -585,7 +581,7 @@ let Pots = (players, bigBlind, holdEmState) =>
 			let player = self.getNextActionPlayer();
 			let playerChips = player.getChips();
 			
-			let call = getCall();
+			let call = self.getCall();
 			
 			if (playerChips == call)
 			{
@@ -596,7 +592,7 @@ let Pots = (players, bigBlind, holdEmState) =>
 			let maxRaise = Math.min(playerChips, maxChipsRemainingPlayers); 
 			return maxRaise == call ? 0 : maxRaise;
 		},
-		awardPot: (cards) =>
+		awardPot: (boardCards) =>
 		{
 			let pot = self.getLastPot();
 			if (pot)
@@ -604,7 +600,7 @@ let Pots = (players, bigBlind, holdEmState) =>
 				let winners = pot.getWinners(boardCards);
 				if (winners)
 				{
-					let numWinners = winners.size();
+					let numWinners = winners.length;
 					let potSize = pot.getSize();
 					if (numWinners == 1)
 					{
@@ -643,7 +639,7 @@ let Pots = (players, bigBlind, holdEmState) =>
 		}
 	}
 	
-	self.startRound(holdEmState);
+	self.startRound(HoldEmState().BLINDS);
 	
 	return self;
 }

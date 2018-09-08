@@ -1,6 +1,6 @@
 let Card = require('./card');
 
-const Deck = () =>
+let Deck = () =>
 {
 	const NUM_CARDS = 52;
 	
@@ -11,7 +11,8 @@ const Deck = () =>
 		cards[i] = i;
 	}
 	
-	return {
+	let self =
+	{
 		shuffle: () =>
 		{
 			cardIndex = 0;
@@ -34,8 +35,25 @@ const Deck = () =>
 			}
 			
 			return Card(cards[cardIndex++]);
+		},
+		dealCards: (number) =>
+		{
+			let cards = [];
+			while (number > 0)
+			{
+				let card = self.deal();
+				if (!card)
+				{
+					return null;
+				}
+				cards.push(card);
+				number--;
+			}
+			return cards;
 		}
 	}
+	
+	return self;
 }
 
 module.exports = Deck;

@@ -1,7 +1,8 @@
 let Hand = (rank) =>
 {
 	return {
-		compare: (hand) => rank - hand.rank
+		compare: (hand) => rank - hand.getRank(),
+		getRank: () => rank
 	}
 }
 

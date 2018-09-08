@@ -1,16 +1,20 @@
 let Hand = require('./hand');
 
-let ThreeOfAKind = (threeKindValue, kickers) =>
+let ThreeOfAKind = (values) =>
 {
 	const THREE_KIND = 3;
 	
 	let rank = Hand(THREE_KIND);
 	
+	let threeKindValue = values[0];
+	let kickers = values.slice(1);
+	
 	let self =
 	{
+		getRank: () => rank,
 		compare: (hand) =>
 		{
-			let rankCompare = rank.compare(hand);
+			let rankCompare = rank.compare(hand.getRank());
 			if (rankCompare)
 			{
 				return rankCompare;
@@ -35,14 +39,12 @@ let ThreeOfAKind = (threeKindValue, kickers) =>
 			
 			return 0;
 		},
-		getThreeKindValue: () =>
-		{
-			
-		},
+		getThreeKindValue: () => threeKindValue,
 		getKicker: (i) => kickers[i],
 		toString: () =>
 		{
-			
+			let kickerStr = kickers[0] + ', ' + kickers[1];
+			return 'Three of a kind (' + threeKindValue + "'s, [" + kickerStr + '] kickers)';
 		}
 	}
 	

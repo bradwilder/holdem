@@ -8,9 +8,10 @@ let Straight = (highValue) =>
 	
 	let self =
 	{
+		getRank: () => rank,
 		compare: (hand) =>
 		{
-			let rankCompare = rank.compare(hand);
+			let rankCompare = rank.compare(hand.getRank());
 			if (rankCompare)
 			{
 				return rankCompare;
@@ -23,10 +24,7 @@ let Straight = (highValue) =>
 			return highValue - straight.getHighValue();
 		},
 		getHighValue: () => highValue,
-		toString: () =>
-		{
-			
-		}
+		toString: () => 'Straight (' + highValue + ' high)'
 	}
 	
 	return self;

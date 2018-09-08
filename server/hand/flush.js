@@ -8,9 +8,10 @@ let Flush = (values) =>
 	
 	let self =
 	{
+		getRank: () => rank,
 		compare: (hand) =>
 		{
-			let rankCompare = rank.compare(hand);
+			let rankCompare = rank.compare(hand.getRank());
 			if (rankCompare)
 			{
 				return rankCompare;
@@ -33,7 +34,14 @@ let Flush = (values) =>
 		getValue: (i) => values[i],
 		toString: () =>
 		{
+			let valuesStr = '';
+			for (let i = 0; i < 4; i++)
+			{
+				valuesStr += (values[i] + ', ');
+			}
+			valuesStr += values[4];
 			
+			return 'Flush (' + valuesStr + ')';
 		}
 	}
 	

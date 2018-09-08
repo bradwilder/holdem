@@ -1,16 +1,20 @@
 let Hand = require('./hand');
 
-let FourOfAKind = (fourKindValue, kicker) =>
+let FourOfAKind = (values) =>
 {
 	const FOUR_KIND = 7;
 	
 	let rank = Hand(FOUR_KIND);
 	
+	let fourKindValue = values[0];
+	let kicker = values[1];
+	
 	let self =
 	{
+		getRank: () => rank,
 		compare: (hand) =>
 		{
-			let rankCompare = rank.compare(hand);
+			let rankCompare = rank.compare(hand.getRank());
 			if (rankCompare)
 			{
 				return rankCompare;
@@ -29,10 +33,7 @@ let FourOfAKind = (fourKindValue, kicker) =>
 		},
 		getFourKindValue: () => fourKindValue,
 		getKicker: () => kicker,
-		toString: function()
-		{
-			
-		}
+		toString: () => 'Four of a kind (' + fourKindValue + "'s, " + kicker + ' kicker)'
 	}
 	
 	return self;
