@@ -322,44 +322,6 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				default:
 					return board.getBoard();
 			}
-		},
-		removePlayer: (player) =>
-		{
-			if (player.hasHoleCards())
-			{
-				throw new Exception("Can't remove player with hole cards");
-			}
-			
-			let index = players.indexOf(player);
-			if (index === -1)
-			{
-				throw new Exception("Can't remove player that doesn't exist");
-			}
-			
-			players.splice(index, 1);
-			
-			if (index <= dealerIndex)
-			{
-				dealerIndex--;
-			}
-		},
-		addPlayer: (player, i) =>
-		{
-			if (state !== HoldEmState().WINNER && state !== HoldEmState().BLINDS)
-			{
-				throw new Exception("Can't add player in state " + state);
-			}
-			
-			if (players.indexOf(player) !== -1)
-			{
-				throw new Exception('Tried to add player that already exists');
-			}
-			
-			if (state === HoldEmState().BLINDS)
-			{
-				
-			}
-			
 		}
 	}
 	
