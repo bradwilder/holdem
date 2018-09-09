@@ -1,5 +1,6 @@
-import { Component, ViewEncapsulation, OnInit } from '@angular/core';
-import * as io from 'socket.io-client';
+import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
+import { LobbyService } from '../lobby.service';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component
 ({
@@ -8,55 +9,29 @@ import * as io from 'socket.io-client';
 	styleUrls: ['./lobby.component.scss'],
 	encapsulation: ViewEncapsulation.None
 })
-export class LobbyComponent implements OnInit
+export class LobbyComponent implements OnInit, OnDestroy
 {
-	private tables: {name: string, isSimulation: boolean, bigBlind: number, maxPlayers: number}[] =
-	[
-		{
-			name: "10-handed",
-			isSimulation: false,
-			bigBlind: 20,
-			maxPlayers: 10
-		},
-		{
-			name: "Simulation",
-			isSimulation: true,
-			bigBlind: 0,
-			maxPlayers: 10
-		}
-	];
+	private rooms: {id: number, name: string, bigBlind: number, maxPlayers: number}[];
+	roomsSubscription: Subscription;
 	
-	rowClick(table: {name: string, isSimulation: boolean, bigBlind: number, maxPlayers: number})
+	constructor(private lobbyService: LobbyService) {}
+	
+	rowClick(room: {id: number, name: string, bigBlind: number, maxPlayers: number})
 	{
-		//console.log(table);
-		if (table.isSimulation)
-		{
-			
-		}
-		else
-		{
-			
-		}
+		console.log(room);
+		
 	}
 	
 	ngOnInit()
 	{
-		//console.log(io);
-		let socket = io('http://localhost:3000');
-		//console.log(socket);
-		//console.log('yo');
-		socket.emit('enterRoom', 'hey');
-		socket.on('connect', () =>
+		this.roomsSubscription = this.lobbyService.roomsChanged.subscribe((rooms) =>
 		{
-			
+			this.rooms = rooms;
 		});
-		socket.on('event', (data) =>
-		{
-			console.log('on event', data);
-		});
-		socket.on('disconnect', () =>
-		{
-			
-		});
+	}
+	
+	ngOnDestroy()
+	{
+		this.roomsSubscription.unsubscribe();
 	}
 }
