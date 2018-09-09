@@ -376,14 +376,14 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		},
 		addPlayer: (player, i) =>
 		{
-			if (state !== HoldEmState().WINNER)
-			{
-				throw "Can't add player in state " + state;
-			}
-			
 			if (players.indexOf(player) !== -1)
 			{
 				throw 'Tried to add player that already exists';
+			}
+			
+			if (state !== HoldEmState().WINNER)
+			{
+				return false;
 			}
 			
 			players.splice(i, 0, player);
@@ -393,6 +393,8 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			{
 				dealerIndex++;
 			}
+			
+			return true;
 		}
 	}
 	
