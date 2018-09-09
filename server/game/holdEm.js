@@ -12,7 +12,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 	let players = tablePlayers.slice();
 	
 	let state;
-	let dealer = players.length - 1;
+	let dealerIndex = players.length - 1;
 	let pots;
 	let board;
 	let actionLog = ActionLog();
@@ -24,7 +24,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 	
 	let changeDealer = () =>
 	{
-		return (dealer = getNextPlayerAtTable(dealer)) >= 0;
+		return (dealerIndex = getNextPlayerAtTable(dealerIndex)) >= 0;
 	}
 	
 	let getNextPlayerAtTable = (i) =>
@@ -35,8 +35,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			throw new Exception('Invalid index' + i)
 		}
 		
-		i = (i + 1) % playersCount;
-		return self.getPlayer(i);
+		return (i + 1) % playersCount;
 	}
 	
 	let getNextIndexAtTable = (i) =>
@@ -53,11 +52,11 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 	let getPlayersForMainPot = () =>
 	{
 		let mainPlayers = [];
-		for (let i = getNextIndexAtTable(dealer); i != dealer; i = getNextIndexAtTable(i))
+		for (let i = getNextIndexAtTable(dealerIndex); i != dealerIndex; i = getNextIndexAtTable(i))
 		{
 			mainPlayers.push(self.getPlayer(i));
 		}
-		mainPlayers.push(self.getPlayer(dealer));
+		mainPlayers.push(self.getPlayer(dealerIndex));
 		return mainPlayers;
 	}
 	
@@ -81,25 +80,25 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				case HoldEmState().BLINDS:
 				case HoldEmState().DEAL_HOLES:
 					state = HoldEmState().BET_PREFLOP;
-				break;
+					break;
 				case HoldEmState().BET_PREFLOP:
 				case HoldEmState().DEAL_FLOP:
 					state = HoldEmState().BET_FLOP;
-				break;
+					break;
 				case HoldEmState().BET_FLOP:
 				case HoldEmState().DEAL_TURN:
 					state = HoldEmState().BET_TURN;
-				break;
+					break;
 				case HoldEmState().BET_TURN:
 				case HoldEmState().DEAL_RIVER:
 					state = HoldEmState().BET_RIVER;
-				break;
+					break;
 				case HoldEmState().BET_RIVER:
 					state = HoldEmState().WINNER;
-				break;
+					break;
 				case HoldEmState().WINNER:
 					state = HoldEmState().BLINDS;
-				break;
+					break;
 				default:
 					// TODO: throw exception here
 			}
@@ -211,7 +210,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		getLogEntries: () => actionLog.getEntries(),
 		getPlayersCount: () => players.length,
 		getPlayer: (i) => players[i],
-		getDealerPlayer: () => self.getPlayer(dealer),
+		getDealerPlayer: () => self.getPlayer(dealerIndex),
 		isBettingOver: () => pots.isBettingOver(),
 		getTotalPotSize: () => pots.getTotalSize(),
 		potsToString: () => pots.toString(),
@@ -323,6 +322,44 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				default:
 					return board.getBoard();
 			}
+		},
+		removePlayer: (player) =>
+		{
+			if (player.hasHoleCards())
+			{
+				throw new Exception("Can't remove player with hole cards");
+			}
+			
+			let index = players.indexOf(player);
+			if (index === -1)
+			{
+				throw new Exception("Can't remove player that doesn't exist");
+			}
+			
+			players.splice(index, 1);
+			
+			if (index <= dealerIndex)
+			{
+				dealerIndex--;
+			}
+		},
+		addPlayer: (player, i) =>
+		{
+			if (state !== HoldEmState().WINNER && state !== HoldEmState().BLINDS)
+			{
+				throw new Exception("Can't add player in state " + state);
+			}
+			
+			if (players.indexOf(player) !== -1)
+			{
+				throw new Exception('Tried to add player that already exists');
+			}
+			
+			if (state === HoldEmState().BLINDS)
+			{
+				
+			}
+			
 		}
 	}
 	

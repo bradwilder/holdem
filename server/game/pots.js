@@ -20,6 +20,7 @@ let Pots = (players, bigBlind) =>
 	let bettingOver;
 	let gotSmallBlind;
 	let gotBigBlind;
+	let bigBlindPlayer;
 	
 	let state;
 	
@@ -163,9 +164,9 @@ let Pots = (players, bigBlind) =>
 			switch (state)
 			{
 				case HoldEmState().BET_PREFLOP:
-					if (actionIndex == 1)
+					if (player === bigBlindPlayer)
 					{
-						// This means the big blind (always in the second position) has checked the option
+						// This means the big blind has checked the option
 						bettingOver = true;
 						entry = ActionLogEntry("checked the option", [player]);
 					}
@@ -249,9 +250,10 @@ let Pots = (players, bigBlind) =>
 				else if (!gotBigBlind)
 				{
 					gotBigBlind = true;
+					bigBlindPlayer = player;
 				}
 			}
-			else
+			else if (state !== HoldEmState().BET_PREFLOP || addition > bigBlind)
 			{
 				// Set this to true so isEven() will only rely on whether the betting is even
 				bettingOver = true; 
