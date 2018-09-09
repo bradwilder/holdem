@@ -31,7 +31,7 @@ describe('betting', () =>
 		players.push(player5);
 		players.push(player6);
 		
-		let pots = Pots(players, 10);
+		let pots = Pots(players, [], 10);
 		pots.startRound(HoldEmState().BET_TURN);
 		
 		let totalPotSize = 0;
@@ -116,7 +116,7 @@ describe('betting', () =>
 		players.push(player5);
 		players.push(player6);
 		
-		let pots = Pots(players, 10);
+		let pots = Pots(players, [], 10);
 		pots.startRound(HoldEmState().BET_TURN);
 		
 		let totalPotSize = 0;
@@ -207,7 +207,7 @@ describe('betting', () =>
 		players.push(player5);
 		players.push(player6);
 		
-		let pots = Pots(players, 10);
+		let pots = Pots(players, [], 10);
 		pots.startRound(HoldEmState().BET_TURN);
 		
 		let totalPotSize = 0;

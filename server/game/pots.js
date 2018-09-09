@@ -2,7 +2,7 @@ let Pot = require('./pot');
 let HoldEmState = require('./holdEmState');
 let ActionLogEntry = require('./actionLogEntry');
 
-let Pots = (players, bigBlind) =>
+let Pots = (players, pendingPlayers, bigBlind) =>
 {
 	let potList = [];
 	
@@ -197,21 +197,42 @@ let Pots = (players, bigBlind) =>
 			if (incrAmount > 0)
 			{
 				raised = true;
-				if (raise < currentRaise)
+				
+				if (gotBigBlind)
 				{
-					shortStackOverraise = raise;
+					if (raise < currentRaise)
+					{
+						shortStackOverraise = raise;
+					}
+					else
+					{
+						shortStackOverraise = 0;
+					}
+					currentRaise = Math.max(currentRaise, raise);
 				}
-				else
-				{
-					shortStackOverraise = 0;
-				}
-				currentRaise = Math.max(currentRaise, raise);
+				
 				if (!gotSmallBlind)
 				{
-					action = "called " + chipsThisRound + " small blind";
+					gotSmallBlind = true;
+					if (pendingPlayers.indexOf(player) !== -1)
+					{
+						gotBigBlind = true;
+						bigBlindPlayer = player;
+						let smallBlind = getSmallBlind();
+						addition -= smallBlind;
+						getCurrentPot().addDeadChips(smallBlind);
+						action = "bought the button for " + chipsThisRound;
+					}
+					else
+					{
+						action = "called " + chipsThisRound + " small blind";
+					}
 				}
 				else if (!gotBigBlind)
 				{
+					gotBigBlind = true;
+					bigBlindPlayer = player;
+					
 					action = "called " + chipsThisRound + " big blind";
 				}
 				else
@@ -241,19 +262,7 @@ let Pots = (players, bigBlind) =>
 			
 			addPlayerChipsToPot(player, addition, currentPotIndex);
 			
-			if (state == HoldEmState().BLINDS)
-			{
-				if (!gotSmallBlind)
-				{
-					gotSmallBlind = true;
-				}
-				else if (!gotBigBlind)
-				{
-					gotBigBlind = true;
-					bigBlindPlayer = player;
-				}
-			}
-			else if (state !== HoldEmState().BET_PREFLOP || addition > bigBlind)
+			if (state > HoldEmState().BET_PREFLOP || addition > bigBlind)
 			{
 				// Set this to true so isEven() will only rely on whether the betting is even
 				bettingOver = true; 
@@ -480,7 +489,7 @@ let Pots = (players, bigBlind) =>
 			let player = self.getNextActionPlayer();
 			if (!player)
 			{
-				throw new Exception("Tried to fold with no action player");
+				throw "Tried to fold with no action player";
 			}
 			
 			let entries = [];
@@ -518,7 +527,7 @@ let Pots = (players, bigBlind) =>
 			let player = self.getNextActionPlayer();
 			if (!player)
 			{
-				throw new Exception("Tried to add to pot with no action player");
+				throw "Tried to add to pot with no action player";
 			}
 			
 			let entry = addPlayerChips(player, addition);
@@ -532,7 +541,7 @@ let Pots = (players, bigBlind) =>
 			
 			if (!player)
 			{
-				throw new Exception("No action player");
+				throw "No action player";
 			}
 			
 			let playerChips = player.getChips();
@@ -543,7 +552,14 @@ let Pots = (players, bigBlind) =>
 				case HoldEmState().BLINDS:
 					if (!gotSmallBlind)
 					{
-						currOwed = Math.min(maxChipsRemainingPlayers, getSmallBlind());
+						if (pendingPlayers.indexOf(player) !== -1)
+						{
+							currOwed = Math.min(maxChipsRemainingPlayers, getSmallBlind() + bigBlind);
+						}
+						else
+						{
+							currOwed = Math.min(maxChipsRemainingPlayers, getSmallBlind());
+						}
 					}
 					else if (!gotBigBlind)
 					{
@@ -590,8 +606,7 @@ let Pots = (players, bigBlind) =>
 				return 0;
 			}
 			
-			let maxChipsRemainingPlayers = getMaxChipsRemainingPlayers();
-			let maxRaise = Math.min(playerChips, maxChipsRemainingPlayers); 
+			let maxRaise = Math.min(playerChips, getMaxChipsRemainingPlayers() - self.getChipsThisRound(player)); 
 			return maxRaise == call ? 0 : maxRaise;
 		},
 		awardPot: (boardCards) =>

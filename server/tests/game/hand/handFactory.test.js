@@ -1,15 +1,15 @@
-let HandFactory = require('../../hand/handFactory');
-// let Hand = require('../../hand/hand');
-// let HighCard = require('../../hand/highCard');
-// let Pair = require('../../hand/pair');
-// let TwoPair = require('../../hand/twoPair');
-// let ThreeOfAKind = require('../../hand/threeOfAKind');
-// let Straight = require('../../hand/straight');
-// let Flush = require('../../hand/flush');
-// let FullHouse = require('../../hand/fullHouse');
-// let FourOfAKind = require('../../hand/fourOfAKind');
-// let StraightFlush = require('../../hand/straightFlush');
-let Card = require('../../game/card');
+let HandFactory = require('../../../game/hand/handFactory');
+// let Hand = require('../../../game/hand/hand');
+// let HighCard = require('../../../game/hand/highCard');
+// let Pair = require('../../../game/hand/pair');
+// let TwoPair = require('../../../game/hand/twoPair');
+// let ThreeOfAKind = require('../../../game/hand/threeOfAKind');
+// let Straight = require('../../../game/hand/straight');
+// let Flush = require('../../../game/hand/flush');
+// let FullHouse = require('../../../game/hand/fullHouse');
+// let FourOfAKind = require('../../../game/hand/fourOfAKind');
+// let StraightFlush = require('../../../game/hand/straightFlush');
+let Card = require('../../../game/card');
 
 describe('creating with holes', () =>
 {

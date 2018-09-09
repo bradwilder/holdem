@@ -1,5 +1,5 @@
 let LinkedHashMap = require('./linkedHashMap');
-let HandFactory = require('../hand/handFactory');
+let HandFactory = require('./hand/handFactory');
 
 let Pot = (players = null) =>
 {
@@ -155,7 +155,7 @@ let Pot = (players = null) =>
 		{
 			if (addition <= 0)
 			{
-				throw new Exception("Attempted to add " + addition);
+				throw "Attempted to add " + addition;
 			}
 			
 			let roundCount = playerCounts.get(player);
@@ -166,7 +166,7 @@ let Pot = (players = null) =>
 			
 			if (bettingCapped && totalCount > currentBet)
 			{
-				throw new Exception("Attempted to add " + addition + " chips to pot with current bet at " + currentBet + " and player's current bet at " + roundCount);
+				throw "Attempted to add " + addition + " chips to pot with current bet at " + currentBet + " and player's current bet at " + roundCount;
 			}
 			
 			playerCounts.set(player, totalCount);
@@ -180,26 +180,34 @@ let Pot = (players = null) =>
 			
 			return newPot;
 		},
+		addDeadChips: (addition) =>
+		{
+			if (addition <= 0)
+			{
+				throw "Attempted to add " + addition;
+			}
+			totalSize += addition;
+		},
 		sub: (player, deduction) =>
 		{
 			if (deduction > totalSize)
 			{
-				throw new Exception("Tried to remove " + deduction + " from pot with size " + totalSize);
+				throw "Tried to remove " + deduction + " from pot with size " + totalSize;
 			}
 			else if (deduction <= 0)
 			{
-				throw new Exception("Attempted to remove " + deduction);
+				throw "Attempted to remove " + deduction;
 			}
 			
 			let roundCount = playerCounts.get(player);
 			
 			if (!roundCount)
 			{
-				throw new Exception("Attempted to remove chips from player that doesn't exist");
+				throw "Attempted to remove chips from player that doesn't exist";
 			}
 			else if (roundCount < deduction)
 			{
-				throw new Exception("Tried to remove " + deduction + " from player with only " + roundCount);
+				throw "Tried to remove " + deduction + " from player with only " + roundCount;
 			}
 			
 			roundCount -= deduction;

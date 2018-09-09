@@ -10,9 +10,10 @@ let Pots = require('./pots');
 let HoldEm = (tablePlayers, bigBlind, deck) =>
 {
 	let players = tablePlayers.slice();
+	let pendingPlayers = [];
 	
-	let state;
-	let dealerIndex = players.length - 1;
+	let state = HoldEmState().WINNER;
+	let dealerIndex = players.length - 2;
 	let pots;
 	let board;
 	let actionLog = ActionLog();
@@ -24,18 +25,31 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 	
 	let changeDealer = () =>
 	{
-		return (dealerIndex = getNextPlayerAtTable(dealerIndex)) >= 0;
+		dealerIndex = getNextPlayerAtTableNotPending(dealerIndex);
 	}
 	
-	let getNextPlayerAtTable = (i) =>
+	let getNextPlayerAtTableNotPending = (i) =>
 	{
 		let playersCount = self.getPlayersCount();
 		if (i >= playersCount)
 		{
-			throw new Exception('Invalid index' + i)
+			throw 'Invalid index' + i;
 		}
 		
-		return (i + 1) % playersCount;
+		let nextIndex = (i + 1) % playersCount;
+		let index = nextIndex;
+		while (index !== i && pendingPlayers.indexOf(self.getPlayer(index)) !== -1)
+		{
+			index = (index + 1) % playersCount;
+		}
+		
+		if (index == i)
+		{
+			// Looped back to original player; let all pending players in for free
+			pendingPlayers = [];
+			return nextIndex;
+		}
+		return index;
 	}
 	
 	let getNextIndexAtTable = (i) =>
@@ -43,7 +57,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		let playersCount = self.getPlayersCount();
 		if (i >= playersCount)
 		{
-			throw new Exception('Invalid index' + i)
+			throw 'Invalid index' + i;
 		}
 		
 		return (i + 1) % playersCount;
@@ -238,12 +252,16 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		{
 			deck.shuffle();
 			
+			changeDealer();
+			
 			let mainPlayers = getPlayersForMainPot();
 			if (mainPlayers.length < 2)
 			{
 				return null;
 			}
-			pots = Pots(players, bigBlind, state);
+			pots = Pots(mainPlayers, pendingPlayers, bigBlind);
+			
+			pendingPlayers = [];
 			
 			players.forEach((player) =>
 			{
@@ -255,16 +273,29 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			
 			pots.startRound(state);
 			
-			if (!changeDealer())
-			{
-				return null;
-			}
 			actionLog.addSystemEntry("Started hand");
 			
 			return self.generateNextAction();
 		},
 		bet: (addition) =>
 		{
+			let nextAction = self.generateNextAction();
+			let playerAction = nextAction.playerAction;
+			if (addition < playerAction.call && playerAction.player.getChips() > 0)
+			{
+				throw 'Bet ' + addition + ' is less than the call ' + playerAction.call;
+			}
+			
+			if (addition > playerAction.call && addition < playerAction.minRaise)
+			{
+				throw 'Bet ' + addition + ' is less than the min raise ' + playerAction.minRaise;
+			}
+			
+			if (addition !== playerAction.call && addition > playerAction.maxRaise)
+			{
+				throw 'Bet ' + addition + ' is greater than the max raise ' + playerAction.maxRaise;
+			}
+			
 			actionLog.addEntry(pots.addToPot(addition));
 			if (pots.isEven() && !pots.isHandOver())
 			{
@@ -321,6 +352,46 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 					return flop.concat(turn);
 				default:
 					return board.getBoard();
+			}
+		},
+		removePlayer: (player) =>
+		{
+			if (player.hasHoleCards())
+			{
+				throw "Can't remove player with hole cards";
+			}
+			
+			let index = players.indexOf(player);
+			if (index === -1)
+			{
+				throw "Can't remove player that doesn't exist";
+			}
+			
+			players.splice(index, 1);
+			
+			if (index <= dealerIndex)
+			{
+				dealerIndex--;
+			}
+		},
+		addPlayer: (player, i) =>
+		{
+			if (state !== HoldEmState().WINNER)
+			{
+				throw "Can't add player in state " + state;
+			}
+			
+			if (players.indexOf(player) !== -1)
+			{
+				throw 'Tried to add player that already exists';
+			}
+			
+			players.splice(i, 0, player);
+			pendingPlayers.push(player);
+			
+			if (i <= dealerIndex)
+			{
+				dealerIndex++;
 			}
 		}
 	}
