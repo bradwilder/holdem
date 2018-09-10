@@ -2,10 +2,10 @@ let Card = (code) =>
 {
 	const NUM_SUITS = 4;
 	const NUM_VALUES = 13;
-	const CLUBS_INDEX = 0;
-	const DIAMONDS_INDEX = 1;
-	const HEARTS_INDEX = 2;
-	const SPADES_INDEX = 3;
+	const SPADES_INDEX = 0;
+	const HEARTS_INDEX = 1;
+	const CLUBS_INDEX = 2;
+	const DIAMONDS_INDEX = 3;
 	
 	let suit;
 	let value;
