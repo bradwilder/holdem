@@ -4,6 +4,8 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 	
 	let holdEm;
 	
+	let visitors = [];
+	
 	let getNumPlayersSittingIn = () =>
 	{
 		let count = 0;
@@ -99,6 +101,21 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			
 			//tablePlayer.setSittingOut(false);
 			
+		},
+		addVisitor: (visitor) =>
+		{
+			if (visitors.indexOf(visitor) === -1)
+			{
+				visitors.push(visitor);
+			}
+		},
+		removeVisitor: (visitor) =>
+		{
+			let index = visitors.indexOf(visitor);
+			if (index !== -1)
+			{
+				visitors.splice(index, 1);
+			}
 		}
 		
 		

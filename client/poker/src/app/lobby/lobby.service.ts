@@ -1,29 +1,36 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { DataService } from '../data.service';
 import { Subject } from 'rxjs/Subject';
-import * as io from 'socket.io-client';
+import { Room } from '../room/room/room.model';
+import { SocketService } from '../socket.service';
 
 @Injectable()
-export class LobbyService implements OnDestroy
+export class LobbyService
 {
-	private rooms: {id: number, name: string, bigBlind: number, maxPlayers: number}[] = [];
-	roomsChanged = new Subject<{id: number, name: string, bigBlind: number, maxPlayers: number}[]>();
-	private socket;
+	private rooms: Room[] = [];
+	roomsChanged = new Subject<Room[]>();
 	
-	constructor(private dataService: DataService)
+	constructor(private dataService: DataService, private socketService: SocketService)
 	{
 		this.getRooms();
 		
-		
-		
-		// TODO
-		let socketIOPort = 3000;
-		let socketIOUrl = window.location.protocol + '//' + window.location.hostname + ':' + socketIOPort;
-		this.socket = io(socketIOUrl);
-		this.socket.emit('enterLobby', 'hey');
-		this.socket.on('event', (data) =>
+		this.socketService.getSocket().on('roomCounts', (roomCounts) =>
 		{
-			console.log('on event', data);
+			let updated = false;
+			roomCounts.forEach((roomCount) =>
+			{
+				let matchingRoom = this.rooms.find((room) => room.id === roomCount.id);
+				
+				if (matchingRoom)
+				{
+					matchingRoom.players = roomCount.players;
+					updated = true;
+				}
+			});
+			if (updated)
+			{
+				this.roomsChanged.next(this.rooms);
+			}
 		});
 	}
 	
@@ -31,13 +38,8 @@ export class LobbyService implements OnDestroy
 	{
 		this.dataService.getRooms().subscribe((rooms) =>
 		{
-			this.rooms = rooms.slice();
+			this.rooms = rooms.map((room) => new Room(room.id, room.name, room.bigBlind, room.maxPlayers));
 			this.roomsChanged.next(this.rooms);
 		});
-	}
-	
-	ngOnDestroy()
-	{
-		this.socket.emit('leaveLobby', 'hey');
 	}
 }

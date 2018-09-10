@@ -11,10 +11,10 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr *ngFor="let room of rooms; let i = index" [ngClass]="{even: i % 2 == 0, odd: i % 2 == 1}" (click)="rowClick(room)">
+				<tr *ngFor="let room of rooms; let i = index" [ngClass]="{even: i % 2 == 0, odd: i % 2 == 1}" [routerLink]="['/room', room.id]">
 					<th>{{ room.name }}</th>
 					<th>{{ (room.bigBlind / 2) + '/' + room.bigBlind }}</th>
-					<th>{{ '0/' + room.maxPlayers }}</th>
+					<th>{{ room.players + '/' + room.maxPlayers }}</th>
 				</tr>
 			</tbody>
 		</table>

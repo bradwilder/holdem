@@ -5,11 +5,9 @@ const bodyParser = require('body-parser');
 const io = require('socket.io').listen(server);
 const router = require('express').Router();
 
-
 const Lobby = require('./table/lobby');
 
 let lobby = Lobby();
-
 
 // Error handling
 const sendError = (err, res) =>
@@ -56,15 +54,47 @@ server.listen(port, () => console.log('Listening on port ' + port));
 
 io.sockets.on('connection', function(socket)
 {
-	socket.on('enterLobby', function(tableId)
+	socket.on('enterLobby', function()
 	{
-		console.log('enterLobby: ' + tableId);
-		io.emit('event', 'hey buddy');
+		console.log('enterLobby: ' + socket.id);
+		io.sockets.connected[socket.id].emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
+		lobby.addVisitor(socket.id);
 	});
 	
-	socket.on('leaveLobby', function(tableId)
+	socket.on('leaveLobby', function()
 	{
-		console.log('enterLobby: ' + tableId);
-		io.emit('event', 'fuck you');
+		console.log('leaveLobby: ' + socket.id);
+		lobby.removeVisitor(socket.id);
+	});
+	
+	socket.on('enterRoom', function(id)
+	{
+		console.log('enterRoom ' + id + ': ' + socket.id);
+		io.emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
+		lobby.addRoomVisitor(id);
+	});
+	
+	socket.on('leaveRoom', function(id)
+	{
+		console.log('leaveRoom ' + id + ': ' + socket.id);
+		lobby.removeRoomVisitor(id);
+	});
+	
+	socket.on('joinTable', function(id)
+	{
+		console.log('joinTable ' + id + ': ' + socket.id);
+		
+		// TODO!!!!!
+		
+		lobby.getVisitors().forEach((visitor) =>
+		{
+			io.sockets.connected[visitor].emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
+		});
+	});
+	
+	socket.on('disconnect', function(error)
+	{
+		console.log('disconnect: ' + socket.id);
+		lobby.removeVisitorCompletely(socket.id);
 	});
 });
