@@ -1,0 +1,10 @@
+:host {
+	height: 100%;
+	width: 100%;
+}
+
+.room {
+	height: 100%;
+	width: 100%;
+	background-image: url('../../../assets/wood-dark.jpg');
+}

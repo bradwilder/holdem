@@ -8,6 +8,7 @@ import { HttpModule } from '@angular/http';
 import { RoomComponent } from './room/room/room.component';
 import { TableComponent } from './table/table/table.component';
 import { SocketService } from './socket.service';
+import { PlayerComponent } from './table/player/player.component';
 
 @NgModule
 ({
@@ -16,7 +17,8 @@ import { SocketService } from './socket.service';
 		AppComponent,
 		LobbyComponent,
 		RoomComponent,
-		TableComponent
+		TableComponent,
+		PlayerComponent
 	],
 	imports:
 	[
