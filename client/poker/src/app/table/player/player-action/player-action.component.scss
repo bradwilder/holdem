@@ -23,16 +23,17 @@
 	border-radius: 10px;
 	opacity: .7;
 	background: #111;
+	font-weight: bold;
 }
 
 .call,
 .bet {
 	& .action-circle {
-		background: green;
+		background: greenyellow;
 	}
 	
 	& .action-dialogue {
-		color: green;
+		color: greenyellow;
 	}
 }
 
@@ -50,7 +51,7 @@
 
 .raise {
 	& .action-circle {
-		background: purple;
+		background: plum;
 	}
 	
 	& .action-circle-label:after {
@@ -58,13 +59,13 @@
 	}
 	
 	& .action-dialogue {
-		color: purple;
+		color: plum;
 	}
 }
 
 .check {
 	& .action-circle {
-		background: blue;
+		background: lightblue;
 	}
 	
 	& .action-circle-label:after {
@@ -74,7 +75,7 @@
 
 .fold {
 	& .action-circle {
-		background: red;
+		background: orangered;
 	}
 	
 	& .action-circle-label:after {
