@@ -2,12 +2,14 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { SocketService } from '../../socket.service';
+import { GameStateService } from '../../game-state.service';
 
 @Component
 ({
 	selector: 'app-room',
 	templateUrl: './room.component.html',
-	styleUrls: ['./room.component.css']
+	styleUrls: ['./room.component.css'],
+	providers: [GameStateService]
 })
 export class RoomComponent implements OnInit, OnDestroy
 {

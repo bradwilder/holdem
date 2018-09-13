@@ -1,5 +1,6 @@
 export class Player
 {
+	socketID: string;
 	name: string;
 	chips: number;
 	isInHand: boolean;

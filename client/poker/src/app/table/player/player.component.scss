@@ -6,9 +6,15 @@
 	border: solid #eee;
 	border-radius: 6px;
 	
-	&.sitting-out {
+	&.sitting-out,
+	&.empty {
 		opacity: .5;
 	}
+}
+
+.join-link {
+	cursor: pointer;
+	pointer-events: auto;
 }
 
 .dealer-button {
