@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { DataService } from '../data.service';
 import { Subject } from 'rxjs/Subject';
 import { Room } from '../room/room/room.model';
