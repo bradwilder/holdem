@@ -1,0 +1,371 @@
+.player-box {
+	position: absolute;
+	background: #111;
+	color: white;
+	padding: 10px;
+	border: solid #eee;
+	border-radius: 6px;
+}
+
+.dealer-button {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	background: #f5eee2;
+	border-radius: 30px;
+	text-align: center;
+	line-height: 30px;
+	font-size: 20px;
+}
+
+.action-box {
+	position: absolute;
+}
+
+.action {
+	position: relative;
+}
+
+.action-circle {
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 25px;
+	height: 25px;
+	border-radius: 25px;
+	text-align: center;
+	line-height: 25px;
+	font-size: 18px;
+	z-index: 1;
+}
+
+.action-dialogue {
+	display: inline-block;
+	height: 20px;
+	padding: 0 20px 0 30px;
+	border-radius: 10px;
+	opacity: .7;
+	background: #111;
+}
+
+.call,
+.bet {
+	& .action-circle {
+		background: green;
+	}
+	
+	& .action-dialogue {
+		color: green;
+	}
+}
+
+.call {
+	& .action-circle-label:after {
+		content: 'C';
+	}
+}
+
+.bet {
+	& .action-circle-label:after {
+		content: 'B';
+	}
+}
+
+.raise {
+	& .action-circle {
+		background: purple;
+	}
+	
+	& .action-circle-label:after {
+		content: '\f077';
+	}
+	
+	& .action-dialogue {
+		color: purple;
+	}
+}
+
+.check {
+	& .action-circle {
+		background: blue;
+	}
+	
+	& .action-circle-label:after {
+		content: '\f00c';
+	}
+}
+
+.fold {
+	& .action-circle {
+		background: red;
+	}
+	
+	& .action-circle-label:after {
+		content: '\f00d';
+	}
+}
+
+.hole-cards {
+	position: absolute;
+	text-align: center;
+	width: 66px;
+}
+
+.hole-card {
+	width: 80%;
+	
+	&.bottom {
+		transform: rotate(-12deg);
+		position: absolute;
+		z-index: -1;
+	}
+}
+
+p {
+	margin: 0;
+	text-align: center;
+}
+
+:host.player-0 > .player-box {
+	left: 50%;
+	top: 100%;
+	transform: translateX(-50%);
+}
+
+:host.player-1 > .player-box {
+	left: 25%;
+	top: 94%;
+	transform: translateX(-100%);
+}
+
+:host.player-2 > .player-box {
+	left: 5%;
+	top: 72%;
+	transform: translateX(-100%);
+}
+
+:host.player-3 > .player-box {
+	left: 5%;
+	top: 28%;
+	transform: translate(-100%, -100%);
+}
+
+:host.player-4 > .player-box {
+	left: 25%;
+	top: 6%;
+	transform: translate(-100%, -100%);
+}
+
+:host.player-5 > .player-box {
+	left: 50%;
+	top: 0%;
+	transform: translate(-50%, -100%);
+}
+
+:host.player-6 > .player-box {
+	left: 75%;
+	top: 6%;
+	transform: translateY(-100%);
+}
+
+:host.player-7 > .player-box {
+	left: 95%;
+	top: 28%;
+	transform: translateY(-100%);
+}
+
+:host.player-8 > .player-box {
+	left: 95%;
+	top: 72%;
+}
+
+:host.player-9 > .player-box {
+	left: 75%;
+	top: 94%;
+}
+
+
+:host.player-0 > .hole-cards {
+	left: 50%;
+	top: 90%;
+	transform: translateX(-50%);
+}
+
+:host.player-1 > .hole-cards {
+	left: 21%;
+	top: 82%;
+	transform: translateX(-100%);
+	transform: rotate(20deg);
+}
+
+:host.player-2 > .hole-cards {
+	left: 5%;
+	top: 64%;
+	transform: translateX(-100%);
+	transform: rotate(60deg);
+}
+
+:host.player-3 > .hole-cards {
+	left: 5%;
+	top: 28%;
+	transform: translate(-100%, -100%);
+	transform: rotate(-60deg);
+}
+
+:host.player-4 > .hole-cards {
+	left: 24%;
+	top: 7%;
+	transform: translate(-100%, -100%);
+	transform: rotate(-20deg);
+}
+
+:host.player-5 > .hole-cards {
+	left: 50%;
+	top: 11%;
+	transform: translate(-50%, -100%);
+}
+
+:host.player-6 > .hole-cards {
+	left: 73%;
+	top: 8%;
+	transform: translateY(-100%);
+	transform: rotate(20deg);
+}
+
+:host.player-7 > .hole-cards {
+	left: 90%;
+	top: 28%;
+	transform: translateY(-100%);
+	transform: rotate(60deg);
+}
+
+:host.player-8 > .hole-cards {
+	left: 90%;
+	top: 64%;
+	transform: rotate(-60deg);
+}
+
+:host.player-9 > .hole-cards {
+	left: 74%;
+	top: 82%;
+	transform: rotate(-20deg);
+}
+
+
+:host.player-0 > .dealer-button {
+	left: 45%;
+	top: 94%;
+	transform: translateX(-50%);
+}
+
+:host.player-1 > .dealer-button {
+	left: 20%;
+	top: 83%;
+	transform: translateX(-100%);
+}
+
+:host.player-2 > .dealer-button {
+	left: 5%;
+	top: 61%;
+	transform: translateX(-100%);
+}
+
+:host.player-3 > .dealer-button {
+	left: 10%;
+	top: 28%;
+	transform: translate(-100%, -100%);
+}
+
+:host.player-4 > .dealer-button {
+	left: 32%;
+	top: 10%;
+	transform: translate(-100%, -100%);
+}
+
+:host.player-5 > .dealer-button {
+	left: 55%;
+	top: 6%;
+	transform: translate(-50%, -100%);
+}
+
+:host.player-6 > .dealer-button {
+	left: 79%;
+	top: 16%;
+	transform: translateY(-100%);
+}
+
+:host.player-7 > .dealer-button {
+	left: 95%;
+	top: 40%;
+	transform: translateY(-100%);
+}
+
+:host.player-8 > .dealer-button {
+	left: 88%;
+	top: 74%;
+}
+
+:host.player-9 > .dealer-button {
+	left: 71%;
+	top: 88%;
+}
+
+
+:host.player-0 > .action-box {
+	left: 50%;
+	top: 82%;
+	transform: translateX(-50%);
+}
+
+:host.player-1 > .action-box {
+	left: 29%;
+	top: 75%;
+	transform: translateX(-100%);
+}
+
+:host.player-2 > .action-box {
+	left: 18%;
+	top: 61%;
+	transform: translateX(-100%);
+}
+
+:host.player-3 > .action-box {
+	left: 18%;
+	top: 38%;
+	transform: translate(-100%, -100%);
+}
+
+:host.player-4 > .action-box {
+	left: 31%;
+	top: 24%;
+	transform: translate(-100%, -100%);
+}
+
+:host.player-5 > .action-box {
+	left: 50%;
+	top: 18%;
+	transform: translate(-50%, -100%);
+}
+
+:host.player-6 > .action-box {
+	left: 71%;
+	top: 24%;
+	transform: translateY(-100%);
+}
+
+:host.player-7 > .action-box {
+	left: 82%;
+	top: 38%;
+	transform: translateY(-100%);
+}
+
+:host.player-8 > .action-box {
+	left: 82%;
+	top: 61%;
+}
+
+:host.player-9 > .action-box {
+	left: 73%;
+	top: 75%;
+}

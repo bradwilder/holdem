@@ -9,6 +9,7 @@ import { RoomComponent } from './room/room/room.component';
 import { TableComponent } from './table/table/table.component';
 import { SocketService } from './socket.service';
 import { PlayerComponent } from './table/player/player.component';
+import { BoardComponent } from './table/board/board.component';
 
 @NgModule
 ({
@@ -18,7 +19,8 @@ import { PlayerComponent } from './table/player/player.component';
 		LobbyComponent,
 		RoomComponent,
 		TableComponent,
-		PlayerComponent
+		PlayerComponent,
+		BoardComponent
 	],
 	imports:
 	[
