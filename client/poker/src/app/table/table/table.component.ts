@@ -21,7 +21,7 @@ export class TableComponent implements OnInit, OnDestroy
 	// private player4: Player = new Player('Seth', 25000);
 	// private player5: Player = new Player('Jose', 25000);
 	// private player6: Player = new Player('Sally', 25000);
-	// private player7: Player = new Player('mandy', 25000);
+	// private player7: Player;
 	// private player8: Player = new Player('mark', 25000);
 	// private player9: Player = new Player('cheech', 25000);
 	private player0: Player;

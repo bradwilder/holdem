@@ -1,19 +1,13 @@
-<div *ngIf="player; else player_empty">
-	<div [ngClass]="{'sitting-out': player.isSittingOut}" class="player-box">
-		<p>{{ player.name }}</p>
-		<p>{{ player.chips }}</p>
-	</div>
-	<div *ngIf="player.isInHand" class="hole-cards">
-		<img class="hole-card bottom" src="assets/cards/back-design-purple.svg">
-		<img class="hole-card" src="assets/cards/back-design-purple.svg">
-	</div>
-	<div class="action-box">
-		<app-player-action [playerAction]='player.playerAction'></app-player-action>
-	</div>
-	<div *ngIf="player.isDealer" class="dealer-button">D</div>
+<div [ngClass]="{'sitting-out': player && player.isSittingOut, empty: !player}" class="player-box">
+	<p *ngIf="player">{{ player.name }}</p>
+	<p *ngIf="player">{{ player.chips }}</p>
+	<span *ngIf="!player" class="join-link">Join Table</span>
 </div>
-<ng-template #player_empty>
-	<div class="player-box empty">
-		<span class="join-link">Join Table</span>
-	</div>
-</ng-template>
+<div *ngIf="player && player.isInHand" class="hole-cards">
+	<img class="hole-card bottom" src="assets/cards/back-design-purple.svg">
+	<img class="hole-card" src="assets/cards/back-design-purple.svg">
+</div>
+<div *ngIf="player" class="action-box">
+	<app-player-action [playerAction]='player.playerAction'></app-player-action>
+</div>
+<div *ngIf="player && player.isDealer" class="dealer-button">D</div>
