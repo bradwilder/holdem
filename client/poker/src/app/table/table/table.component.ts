@@ -35,6 +35,8 @@ export class TableComponent implements OnInit, OnDestroy
 	private player8: Player;
 	private player9: Player;
 	
+	private board: number[];
+	
 	constructor(private gameStateService: GameStateService) {}
 	
 	ngOnInit()

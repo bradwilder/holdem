@@ -7,4 +7,5 @@ export class GameState
 	potSize: number;
 	players: Player[];
 	action: PlayerActionState;
+	board: number[];
 }
