@@ -1,0 +1,4 @@
+<div *ngIf="playerAction" [ngClass]="playerAction.getClassName()" class="action">
+	<div class="action-circle"><span class="fa action-circle-label"></span></div>
+	<div *ngIf="playerAction.getValue()" class="action-dialogue">{{ playerAction.getValue() }}</div>
+</div>

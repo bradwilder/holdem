@@ -5,6 +5,10 @@
 	padding: 10px;
 	border: solid #eee;
 	border-radius: 6px;
+	
+	&.sitting-out {
+		opacity: .5;
+	}
 }
 
 .dealer-button {
@@ -20,90 +24,6 @@
 
 .action-box {
 	position: absolute;
-}
-
-.action {
-	position: relative;
-}
-
-.action-circle {
-	position: absolute;
-	left: 0;
-	top: 50%;
-	transform: translateY(-50%);
-	width: 25px;
-	height: 25px;
-	border-radius: 25px;
-	text-align: center;
-	line-height: 25px;
-	font-size: 18px;
-	z-index: 1;
-}
-
-.action-dialogue {
-	display: inline-block;
-	height: 20px;
-	padding: 0 20px 0 30px;
-	border-radius: 10px;
-	opacity: .7;
-	background: #111;
-}
-
-.call,
-.bet {
-	& .action-circle {
-		background: green;
-	}
-	
-	& .action-dialogue {
-		color: green;
-	}
-}
-
-.call {
-	& .action-circle-label:after {
-		content: 'C';
-	}
-}
-
-.bet {
-	& .action-circle-label:after {
-		content: 'B';
-	}
-}
-
-.raise {
-	& .action-circle {
-		background: purple;
-	}
-	
-	& .action-circle-label:after {
-		content: '\f077';
-	}
-	
-	& .action-dialogue {
-		color: purple;
-	}
-}
-
-.check {
-	& .action-circle {
-		background: blue;
-	}
-	
-	& .action-circle-label:after {
-		content: '\f00c';
-	}
-}
-
-.fold {
-	& .action-circle {
-		background: red;
-	}
-	
-	& .action-circle-label:after {
-		content: '\f00d';
-	}
 }
 
 .hole-cards {

@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Player } from './player.model';
 
 @Component
 ({
@@ -8,8 +9,5 @@ import { Component, Input } from '@angular/core';
 })
 export class PlayerComponent
 {
-	@Input() name: string;
-	@Input() chips: number;
-	
-	
+	@Input() player: Player;
 }

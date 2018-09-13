@@ -10,6 +10,7 @@ import { TableComponent } from './table/table/table.component';
 import { SocketService } from './socket.service';
 import { PlayerComponent } from './table/player/player.component';
 import { BoardComponent } from './table/board/board.component';
+import { PlayerActionComponent } from './table/player/player-action/player-action.component';
 
 @NgModule
 ({
@@ -20,7 +21,8 @@ import { BoardComponent } from './table/board/board.component';
 		RoomComponent,
 		TableComponent,
 		PlayerComponent,
-		BoardComponent
+		BoardComponent,
+		PlayerActionComponent
 	],
 	imports:
 	[

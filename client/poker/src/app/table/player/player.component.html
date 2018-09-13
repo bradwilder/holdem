@@ -1,18 +1,12 @@
-<div class="player-box">
-	<p>{{ name }}</p>
-	<p>{{ chips }}</p>
+<div [ngClass]="{'sitting-out': player.isSittingOut}" class="player-box">
+	<p>{{ player.name }}</p>
+	<p>{{ player.chips }}</p>
 </div>
-<div class="hole-cards">
+<div *ngIf="player.isInHand" class="hole-cards">
 	<img class="hole-card bottom" src="assets/cards/back-design-purple.svg">
 	<img class="hole-card" src="assets/cards/back-design-purple.svg">
 </div>
 <div class="action-box">
-	<!-- <div class="action raise">
-		<div class="action-circle"><span class="fa action-circle-label"></span></div>
-		<div class="action-dialogue">$50</div>
-	</div> -->
-	<div class="action fold">
-		<div class="action-circle"><span class="fa action-circle-label"></span></div>
-	</div>
+	<app-player-action [playerAction]='player.playerAction'></app-player-action>
 </div>
-<div class="dealer-button">D</div>
+<div *ngIf="player.isDealer" class="dealer-button">D</div>
