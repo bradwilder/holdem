@@ -71,6 +71,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			let players = getPlayersSittingIn();
 			
 			// TODO
+			console.log('startGame called');
 		},
 		sitPlayerIn: (i) =>
 		{
