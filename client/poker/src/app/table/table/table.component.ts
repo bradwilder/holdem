@@ -40,32 +40,32 @@ export class TableComponent implements OnInit, OnDestroy
 		
 		
 		// this.player0 = new Player('Ted', 25000);
-		// this.player1 = new Player('Poon dog', 25000);
+		// //this.player1 = new Player('Poon dog', 25000);
 		// this.player2 = new Player('player2', 25000);
-		// this.player3 = new Player('Dodgers fan', 25000);
+		// //this.player3 = new Player('Dodgers fan', 25000);
 		// this.player4 = new Player('Seth', 25000);
 		// this.player5 = new Player('Jose', 25000);
-		// this.player6 = new Player('Sally', 25000);
+		// //this.player6 = new Player('Sally', 25000);
 		// this.player7 = new Player('stupid', 333838);
 		// this.player8 = new Player('mark', 25000);
 		// this.player9 = new Player('cheech', 25000);
 		
-		// this.currentPlayer = this.player0;
+		// //this.currentPlayer = this.player0;
 		
 		// this.player0.isInHand = false;
-		// this.player1.isInHand = true;
+		// //this.player1.isInHand = true;
 		// this.player2.isInHand = true;
-		// this.player3.isInHand = true;
+		// //this.player3.isInHand = true;
 		// this.player4.isInHand = true;
 		// this.player5.isInHand = true;
-		// this.player6.isInHand = true;
+		// //this.player6.isInHand = true;
 		// this.player7.isInHand = true;
 		// this.player8.isInHand = true;
 		
 		// this.player0.isDealer = true;
 		
 		// this.player0.holeCards = [14, 26];
-		// this.player1.holeCards = [19, 46];
+		// //this.player1.holeCards = [19, 46];
 		// this.player2.holeCards = [19, 46];
 		// //this.player3.holeCards = [19, 46];
 		// this.player4.holeCards = [19, 46];
@@ -75,10 +75,10 @@ export class TableComponent implements OnInit, OnDestroy
 		// this.player8.holeCards = [19, 46];
 		// this.player9.holeCards = [19, 46];
 		
-		// this.player0.playerAction = new RaiseAction(50);
+		// this.player0.playerAction = new RaiseAction(50000);
 		// this.player2.playerAction = new CallAction(50);
-		// this.player3.playerAction = new CheckAction();
-		// this.player4.playerAction = new FoldAction();
+		// this.player4.playerAction = new CheckAction();
+		// this.player7.playerAction = new FoldAction();
 	}
 	
 	ngOnDestroy()
