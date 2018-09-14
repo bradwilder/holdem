@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Player } from '../player/player.model';
-import { RaiseAction } from '../player/player-action/raise-action.model';
-import { CallAction } from '../player/player-action/call-action.model';
-import { CheckAction } from '../player/player-action/check-action.model';
-import { FoldAction } from '../player/player-action/fold-action.model';
+// import { RaiseAction } from '../player/player-action/raise-action.model';
+// import { CallAction } from '../player/player-action/call-action.model';
+// import { CheckAction } from '../player/player-action/check-action.model';
+// import { FoldAction } from '../player/player-action/fold-action.model';
 import { GameStateService } from '../../game-state.service';
-import { CurrentPlayerService } from '../../current-player.service';
 
 @Component
 ({
@@ -15,8 +14,6 @@ import { CurrentPlayerService } from '../../current-player.service';
 })
 export class TableComponent implements OnInit, OnDestroy
 {
-	private currentPlayer: Player;
-	
 	private player0: Player;
 	private player1: Player;
 	private player2: Player;
@@ -30,7 +27,7 @@ export class TableComponent implements OnInit, OnDestroy
 	
 	private board: number[];
 	
-	constructor(private gameStateService: GameStateService, private currentPlayerService: CurrentPlayerService) {}
+	constructor(private gameStateService: GameStateService) {}
 	
 	ngOnInit()
 	{
@@ -39,11 +36,7 @@ export class TableComponent implements OnInit, OnDestroy
 			
 		});
 		
-		this.currentPlayerService.currentPlayerChanged.subscribe((currentPlayer) =>
-		{
-			this.currentPlayer = currentPlayer;
-		});
-		
+				
 		
 		
 		// this.player0 = new Player('Ted', 25000);

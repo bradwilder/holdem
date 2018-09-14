@@ -11,10 +11,15 @@ export class CurrentPlayerService
 	
 	constructor(private socketService: SocketService)
 	{
-		this.socketService.getSocket().on('login', (player) =>
+		this.socketService.getSocket().on('loggedIn', (player) =>
 		{
-			this.currentPlayer = player;
+			this.currentPlayer = new Player(player.name, player.chips);
 			this.currentPlayerChanged.next(this.currentPlayer);
 		});
+	}
+	
+	login(name)
+	{
+		this.socketService.getSocket().emit('login', name);
 	}
 }

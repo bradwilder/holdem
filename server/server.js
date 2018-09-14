@@ -70,26 +70,41 @@ io.sockets.on('connection', function(socket)
 	socket.on('enterRoom', function(id)
 	{
 		console.log('enterRoom ' + id + ': ' + socket.id);
-		io.emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
-		lobby.addRoomVisitor(id);
+		lobby.addRoomVisitor(socket.id, id);
 	});
 	
 	socket.on('leaveRoom', function(id)
 	{
 		console.log('leaveRoom ' + id + ': ' + socket.id);
-		lobby.removeRoomVisitor(id);
+		lobby.removeRoomVisitor(socket.id, id);
 	});
 	
-	socket.on('joinTable', function(id)
+	socket.on('login', function(name)
 	{
-		console.log('joinTable ' + id + ': ' + socket.id);
+		console.log('login ' + name + ': ' + socket.id);
+		let newPlayer = lobby.createPlayer(socket.id, name);
+		if (newPlayer)
+		{
+			io.sockets.connected[socket.id].emit('loggedIn', newPlayer);
+		}
+	});
+	
+	socket.on('joinTable', function(id, position)
+	{
+		console.log('joinTable ' + id + ', position: ' + position + ': ' + socket.id);
 		
 		// TODO!!!!!
-		
-		lobby.getVisitors().forEach((visitor) =>
+		if (lobby.joinTable(socket.id, id, position))
 		{
-			io.sockets.connected[visitor].emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
-		});
+			lobby.getVisitors().forEach((visitor) =>
+			{
+				io.sockets.connected[visitor].emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
+			});
+		}
+		else
+		{
+			io.sockets.connected[socket.id].emit('s');
+		}
 	});
 	
 	socket.on('disconnect', function(error)

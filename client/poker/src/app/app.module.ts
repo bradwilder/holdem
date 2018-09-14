@@ -15,6 +15,9 @@ import { CurrentPlayerService } from './current-player.service';
 import { MenuComponent } from './menu/menu.component';
 import { MenuService } from './menu/menu.service';
 import { LobbyService } from './lobby/lobby.service';
+import { LoginComponent, LoginModalComponent } from './login/login.component';
+import { FormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule
 ({
@@ -27,13 +30,17 @@ import { LobbyService } from './lobby/lobby.service';
 		PlayerComponent,
 		BoardComponent,
 		PlayerActionComponent,
-		MenuComponent
+		MenuComponent,
+		LoginComponent,
+		LoginModalComponent
 	],
 	imports:
 	[
 		BrowserModule,
 		HttpModule,
-		AppRoutingModule
+		AppRoutingModule,
+		FormsModule,
+		NgbModule.forRoot()
 	],
 	providers:
 	[
@@ -43,6 +50,11 @@ import { LobbyService } from './lobby/lobby.service';
 		MenuService,
 		LobbyService
 	],
-	bootstrap: [AppComponent]
+	bootstrap: [AppComponent],
+	entryComponents:
+	[
+		LoginComponent,
+		LoginModalComponent
+	]
 })
 export class AppModule {}

@@ -2,9 +2,9 @@ export class Player
 {
 	name: string;
 	chips: number;
-	isInHand: boolean;
-	isDealer: boolean;
-	isSittingOut: boolean;
+	isInHand = false;
+	isDealer = false;
+	isSittingOut = false;
 	holeCards: number[] = [];
 	playerAction: PlayerAction;
 	

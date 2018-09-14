@@ -3,6 +3,7 @@ import { Player } from './player.model';
 import { SocketService } from '../../socket.service';
 import { Subscription } from 'rxjs/Subscription';
 import { ActivatedRoute } from '@angular/router';
+import { CurrentPlayerService } from '../../current-player.service';
 
 @Component
 ({
@@ -14,18 +15,24 @@ export class PlayerComponent
 {
 	@Input() player: Player;
 	@Input() position: number;
-	@Input() currentPlayer: Player;
 	
 	private roomID: number;
 	private routeSubscription: Subscription;
+	private currentPlayer: Player;
+	private currentPlayerSubscription: Subscription;
 	
-	constructor(private route: ActivatedRoute, private socketService: SocketService) {}
+	constructor(private route: ActivatedRoute, private socketService: SocketService, private currentPlayerService: CurrentPlayerService) {}
 	
 	ngOnInit()
 	{
 		this.routeSubscription = this.route.params.subscribe(params =>
 		{
 			this.roomID = +params['id'];
+		});
+		
+		this.currentPlayerSubscription = this.currentPlayerService.currentPlayerChanged.subscribe((currentPlayer) =>
+		{
+			this.currentPlayer = currentPlayer;
 		});
 	}
 	
@@ -37,5 +44,6 @@ export class PlayerComponent
 	ngOnDestroy()
 	{
 		this.routeSubscription.unsubscribe();
+		this.currentPlayerSubscription.unsubscribe();
 	}
 }

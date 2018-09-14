@@ -8,7 +8,15 @@
 </ng-template>
 
 <ng-template #player_box_empty>
-	<span class="join-link" (click)="onJoinTable()">Join Table</span>
+	<ng-container *ngIf="currentPlayer; then logged_in; else logged_out"></ng-container>
+	
+	<ng-template #logged_out>
+		<span>Log In To Sit Here</span>
+	</ng-template>
+	
+	<ng-template #logged_in>
+		<span class="join-link" (click)="onJoinTable()">Join Table</span>
+	</ng-template>
 </ng-template>
 
 <ng-container *ngIf="player">

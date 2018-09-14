@@ -12,8 +12,11 @@ let Player = (name, chips = 0) =>
 		{
 			holeCards = cards.slice();
 		},
+		// TODO: remove these???
 		getName: () => name,
 		getChips: () => chips,
+		name: name,
+		chips: chips,
 		getHoleCards: () => holeCards,
 		hasHoleCards: () => holeCards.length == 2,
 		awardChips: (newChips) =>
