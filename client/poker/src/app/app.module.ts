@@ -11,6 +11,10 @@ import { SocketService } from './socket.service';
 import { PlayerComponent } from './table/player/player.component';
 import { BoardComponent } from './table/board/board.component';
 import { PlayerActionComponent } from './table/player/player-action/player-action.component';
+import { CurrentPlayerService } from './current-player.service';
+import { MenuComponent } from './menu/menu.component';
+import { MenuService } from './menu/menu.service';
+import { LobbyService } from './lobby/lobby.service';
 
 @NgModule
 ({
@@ -22,7 +26,8 @@ import { PlayerActionComponent } from './table/player/player-action/player-actio
 		TableComponent,
 		PlayerComponent,
 		BoardComponent,
-		PlayerActionComponent
+		PlayerActionComponent,
+		MenuComponent
 	],
 	imports:
 	[
@@ -33,7 +38,10 @@ import { PlayerActionComponent } from './table/player/player-action/player-actio
 	providers:
 	[
 		DataService,
-		SocketService
+		SocketService,
+		CurrentPlayerService,
+		MenuService,
+		LobbyService
 	],
 	bootstrap: [AppComponent]
 })

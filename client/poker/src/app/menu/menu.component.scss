@@ -1,0 +1,33 @@
+@import '../../styles/base/_constants.scss';
+
+nav {
+	background: #111;
+	height: $header-size;
+	color: white;
+	position: relative;
+	font-size: 20px;
+}
+
+.nav-title {
+	display: block;
+	text-align: center;
+	line-height: $header-size;
+}
+
+.nav-btn {
+	position: absolute;
+	top: 10px;
+	outline: none;
+}
+
+.nav-btn {
+	cursor: pointer;
+}
+
+.left-item {
+	left: 10px;
+}
+
+.right-item {
+	right: 10px;
+}

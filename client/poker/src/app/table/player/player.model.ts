@@ -1,12 +1,11 @@
 export class Player
 {
-	socketID: string;
 	name: string;
 	chips: number;
 	isInHand: boolean;
-	isShowing: boolean;
 	isDealer: boolean;
 	isSittingOut: boolean;
+	holeCards: number[] = [];
 	playerAction: PlayerAction;
 	
 	constructor(name: string, chips: number)

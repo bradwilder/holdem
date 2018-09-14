@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { SocketService } from '../../socket.service';
 import { GameStateService } from '../../game-state.service';
+import { MenuService } from '../../menu/menu.service';
+import { LobbyService } from '../../lobby/lobby.service';
 
 @Component
 ({
@@ -15,8 +17,9 @@ export class RoomComponent implements OnInit, OnDestroy
 {
 	private roomID: number;
 	private routeSubscription: Subscription;
+	private lobbySubscription: Subscription;
 	
-	constructor(private route: ActivatedRoute, private socketService: SocketService) {}
+	constructor(private route: ActivatedRoute, private socketService: SocketService, private menuService: MenuService, private lobbyService: LobbyService) {}
 	
 	ngOnInit()
 	{
@@ -25,8 +28,19 @@ export class RoomComponent implements OnInit, OnDestroy
 			this.roomID = +params['id'];
 			this.socketService.getSocket().emit('enterRoom', this.roomID);
 			
-			// TODO: for testing only!!!!!
-			//this.socketService.getSocket().emit('joinTable', this.roomID);
+			let room = this.lobbyService.getRoom(this.roomID);
+			if (room)
+			{
+				this.menuService.changeToRoom(room.name);
+			}
+		});
+		
+		this.lobbySubscription = this.lobbyService.roomsChanged.subscribe((rooms) =>
+		{
+			if (this.roomID >= 0)
+			{
+				this.menuService.changeToRoom(rooms.find((room) => room.id === this.roomID).name);
+			}
 		});
 	}
 	
@@ -34,5 +48,6 @@ export class RoomComponent implements OnInit, OnDestroy
 	{
 		this.socketService.getSocket().emit('leaveRoom', this.roomID);
 		this.routeSubscription.unsubscribe();
+		this.lobbySubscription.unsubscribe();
 	}
 }

@@ -12,14 +12,18 @@ export class LobbyService
 	
 	constructor(private dataService: DataService, private socketService: SocketService)
 	{
-		this.getRooms();
+		this.dataService.getRooms().subscribe((rooms) =>
+		{
+			this.rooms = rooms.map((room) => new Room(room.id, room.name, room.bigBlind, room.maxPlayers));
+			this.roomsChanged.next(this.rooms);
+		});
 		
 		this.socketService.getSocket().on('roomCounts', (roomCounts) =>
 		{
 			let updated = false;
 			roomCounts.forEach((roomCount) =>
 			{
-				let matchingRoom = this.rooms.find((room) => room.id === roomCount.id);
+				let matchingRoom = this.getRoom(roomCount.id);
 				
 				if (matchingRoom)
 				{
@@ -34,12 +38,8 @@ export class LobbyService
 		});
 	}
 	
-	private getRooms()
+	getRoom(roomID)
 	{
-		this.dataService.getRooms().subscribe((rooms) =>
-		{
-			this.rooms = rooms.map((room) => new Room(room.id, room.name, room.bigBlind, room.maxPlayers));
-			this.roomsChanged.next(this.rooms);
-		});
+		return this.rooms.find((room) => room.id === roomID);
 	}
 }

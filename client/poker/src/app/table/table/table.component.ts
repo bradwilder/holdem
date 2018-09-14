@@ -5,25 +5,18 @@ import { CallAction } from '../player/player-action/call-action.model';
 import { CheckAction } from '../player/player-action/check-action.model';
 import { FoldAction } from '../player/player-action/fold-action.model';
 import { GameStateService } from '../../game-state.service';
+import { CurrentPlayerService } from '../../current-player.service';
 
 @Component
 ({
 	selector: 'app-table',
 	templateUrl: './table.component.html',
-	styleUrls: ['./table.component.css']
+	styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit, OnDestroy
 {
-	// private player0: Player = new Player('Ted', 25000);
-	// private player1: Player = new Player('Poon dog', 25000);
-	// private player2: Player = new Player('player2', 25000);
-	// private player3: Player = new Player('Dodgers fan', 25000);
-	// private player4: Player = new Player('Seth', 25000);
-	// private player5: Player = new Player('Jose', 25000);
-	// private player6: Player = new Player('Sally', 25000);
-	// private player7: Player;
-	// private player8: Player = new Player('mark', 25000);
-	// private player9: Player = new Player('cheech', 25000);
+	private currentPlayer: Player;
+	
 	private player0: Player;
 	private player1: Player;
 	private player2: Player;
@@ -37,7 +30,7 @@ export class TableComponent implements OnInit, OnDestroy
 	
 	private board: number[];
 	
-	constructor(private gameStateService: GameStateService) {}
+	constructor(private gameStateService: GameStateService, private currentPlayerService: CurrentPlayerService) {}
 	
 	ngOnInit()
 	{
@@ -46,14 +39,48 @@ export class TableComponent implements OnInit, OnDestroy
 			
 		});
 		
-		// this.player0.isInHand = true;
+		this.currentPlayerService.currentPlayerChanged.subscribe((currentPlayer) =>
+		{
+			this.currentPlayer = currentPlayer;
+		});
+		
+		
+		
+		// this.player0 = new Player('Ted', 25000);
+		// this.player1 = new Player('Poon dog', 25000);
+		// this.player2 = new Player('player2', 25000);
+		// this.player3 = new Player('Dodgers fan', 25000);
+		// this.player4 = new Player('Seth', 25000);
+		// this.player5 = new Player('Jose', 25000);
+		// this.player6 = new Player('Sally', 25000);
+		// this.player7 = new Player('stupid', 333838);
+		// this.player8 = new Player('mark', 25000);
+		// this.player9 = new Player('cheech', 25000);
+		
+		// this.currentPlayer = this.player0;
+		
+		// this.player0.isInHand = false;
+		// this.player1.isInHand = true;
 		// this.player2.isInHand = true;
 		// this.player3.isInHand = true;
+		// this.player4.isInHand = true;
 		// this.player5.isInHand = true;
 		// this.player6.isInHand = true;
+		// this.player7.isInHand = true;
 		// this.player8.isInHand = true;
 		
-		// this.player1.isSittingOut = true;
+		// this.player0.isDealer = true;
+		
+		// this.player0.holeCards = [14, 26];
+		// this.player1.holeCards = [19, 46];
+		// this.player2.holeCards = [19, 46];
+		// //this.player3.holeCards = [19, 46];
+		// this.player4.holeCards = [19, 46];
+		// this.player5.holeCards = [19, 46];
+		// //this.player6.holeCards = [19, 46];
+		// this.player7.holeCards = [19, 46];
+		// this.player8.holeCards = [19, 46];
+		// this.player9.holeCards = [19, 46];
 		
 		// this.player0.playerAction = new RaiseAction(50);
 		// this.player2.playerAction = new CallAction(50);

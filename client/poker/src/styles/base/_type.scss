@@ -1,0 +1,46 @@
+@import './_constants.scss';
+
+.type {
+	&__title {
+		font-family: $font-family-title;
+		text-transform: uppercase;
+		letter-spacing: .03em;
+		
+		&--wide {
+			letter-spacing: .05em;
+		}
+		
+		&--no-upper {
+			text-transform: none;
+		}
+		
+		&--lighter {
+			font-weight: lighter;
+		}
+		
+		&--darker {
+			font-weight: bold;
+		}
+	}
+	
+	&__desc {
+		font-family: $font-family-description;
+		
+		&--emphasis {
+			font-weight: bold;
+		}
+	}
+	
+	&__label {
+		font-family: $font-family-mono;
+		font-weight: normal;
+		
+		&--emphasis {
+			font-weight: bold;
+		}
+		
+		&--upper {
+			text-transform: uppercase;
+		}
+	}
+}

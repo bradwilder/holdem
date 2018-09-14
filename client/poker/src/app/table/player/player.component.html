@@ -1,13 +1,38 @@
 <div [ngClass]="{'sitting-out': player && player.isSittingOut, empty: !player}" class="player-box">
-	<p *ngIf="player">{{ player.name }}</p>
-	<p *ngIf="player">{{ player.chips }}</p>
-	<span *ngIf="!player" class="join-link">Join Table</span>
+	<ng-container *ngIf="player; then player_box; else player_box_empty"></ng-container>
 </div>
-<div *ngIf="player && player.isInHand" class="hole-cards">
-	<img class="hole-card bottom" src="assets/cards/back-design-purple.svg">
-	<img class="hole-card" src="assets/cards/back-design-purple.svg">
-</div>
+
+<ng-template #player_box>
+	<p>{{ player.name }}</p>
+	<p>{{ player.chips }}</p>
+</ng-template>
+
+<ng-template #player_box_empty>
+	<span class="join-link" (click)="onJoinTable()">Join Table</span>
+</ng-template>
+
+<ng-container *ngIf="player">
+	<ng-container *ngIf="player.holeCards.length == 2; then hole_cards_showing; else hole_cards_hidden"></ng-container>
+</ng-container>
+
+<ng-template #hole_cards_hidden>
+	<ng-container *ngIf="player.isInHand">
+		<div class="hole-cards--hidden">
+			<img class="hole-card--hidden bottom" src="assets/cards/back-design-purple.svg">
+			<img class="hole-card--hidden" src="assets/cards/back-design-purple.svg">
+		</div>
+	</ng-container>
+</ng-template>
+
+<ng-template #hole_cards_showing>
+	<div class="hole-cards--showing" [ngClass]="{'active-player': player === currentPlayer, 'not-in-hand': !player.isInHand}">
+		<img class="hole-card--showing bottom" [src]="'assets/cards/' + player.holeCards[0] + '.svg'">
+		<img class="hole-card--showing top" [src]="'assets/cards/' + player.holeCards[1] + '.svg'">
+	</div>
+</ng-template>
+
 <div *ngIf="player" class="action-box">
 	<app-player-action [playerAction]='player.playerAction'></app-player-action>
 </div>
+
 <div *ngIf="player && player.isDealer" class="dealer-button">D</div>

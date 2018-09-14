@@ -33,19 +33,40 @@
 	position: absolute;
 }
 
-.hole-cards {
+.hole-cards--hidden {
 	position: absolute;
 	text-align: center;
 	width: 66px;
 }
 
-.hole-card {
+.hole-card--hidden {
 	width: 80%;
 	
 	&.bottom {
 		transform: rotate(-12deg);
 		position: absolute;
 		z-index: -1;
+	}
+}
+
+.hole-cards--showing {
+	position: absolute;
+	text-align: center;
+	width: 110px;
+}
+
+.hole-card--showing {
+	width: 80%;
+	
+	&.bottom {
+		transform: rotate(-14deg);
+		position: absolute;
+		left: 8%;
+	}
+	
+	&.top {
+		transform: rotate(14deg);
+		position: absolute;
 	}
 }
 
@@ -113,70 +134,135 @@ p {
 }
 
 
-:host.player-0 > .hole-cards {
+:host.player-0 > .hole-cards--hidden {
 	left: 50%;
 	top: 90%;
 	transform: translateX(-50%);
 }
 
-:host.player-1 > .hole-cards {
+:host.player-1 > .hole-cards--hidden {
 	left: 21%;
 	top: 82%;
 	transform: translateX(-100%);
 	transform: rotate(20deg);
 }
 
-:host.player-2 > .hole-cards {
+:host.player-2 > .hole-cards--hidden {
 	left: 5%;
 	top: 64%;
 	transform: translateX(-100%);
 	transform: rotate(60deg);
 }
 
-:host.player-3 > .hole-cards {
+:host.player-3 > .hole-cards--hidden {
 	left: 5%;
 	top: 28%;
 	transform: translate(-100%, -100%);
 	transform: rotate(-60deg);
 }
 
-:host.player-4 > .hole-cards {
+:host.player-4 > .hole-cards--hidden {
 	left: 24%;
 	top: 7%;
 	transform: translate(-100%, -100%);
 	transform: rotate(-20deg);
 }
 
-:host.player-5 > .hole-cards {
+:host.player-5 > .hole-cards--hidden {
 	left: 50%;
 	top: 11%;
 	transform: translate(-50%, -100%);
 }
 
-:host.player-6 > .hole-cards {
+:host.player-6 > .hole-cards--hidden {
 	left: 73%;
 	top: 8%;
 	transform: translateY(-100%);
 	transform: rotate(20deg);
 }
 
-:host.player-7 > .hole-cards {
+:host.player-7 > .hole-cards--hidden {
 	left: 90%;
 	top: 28%;
 	transform: translateY(-100%);
 	transform: rotate(60deg);
 }
 
-:host.player-8 > .hole-cards {
+:host.player-8 > .hole-cards--hidden {
 	left: 90%;
 	top: 64%;
 	transform: rotate(-60deg);
 }
 
-:host.player-9 > .hole-cards {
+:host.player-9 > .hole-cards--hidden {
 	left: 74%;
 	top: 82%;
 	transform: rotate(-20deg);
+}
+
+
+:host.player-0 > .hole-cards--showing {
+	left: 50%;
+	top: 96%;
+	transform: translateX(-71%);
+	
+	&.active-player {
+		width: 150px;
+		top: 112%;
+		
+		&.not-in-hand {
+			opacity: .5;
+		}
+	}
+}
+
+:host.player-1 > .hole-cards--showing {
+	left: 16%;
+	top: 88%;
+}
+
+:host.player-2 > .hole-cards--showing {
+	left: 5%;
+	top: 68%;
+	transform: translateX(-100%);
+}
+
+:host.player-3 > .hole-cards--showing {
+	left: -5%;
+	top: 16%;
+}
+
+:host.player-4 > .hole-cards--showing {
+	left: 25%;
+	top: -5%;
+	transform: translate(-100%, -100%);
+}
+
+:host.player-5 > .hole-cards--showing {
+	left: 50%;
+	top: -13%;
+	transform: translateX(-67%);
+}
+
+:host.player-6 > .hole-cards--showing {
+	left: 72%;
+	top: -5%;
+	transform: translateY(-100%);
+}
+
+:host.player-7 > .hole-cards--showing {
+	left: 93%;
+	top: 16%;
+}
+
+:host.player-8 > .hole-cards--showing {
+	left: 92%;
+	top: 68%;
+}
+
+:host.player-9 > .hole-cards--showing {
+	left: 72%;
+	top: 88%;
 }
 
 
