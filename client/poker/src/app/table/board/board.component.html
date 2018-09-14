@@ -1,12 +1,12 @@
 <div class="board">
 	<!-- TODO: use a card class to get alts -->
-	<img *ngIf="cards && cards[0]; else card_empty" class="card" [src]="'assets/cards/' + cards[0] + '.svg'">
-	<img *ngIf="cards && cards[1]; else card_empty" class="card" [src]="'assets/cards/' + cards[1] + '.svg'">
-	<img *ngIf="cards && cards[2]; else card_empty" class="card" [src]="'assets/cards/' + cards[2] + '.svg'">
-	<img *ngIf="cards && cards[3]; else card_empty" class="card" [src]="'assets/cards/' + cards[3] + '.svg'">
-	<img *ngIf="cards && cards[4]; else card_empty" class="card" [src]="'assets/cards/' + cards[4] + '.svg'">
+	<img *ngIf="cards && cards[0]; else card_empty" class="board-card" [src]="'assets/cards/' + cards[0] + '.svg'">
+	<img *ngIf="cards && cards[1]; else card_empty" class="board-card" [src]="'assets/cards/' + cards[1] + '.svg'">
+	<img *ngIf="cards && cards[2]; else card_empty" class="board-card" [src]="'assets/cards/' + cards[2] + '.svg'">
+	<img *ngIf="cards && cards[3]; else card_empty" class="board-card" [src]="'assets/cards/' + cards[3] + '.svg'">
+	<img *ngIf="cards && cards[4]; else card_empty" class="board-card" [src]="'assets/cards/' + cards[4] + '.svg'">
 </div>
 
 <ng-template #card_empty>
-	<img class="card face-down" src="assets/cards/back-design-purple.svg" alt="Card back">
+	<img class="board-card face-down" src="assets/cards/back-design-purple.svg" alt="Card back">
 </ng-template>
