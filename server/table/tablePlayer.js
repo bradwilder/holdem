@@ -1,5 +1,6 @@
 let TablePlayer = (player, socket) =>
 {
+	// TODO: remove this
 	let sittingOut = false;
 	
 	
