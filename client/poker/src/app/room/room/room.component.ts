@@ -35,6 +35,11 @@ export class RoomComponent implements OnInit, OnDestroy
 			}
 		});
 		
+		this.socketService.getSocket().on('serverStart', () =>
+		{
+			this.socketService.getSocket().emit('enterRoom', this.roomID);
+		});
+		
 		this.lobbySubscription = this.lobbyService.roomsChanged.subscribe((rooms) =>
 		{
 			if (this.roomID >= 0)

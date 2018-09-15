@@ -28,6 +28,11 @@ export class LobbyComponent implements OnInit, OnDestroy
 		
 		this.socketService.getSocket().emit('enterLobby');
 		
+		this.socketService.getSocket().on('serverStart', () =>
+		{
+			this.socketService.getSocket().emit('enterLobby');
+		});
+		
 		this.menuService.changeToLobby();
 	}
 	

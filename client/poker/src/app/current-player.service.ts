@@ -16,6 +16,12 @@ export class CurrentPlayerService
 			this.currentPlayer = new Player(player.name, player.chips);
 			this.currentPlayerChanged.next(this.currentPlayer);
 		});
+		
+		this.socketService.getSocket().on('serverStart', () =>
+		{
+			this.currentPlayer = null;
+			this.currentPlayerChanged.next(this.currentPlayer);
+		});
 	}
 	
 	login(name)

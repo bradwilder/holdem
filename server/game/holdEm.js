@@ -74,12 +74,17 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		return mainPlayers;
 	}
 	
+	let getChipsThisRound = (player) =>
+	{
+		return pots ? pots.getChipsThisRound(player) : 0;
+	}
+	
 	let getPlayersSimple = () =>
 	{
 		let playersSimple = [];
 		players.forEach((player) =>
 		{
-			let playerSimple = PlayerSimple(player.getName(), player.getChips(), player.hasHoleCards(), pots.getChipsThisRound(player));
+			let playerSimple = PlayerSimple(player.getName(), player.getChips(), player.hasHoleCards(), getChipsThisRound(player));
 			playersSimple.push(playerSimple);
 		});
 		return playersSimple;
@@ -226,10 +231,9 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		getPlayer: (i) => players[i],
 		getDealerPlayer: () => self.getPlayer(dealerIndex),
 		isBettingOver: () => pots.isBettingOver(),
-		getTotalPotSize: () => pots.getTotalSize(),
+		getTotalPotSize: () => pots ? pots.getTotalSize() : 0,
 		potsToString: () => pots.toString(),
 		getMainPot: () => pots.getMainPot(),
-		getChipsThisRound: (player) => pots.getChipsThisRound(player), // TODO: remove and use GameState
 		awardPot: () => pots.awardPot(self.getBoard()),
 		generateGameState: () =>
 		{

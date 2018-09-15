@@ -56,7 +56,7 @@ io.sockets.on('connection', function(socket)
 {
 	console.log('connection: ' + socket.id);
 	lobby.addVisitor(socket.id);
-	// TODO: send reset to all clients
+	io.sockets.connected[socket.id].emit('serverStart');
 	
 	socket.on('enterLobby', function()
 	{
@@ -73,6 +73,7 @@ io.sockets.on('connection', function(socket)
 	{
 		console.log('enterRoom ' + id + ': ' + socket.id);
 		lobby.addRoomVisitor(socket.id, id);
+		io.sockets.connected[socket.id].emit('gameState', lobby.getRoom(id).getGameState());
 	});
 	
 	socket.on('leaveRoom', function(id)
@@ -106,9 +107,13 @@ io.sockets.on('connection', function(socket)
 			if (room)
 			{
 				let roomVisitors = room.getVisitors();
+				let gameState = room.getGameState();
+				// console.log('visitor gameState');
+				// console.log(gameState);
+				// console.log('visitor gameState2');
 				roomVisitors.forEach((roomVisitor) =>
 				{
-					io.sockets.connected[roomVisitor].emit('gameState', room.getGameState());
+					io.sockets.connected[roomVisitor].emit('gameState', gameState);
 				});
 				
 				let tablePlayers = room.getTablePlayers();
@@ -116,7 +121,11 @@ io.sockets.on('connection', function(socket)
 				{
 					if (tablePlayer)
 					{
-						io.sockets.connected[tablePlayer.getSocket()].emit('gameState', room.getGameState(tablePlayer));
+						let gameState = room.getGameState(tablePlayer);
+						// console.log('player gameState: ' + tablePlayer.getPlayer().getName());
+						// console.log(gameState);
+						// console.log('player gameState2');
+						io.sockets.connected[tablePlayer.getSocket()].emit('gameState', gameState);
 					}
 				});
 			}

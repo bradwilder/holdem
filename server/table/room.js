@@ -31,7 +31,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 		{
 			if (tablePlayer && !tablePlayer.isSittingOut())
 			{
-				players.push(tablePlayer);
+				players.push(tablePlayer.getPlayer());
 			}
 		});
 		return players;
@@ -149,8 +149,9 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			let players = getPlayersSittingIn();
 			
 			// TODO
-			console.log('startGame called');
+			console.log('startHand called');
 			holdEm = HoldEm(players, bigBlind, Deck());
+			holdEm.startHand();
 			
 			
 			
@@ -211,6 +212,9 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				gameState = holdEm.generateGameState();
 				
 				// TODO!!!
+				console.log('gameState');
+				console.log(gameState);
+				console.log('gameState2');
 				
 				
 				
