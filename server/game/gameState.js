@@ -1,10 +1,10 @@
-let GameState = (state, potSize, players, playerAction) =>
+let GameState = (state, potSize, players, nextAction) =>
 {
 	return {
 		state: state,
 		potSize: potSize,
 		players: players,
-		playerAction: playerAction
+		nextAction: nextAction
 	}
 }
 

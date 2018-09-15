@@ -1,4 +1,4 @@
-let PlayerAction = (player, call, minRaise, maxRaise) =>
+let NextAction = (player, call, minRaise, maxRaise) =>
 {
 	return {
 		player: player,
@@ -8,4 +8,4 @@ let PlayerAction = (player, call, minRaise, maxRaise) =>
 	}
 }
 
-module.exports = PlayerAction;
+module.exports = NextAction;

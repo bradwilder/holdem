@@ -208,7 +208,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			let gameState;
 			if (holdEm)
 			{
-				gameState = holdEm.generateNextAction();
+				gameState = holdEm.generateGameState();
 				
 				// TODO!!!
 				

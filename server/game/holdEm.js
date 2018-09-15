@@ -4,7 +4,7 @@ let ActionLogEntry = require('./actionLogEntry');
 let PlayerSimple = require('./playerSimple');
 let HoldEmState = require('./holdEmState');
 let GameState = require('./gameState');
-let PlayerAction = require('./playerAction');
+let NextAction = require('./nextAction');
 let Pots = require('./pots');
 
 let HoldEm = (tablePlayers, bigBlind, deck) =>
@@ -231,9 +231,9 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		getMainPot: () => pots.getMainPot(),
 		getChipsThisRound: (player) => pots.getChipsThisRound(player), // TODO: remove and use GameState
 		awardPot: () => pots.awardPot(self.getBoard()),
-		generateNextAction: () =>
+		generateGameState: () =>
 		{
-			let playerAction;
+			let nextAction;
 			switch (state)
 			{
 				case HoldEmState().BLINDS:
@@ -241,12 +241,12 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				case HoldEmState().BET_FLOP:
 				case HoldEmState().BET_TURN:
 				case HoldEmState().BET_RIVER:
-					playerAction = PlayerAction(getActionPlayer(), getCall(), getMinRaise(), getMaxRaise());
+					nextAction = NextAction(getActionPlayer(), getCall(), getMinRaise(), getMaxRaise());
 					break;
 				default:
 			}
 			
-			return GameState(state, self.getTotalPotSize(), getPlayersSimple(), playerAction);
+			return GameState(state, self.getTotalPotSize(), getPlayersSimple(), nextAction);
 		},
 		startHand: () =>
 		{
@@ -275,25 +275,25 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			
 			actionLog.addSystemEntry("Started hand");
 			
-			return self.generateNextAction();
+			return self.generateGameState();
 		},
 		bet: (addition) =>
 		{
-			let nextAction = self.generateNextAction();
-			let playerAction = nextAction.playerAction;
-			if (addition < playerAction.call && playerAction.player.getChips() > 0)
+			let gameState = self.generateGameState();
+			let nextAction = gameState.nextAction;
+			if (addition < nextAction.call && nextAction.player.getChips() > 0)
 			{
-				throw 'Bet ' + addition + ' is less than the call ' + playerAction.call;
+				throw 'Bet ' + addition + ' is less than the call ' + nextAction.call;
 			}
 			
-			if (addition > playerAction.call && addition < playerAction.minRaise)
+			if (addition > nextAction.call && addition < nextAction.minRaise)
 			{
-				throw 'Bet ' + addition + ' is less than the min raise ' + playerAction.minRaise;
+				throw 'Bet ' + addition + ' is less than the min raise ' + nextAction.minRaise;
 			}
 			
-			if (addition !== playerAction.call && addition > playerAction.maxRaise)
+			if (addition !== nextAction.call && addition > nextAction.maxRaise)
 			{
-				throw 'Bet ' + addition + ' is greater than the max raise ' + playerAction.maxRaise;
+				throw 'Bet ' + addition + ' is greater than the max raise ' + nextAction.maxRaise;
 			}
 			
 			actionLog.addEntry(pots.addToPot(addition));
@@ -302,7 +302,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				moveState();
 			}
 			
-			return self.generateNextAction();
+			return self.generateGameState();
 		},
 		check: () => self.bet(0),
 		fold: () =>
@@ -332,7 +332,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				actionLog.addEntry(entry);
 			}
 			
-			return self.generateNextAction();
+			return self.generateGameState();
 		},
 		getBoard: () =>
 		{

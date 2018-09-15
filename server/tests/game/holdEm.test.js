@@ -3,27 +3,27 @@ let Player = require('../../game/player');
 let Deck = require('../../game/deck');
 let HoldEmState = require('../../game/holdEmState');
 
-let verifyPlayerAction = (holdEm, expectedGameState, expectedPlayer, expectedMinRaise, expectedMaxRaise, expectedCall, expectedTotalPotSize) =>
+let verifyPlayerAction = (holdEm, expectedHoldEmState, expectedPlayer, expectedMinRaise, expectedMaxRaise, expectedCall, expectedTotalPotSize) =>
 {
-	let nextAction = holdEm.generateNextAction();
-	let playerAction = nextAction.playerAction;
+	let gameState = holdEm.generateGameState();
+	let nextAction = gameState.nextAction;
 	
-	expect(playerAction.player.getName()).toBe(expectedPlayer.getName());
-	expect(playerAction.minRaise).toBe(expectedMinRaise);
-	expect(playerAction.maxRaise).toBe(expectedMaxRaise);
-	expect(playerAction.call).toBe(expectedCall);
+	expect(nextAction.player.getName()).toBe(expectedPlayer.getName());
+	expect(nextAction.minRaise).toBe(expectedMinRaise);
+	expect(nextAction.maxRaise).toBe(expectedMaxRaise);
+	expect(nextAction.call).toBe(expectedCall);
 	
-	expect(nextAction.state).toBe(expectedGameState);
+	expect(gameState.state).toBe(expectedHoldEmState);
 	expect(holdEm.getTotalPotSize()).toBe(expectedTotalPotSize);
 }
 
-let verify = (holdEm, expectedGameState, expectedTotalPotSize) =>
+let verify = (holdEm, expectedHoldEmState, expectedTotalPotSize) =>
 {
-	let nextAction = holdEm.generateNextAction();
-	let playerAction = nextAction.playerAction;
+	let gameState = holdEm.generateGameState();
+	let nextAction = gameState.nextAction;
 	
-	expect(playerAction).toBeUndefined();
-	expect(nextAction.state).toBe(expectedGameState);
+	expect(nextAction).toBeUndefined();
+	expect(gameState.state).toBe(expectedHoldEmState);
 	expect(holdEm.getTotalPotSize()).toBe(expectedTotalPotSize);
 }
 
@@ -54,13 +54,13 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player0.getChips()).toBe(1990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player1.getChips()).toBe(1980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 2000, 20, 30);
 		
@@ -115,13 +115,13 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player0.getChips()).toBe(90);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player1.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 100, 20, 30);
 		
@@ -201,13 +201,13 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player0.getChips()).toBe(90);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player1.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 100, 20, 30);
 		
@@ -261,13 +261,13 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player0.getChips()).toBe(990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player1.getChips()).toBe(980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 1000, 20, 30);
 		
@@ -309,13 +309,13 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player0.getChips()).toBe(990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player1.getChips()).toBe(980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 1000, 20, 30);
 		
@@ -347,13 +347,13 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player0.getChips()).toBe(990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player1.getChips()).toBe(980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 1000, 20, 30);
 		
@@ -385,13 +385,13 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player0.getChips()).toBe(990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player1.getChips()).toBe(980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 1000, 20, 30);
 		
@@ -423,13 +423,13 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player0.getChips()).toBe(90);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player1.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 50, 20, 30);
 		
@@ -484,13 +484,13 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player0.getChips()).toBe(90);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(player1.getChips()).toBe(155);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 50, 20, 30);
 		
@@ -568,9 +568,9 @@ describe('betting', () =>
 		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, playerNew0, 0, 0, 30, 0);
 		
-		gameState = holdEm.generateNextAction();
+		gameState = holdEm.generateGameState();
 		
-		gameState = holdEm.bet(gameState.playerAction.call);
+		gameState = holdEm.bet(gameState.nextAction.call);
 		expect(playerNew0.getChips()).toBe(470);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player0, 40, 100, 20, 30);
 	});
@@ -631,9 +631,9 @@ describe('betting', () =>
 		
 	// 	verifyPlayerAction(holdEm, HoldEmState().BLINDS, playerNew0, 0, 0, 30, 0);
 		
-	// 	gameState = holdEm.generateNextAction();
+	// 	gameState = holdEm.generateGameState();
 		
-	// 	gameState = holdEm.bet(gameState.playerAction.call);
+	// 	gameState = holdEm.bet(gameState.nextAction.call);
 	// 	expect(playerNew0.getChips()).toBe(470);
 	// 	verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player0, 40, 100, 20, 30);
 	// });
