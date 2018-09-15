@@ -281,19 +281,19 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		{
 			let gameState = self.generateGameState();
 			let nextAction = gameState.nextAction;
-			if (addition < nextAction.call && nextAction.player.getChips() > 0)
+			if (addition < nextAction.action.call && nextAction.player.getChips() > 0)
 			{
-				throw 'Bet ' + addition + ' is less than the call ' + nextAction.call;
+				throw 'Bet ' + addition + ' is less than the call ' + nextAction.action.call;
 			}
 			
-			if (addition > nextAction.call && addition < nextAction.minRaise)
+			if (addition > nextAction.action.call && addition < nextAction.action.minRaise)
 			{
-				throw 'Bet ' + addition + ' is less than the min raise ' + nextAction.minRaise;
+				throw 'Bet ' + addition + ' is less than the min raise ' + nextAction.action.minRaise;
 			}
 			
-			if (addition !== nextAction.call && addition > nextAction.maxRaise)
+			if (addition !== nextAction.action.call && addition > nextAction.action.maxRaise)
 			{
-				throw 'Bet ' + addition + ' is greater than the max raise ' + nextAction.maxRaise;
+				throw 'Bet ' + addition + ' is greater than the max raise ' + nextAction.action.maxRaise;
 			}
 			
 			actionLog.addEntry(pots.addToPot(addition));

@@ -2,9 +2,12 @@ let NextAction = (player, call, minRaise, maxRaise) =>
 {
 	return {
 		player: player,
-		call: call,
-		minRaise: minRaise,
-		maxRaise: maxRaise
+		action:
+		{
+			call: call,
+			minRaise: minRaise,
+			maxRaise: maxRaise
+		}
 	}
 }
 
