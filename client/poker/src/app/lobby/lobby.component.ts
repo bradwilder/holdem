@@ -1,9 +1,9 @@
 import { Component, ViewEncapsulation, OnInit, OnDestroy } from '@angular/core';
-import { LobbyService } from '../lobby.service';
+import { LobbyService } from './lobby.service';
 import { Subscription } from 'rxjs/Subscription';
-import { Room } from '../../room/room.model';
-import { SocketService } from '../../socket.service';
-import { MenuService } from '../../menu/menu.service';
+import { Room } from '../room/room.model';
+import { SocketService } from '../socket.service';
+import { MenuService } from '../menu/menu.service';
 
 @Component
 ({
