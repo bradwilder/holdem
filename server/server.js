@@ -54,7 +54,10 @@ server.listen(port, () => console.log('Listening on port ' + port));
 
 io.sockets.on('connection', function(socket)
 {
+	console.log('connection: ' + socket.id);
 	lobby.addVisitor(socket.id);
+	// TODO: send reset to all clients
+	
 	socket.on('enterLobby', function()
 	{
 		console.log('enterLobby: ' + socket.id);
