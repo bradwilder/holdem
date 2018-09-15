@@ -1,6 +1,6 @@
 import { Player } from "./table/player/player.model";
 
-export class PlayerActionState
+export class NextAction
 {
 	player: Player;
 	call: number;

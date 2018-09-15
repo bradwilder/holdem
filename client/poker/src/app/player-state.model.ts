@@ -1,9 +1,9 @@
 import { Player } from "./table/player/player.model";
-import { PlayerActionState } from "./player-action-state.model";
+import { NextAction } from "./next-action.model";
 
 export class PlayerState
 {
 	player: Player;
 	isInHand: boolean;
-	playerAction: PlayerActionState;
+	playerAction: NextAction;
 }
