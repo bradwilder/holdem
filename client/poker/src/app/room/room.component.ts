@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
-import { SocketService } from '../../socket.service';
-import { GameStateService } from '../../game-state.service';
-import { MenuService } from '../../menu/menu.service';
-import { LobbyService } from '../../lobby/lobby.service';
+import { SocketService } from '../socket.service';
+import { GameStateService } from '../game-state.service';
+import { MenuService } from '../menu/menu.service';
+import { LobbyService } from '../lobby/lobby.service';
 
 @Component
 ({

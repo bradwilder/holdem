@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from '@angular/router';
 import { LobbyComponent } from "./lobby/lobby/lobby.component";
-import { RoomComponent } from "./room/room/room.component";
+import { RoomComponent } from "./room/room.component";
 
 const appRoutes: Routes =
 [

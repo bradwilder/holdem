@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { LobbyComponent } from './lobby/lobby/lobby.component';
 import { DataService } from './data.service';
 import { HttpModule } from '@angular/http';
-import { RoomComponent } from './room/room/room.component';
+import { RoomComponent } from './room/room.component';
 import { TableComponent } from './table/table/table.component';
 import { SocketService } from './socket.service';
 import { PlayerComponent } from './table/player/player.component';
