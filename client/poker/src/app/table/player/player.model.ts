@@ -5,7 +5,7 @@ export class Player
 	isInHand = false;
 	isDealer = false;
 	holeCards: number[] = [];
-	playerAction: PlayerAction;
+	ongoingRoundAction: OngoingRoundAction;
 	
 	constructor(name: string, chips: number)
 	{

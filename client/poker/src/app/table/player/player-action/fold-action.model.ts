@@ -1,4 +1,4 @@
-export class FoldAction implements PlayerAction
+export class FoldAction implements OngoingRoundAction
 {
 	getClassName(): string
 	{

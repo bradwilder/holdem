@@ -1,4 +1,4 @@
-export class RaiseAction implements PlayerAction
+export class RaiseAction implements OngoingRoundAction
 {
 	private value: number;
 	

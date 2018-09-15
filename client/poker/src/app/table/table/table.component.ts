@@ -91,10 +91,10 @@ export class TableComponent implements OnInit, OnDestroy
 		// //this.player8.holeCards = [19, 46];
 		// //this.player9.holeCards = [19, 46];
 		
-		// this.player0.playerAction = new RaiseAction(50000);
-		// this.player2.playerAction = new CallAction(50);
-		// this.player4.playerAction = new CheckAction();
-		// this.player7.playerAction = new FoldAction();
+		// this.player0.ongoingRoundAction = new RaiseAction(50000);
+		// this.player2.ongoingRoundAction = new CallAction(50);
+		// this.player4.ongoingRoundAction = new CheckAction();
+		// this.player7.ongoingRoundAction = new FoldAction();
 	}
 	
 	ngOnDestroy()

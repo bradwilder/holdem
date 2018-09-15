@@ -1,4 +1,4 @@
-export class CheckAction implements PlayerAction
+export class CheckAction implements OngoingRoundAction
 {
 	getClassName(): string
 	{

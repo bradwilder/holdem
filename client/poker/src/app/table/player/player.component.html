@@ -41,7 +41,7 @@
 </ng-template>
 
 <div *ngIf="player" class="action-box">
-	<app-player-action [playerAction]='player.playerAction'></app-player-action>
+	<app-player-action [ongoingRoundAction]='player.ongoingRoundAction'></app-player-action>
 </div>
 
 <div *ngIf="player && player.isDealer" class="dealer-button">D</div>

@@ -1,4 +1,4 @@
-export class BetAction implements PlayerAction
+export class BetAction implements OngoingRoundAction
 {
 	private value: number;
 	
