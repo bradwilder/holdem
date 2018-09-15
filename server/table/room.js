@@ -16,7 +16,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 		let count = 0;
 		tablePlayers.forEach((player) =>
 		{
-			if (player && !player.isSittingOut())
+			if (player)
 			{
 				count++;
 			}
@@ -29,7 +29,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 		let players = [];
 		tablePlayers.forEach((tablePlayer) =>
 		{
-			if (tablePlayer && !tablePlayer.isSittingOut())
+			if (tablePlayer)
 			{
 				players.push(tablePlayer.getPlayer());
 			}
@@ -157,36 +157,6 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			
 			
 			
-			
-		},
-		sitPlayerIn: (i) =>
-		{
-			let tablePlayer = tablePlayers[i];
-			if (!tablePlayer)
-			{
-				throw 'No player at index ' + i;
-			}
-			
-			if (!tablePlayer.isSittingOut())
-			{
-				throw 'Player ' + i + ' is already sitting in';
-			}
-			
-			let newIndex = 0;
-			for (let j = 0; j < tablePlayers.length && j < i; j++)
-			{
-				let tablePlayer = tablePlayers[j];
-				if (tablePlayer && !tablePlayer.isSittingOut())
-				{
-					newIndex++;
-				}
-			}
-			
-			
-			// TODO: is game active? if not, queue them for later
-			//if ()
-			
-			//tablePlayer.setSittingOut(false);
 			
 		},
 		addVisitor: (visitor) =>

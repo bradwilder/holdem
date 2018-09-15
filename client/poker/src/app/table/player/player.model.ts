@@ -4,7 +4,6 @@ export class Player
 	chips: number;
 	isInHand = false;
 	isDealer = false;
-	isSittingOut = false;
 	holeCards: number[] = [];
 	playerAction: PlayerAction;
 	
