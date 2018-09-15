@@ -54,17 +54,16 @@ server.listen(port, () => console.log('Listening on port ' + port));
 
 io.sockets.on('connection', function(socket)
 {
+	lobby.addVisitor(socket.id);
 	socket.on('enterLobby', function()
 	{
 		console.log('enterLobby: ' + socket.id);
 		io.sockets.connected[socket.id].emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
-		lobby.addVisitor(socket.id);
 	});
 	
 	socket.on('leaveLobby', function()
 	{
 		console.log('leaveLobby: ' + socket.id);
-		lobby.removeVisitor(socket.id);
 	});
 	
 	socket.on('enterRoom', function(id)
@@ -87,23 +86,41 @@ io.sockets.on('connection', function(socket)
 		{
 			io.sockets.connected[socket.id].emit('loggedIn', newPlayer);
 		}
+		else
+		{
+			// TODO: error
+		}
 	});
 	
 	socket.on('joinTable', function(id, position)
 	{
 		console.log('joinTable ' + id + ', position: ' + position + ': ' + socket.id);
-		
-		// TODO!!!!!
 		if (lobby.joinTable(socket.id, id, position))
 		{
-			lobby.getVisitors().forEach((visitor) =>
+			io.emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
+			
+			let room = lobby.getRoom(id);
+			if (room)
 			{
-				io.sockets.connected[visitor].emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
-			});
+				let roomVisitors = room.getVisitors();
+				roomVisitors.forEach((roomVisitor) =>
+				{
+					io.sockets.connected[roomVisitor].emit('gameState', room.getGameState());
+				});
+				
+				let tablePlayers = room.getTablePlayers();
+				tablePlayers.forEach((tablePlayer) =>
+				{
+					if (tablePlayer)
+					{
+						io.sockets.connected[tablePlayer.getSocket()].emit('gameState', room.getGameState(tablePlayer));
+					}
+				});
+			}
 		}
 		else
 		{
-			io.sockets.connected[socket.id].emit('s');
+			// TODO: error
 		}
 	});
 	
@@ -111,5 +128,6 @@ io.sockets.on('connection', function(socket)
 	{
 		console.log('disconnect: ' + socket.id);
 		lobby.removeVisitorCompletely(socket.id);
+		io.emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
 	});
 });

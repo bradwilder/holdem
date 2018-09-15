@@ -1,6 +1,6 @@
 let TablePlayer = (player, socket) =>
 {
-	let sittingOut = true;
+	let sittingOut = false;
 	
 	
 	
@@ -9,6 +9,7 @@ let TablePlayer = (player, socket) =>
 	let self =
 	{
 		getPlayer: () => player,
+		getSocket: () => socket,
 		isSittingOut: () => sittingOut,
 		setSittingOut: (isSittingOut) =>
 		{

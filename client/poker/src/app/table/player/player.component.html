@@ -19,7 +19,7 @@
 	</ng-template>
 </ng-template>
 
-<ng-container *ngIf="player">
+<ng-container *ngIf="player && player.isInHand">
 	<ng-container *ngIf="player.holeCards.length == 2; then hole_cards_showing; else hole_cards_hidden"></ng-container>
 </ng-container>
 

@@ -1,3 +1,8 @@
+const HoldEm = require('../game/holdEm');
+const Deck = require('../game/deck');
+const GameState = require('../game/gameState');
+const PlayerSimple = require('../game/playerSimple');
+
 let Room = (id, name, bigBlind, maxPlayers) =>
 {
 	let tablePlayers = Array(maxPlayers).fill(null);
@@ -26,13 +31,68 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 		{
 			if (tablePlayer && !tablePlayer.isSittingOut())
 			{
-				tablePlayer.push(tablePlayer);
+				players.push(tablePlayer);
 			}
 		});
 		return players;
 	}
 	
+	let tablePlayersToPlayersSimpleWithOriginNoGame = (tablePlayerOrigin) =>
+	{
+		let indexOrigin;
+		for (let i = 0; i < maxPlayers; i++)
+		{
+			let tablePlayer = tablePlayers[i];
+			if (tablePlayer && tablePlayer.getPlayer() === tablePlayerOrigin.getPlayer())
+			{
+				indexOrigin = i;
+				break;
+			}
+		}
+		
+		if (indexOrigin >= 0)
+		{
+			let playersSimple = Array(maxPlayers).fill(null);
+			
+			let playerOrigin = tablePlayers[indexOrigin].getPlayer();
+			let playerSimple = PlayerSimple(playerOrigin.getName(), playerOrigin.getChips(), false, null);
+			playersSimple[0] = playerSimple;
+			
+			let currentAddIndex = 1;
+			for (let i = (indexOrigin + 1) % maxPlayers; i != indexOrigin; i = (i + 1) % maxPlayers)
+			{
+				let tablePlayer = tablePlayers[i];
+				if (tablePlayer)
+				{
+					let player = tablePlayer.getPlayer();
+					let playerSimple = PlayerSimple(player.getName(), player.getChips(), false, null);
+					playersSimple[currentAddIndex] = playerSimple;
+				}
+				currentAddIndex++;
+			}
+			return playersSimple;
+		}
+		else
+		{
+			return tablePlayersToPlayersSimpleNoGame();
+		}
+	}
 	
+	let tablePlayersToPlayersSimpleNoGame = () =>
+	{
+		let playersSimple = Array(maxPlayers).fill(null);
+		for (let i = 0; i < maxPlayers; i++)
+		{
+			let tablePlayer = tablePlayers[i];
+			if (tablePlayer)
+			{
+				let player = tablePlayer.getPlayer();
+				let playerSimple = PlayerSimple(player.getName(), player.getChips(), false, null);
+				playersSimple[i] = playerSimple;
+			}
+		}
+		return playersSimple;
+	}
 	
 	let self =
 	{
@@ -40,6 +100,8 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 		name: name,
 		bigBlind: bigBlind,
 		maxPlayers: maxPlayers,
+		getVisitors: () => visitors,
+		getTablePlayers: () => tablePlayers,
 		getNumPlayers: () =>
 		{
 			let count = 0;
@@ -59,12 +121,28 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				throw "Can't seat player at position " + i + " with max players " + tablePlayers.length;
 			}
 			
+			// TODO: what if game is in progress? add them into game and hope it queues correctly...
 			tablePlayers[i] = tablePlayer;
+			
+			self.removeVisitor(tablePlayer.getSocket());
 			
 			if (!holdEm && getNumPlayersSittingIn() >= 2)
 			{
-				startGame();
+				self.startGame();
 			}
+		},
+		removePlayer: (tablePlayerToRemove) =>
+		{
+			for (let i = 0; i < tablePlayers.length; i++)
+			{
+				let tablePlayer = tablePlayers[i];
+				if (tablePlayer === tablePlayerToRemove)
+				{
+					tablePlayers[i] = null;
+				}
+			}
+			
+			self.removeVisitor(tablePlayerToRemove.getSocket());
 		},
 		startGame: () =>
 		{
@@ -72,6 +150,13 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			
 			// TODO
 			console.log('startGame called');
+			holdEm = HoldEm(players, bigBlind, Deck());
+			
+			
+			
+			
+			
+			
 		},
 		sitPlayerIn: (i) =>
 		{
@@ -117,10 +202,35 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			{
 				visitors.splice(index, 1);
 			}
+		},
+		getGameState: (player = null) =>
+		{
+			let gameState;
+			if (holdEm)
+			{
+				gameState = holdEm.generateNextAction();
+				
+				// TODO!!!
+				
+				
+				
+				
+			}
+			else
+			{
+				let playersSimple;
+				if (player)
+				{
+					playersSimple = tablePlayersToPlayersSimpleWithOriginNoGame(player);
+				}
+				else
+				{
+					playersSimple = tablePlayersToPlayersSimpleNoGame();
+				}
+				gameState = GameState(null, null, playersSimple, null);
+			}
+			return gameState;
 		}
-		
-		
-		
 	}
 	
 	return self;

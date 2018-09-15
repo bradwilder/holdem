@@ -9,22 +9,15 @@ let Lobby = () =>
 		Room(0, '10-handed', 20, 10)
 	];
 	
-	let getRoom = (id) =>
-	{
-		return rooms.find((room) => room.id === id);
-	}
-	
-	let visitors = {}; // socket ids
-	
-	let players = {};
+	let visitors = {}; // socketID: tablePlayer
 	
 	let hasPlayer = (name) =>
 	{
-		let tablePlayers = Object.values(players);
+		let tablePlayers = Object.values(visitors);
 		for (let i = 0; i < tablePlayers.length; i++)
 		{
 			let tablePlayer = tablePlayers[i];
-			if (tablePlayer.getPlayer().name === name)
+			if (tablePlayer && tablePlayer.getPlayer().name === name)
 			{
 				return true;
 			}
@@ -36,6 +29,10 @@ let Lobby = () =>
 	let self =
 	{
 		getRooms: () => rooms,
+		getRoom:  (id) =>
+		{
+			return rooms.find((room) => room.id === id);
+		},
 		getVisitors: () => Object.keys(visitors),
 		addVisitor: (visitor) =>
 		{
@@ -50,7 +47,7 @@ let Lobby = () =>
 		},
 		addRoomVisitor: (visitor, roomID) =>
 		{
-			let room = getRoom(roomID);
+			let room = self.getRoom(roomID);
 			if (room)
 			{
 				room.addVisitor(visitor);
@@ -58,7 +55,7 @@ let Lobby = () =>
 		},
 		removeRoomVisitor: (visitor, roomID) =>
 		{
-			let room = getRoom(roomID);
+			let room = self.getRoom(roomID);
 			if (room)
 			{
 				room.removeVisitor(visitor);
@@ -66,13 +63,13 @@ let Lobby = () =>
 		},
 		joinTable: (visitor, roomID, position) =>
 		{
-			if (!visitors.hasOwnProperty(visitor) && !visitors[visitor])
+			if (!visitors.hasOwnProperty(visitor) || !visitors[visitor])
 			{
 				return false;
 			}
 			
 			let tablePlayer = visitors[visitor];
-			let room = getRoom(roomID);
+			let room = self.getRoom(roomID);
 			if (room)
 			{
 				room.addPlayer(tablePlayer, position);
@@ -81,12 +78,20 @@ let Lobby = () =>
 		},
 		removeVisitorCompletely: (visitor) =>
 		{
-			self.removeVisitor();
+			let tablePlayer = visitors[visitor];
+			
+			self.removeVisitor(visitor);
 			rooms.forEach((room) =>
 			{
-				room.removeVisitor(visitor);
+				if (tablePlayer)
+				{
+					room.removePlayer(tablePlayer);
+				}
+				else
+				{
+					room.removeVisitor(visitor);
+				}
 			});
-			delete players[visitor];
 		},
 		createPlayer: (visitor, name) =>
 		{
@@ -97,7 +102,7 @@ let Lobby = () =>
 			
 			let player = Player(name, 20000);
 			let tablePlayer = TablePlayer(player, visitor);
-			players[visitor] = tablePlayer;
+			visitors[visitor] = tablePlayer;
 			return player;
 		}
 	}

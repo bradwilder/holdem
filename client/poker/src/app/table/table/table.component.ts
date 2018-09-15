@@ -33,6 +33,22 @@ export class TableComponent implements OnInit, OnDestroy
 	{
 		this.gameStateService.gameStateChanged.subscribe((gameState) =>
 		{
+			let players = gameState.players;
+			
+			this.player0 = players[0];
+			this.player1 = players[1];
+			this.player2 = players[2];
+			this.player3 = players[3];
+			this.player4 = players[4];
+			this.player5 = players[5];
+			this.player6 = players[6];
+			this.player7 = players[7];
+			this.player8 = players[8];
+			this.player9 = players[9];
+			
+			
+			
+			
 			
 		});
 		
@@ -50,7 +66,7 @@ export class TableComponent implements OnInit, OnDestroy
 		// this.player8 = new Player('mark', 25000);
 		// this.player9 = new Player('cheech', 25000);
 		
-		// //this.currentPlayer = this.player0;
+		// // //this.currentPlayer = this.player0;
 		
 		// this.player0.isInHand = false;
 		// //this.player1.isInHand = true;
@@ -71,9 +87,9 @@ export class TableComponent implements OnInit, OnDestroy
 		// this.player4.holeCards = [19, 46];
 		// this.player5.holeCards = [19, 46];
 		// //this.player6.holeCards = [19, 46];
-		// this.player7.holeCards = [19, 46];
-		// this.player8.holeCards = [19, 46];
-		// this.player9.holeCards = [19, 46];
+		// //this.player7.holeCards = [19, 46];
+		// //this.player8.holeCards = [19, 46];
+		// //this.player9.holeCards = [19, 46];
 		
 		// this.player0.playerAction = new RaiseAction(50000);
 		// this.player2.playerAction = new CallAction(50);
