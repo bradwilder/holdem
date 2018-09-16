@@ -264,6 +264,9 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				}
 				gameState = GameState(null, null, playersSimple, null);
 			}
+			console.log('gameState');
+			console.log(gameState);
+			console.log('gameState end');
 			return gameState;
 		}
 	}
