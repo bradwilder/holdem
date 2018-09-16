@@ -8,14 +8,13 @@
 </ng-template>
 
 <ng-template #player_box_empty>
-	<ng-container *ngIf="currentPlayer; then logged_in; else logged_out"></ng-container>
+	<ng-container *ngIf="currentPlayer && currentTable === null; then join; else open"></ng-container>
 	
-	<ng-template #logged_out>
+	<ng-template #open>
 		<span>Open</span>
 	</ng-template>
 	
-	<!-- TODO: show Open if logged in but at table -->
-	<ng-template #logged_in>
+	<ng-template #join>
 		<span class="join-link" (click)="onJoinTable()">Join</span>
 	</ng-template>
 </ng-template>

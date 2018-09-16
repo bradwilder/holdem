@@ -20,6 +20,8 @@ export class PlayerComponent
 	private routeSubscription: Subscription;
 	private currentPlayer: Player;
 	private currentPlayerSubscription: Subscription;
+	private currentTable: number;
+	private currentTableSubscription: Subscription;
 	
 	constructor(private route: ActivatedRoute, private socketService: SocketService, private currentPlayerService: CurrentPlayerService) {}
 	
@@ -34,16 +36,23 @@ export class PlayerComponent
 		{
 			this.currentPlayer = currentPlayer;
 		});
+		
+		this.currentTableSubscription = this.currentPlayerService.currentTableChanged.subscribe((currentTable) =>
+		{
+			this.currentTable = currentTable;
+		});
 	}
 	
 	onJoinTable()
 	{
 		this.socketService.getSocket().emit('joinTable', this.roomID, this.position);
+		this.currentPlayerService.setCurrentTable(this.roomID);
 	}
 	
 	ngOnDestroy()
 	{
 		this.routeSubscription.unsubscribe();
 		this.currentPlayerSubscription.unsubscribe();
+		this.currentTableSubscription.unsubscribe();
 	}
 }

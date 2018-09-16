@@ -6,8 +6,11 @@ import { Subject } from "rxjs/Subject";
 @Injectable()
 export class CurrentPlayerService
 {
-	currentPlayer: Player;
+	private currentPlayer: Player;
 	currentPlayerChanged = new Subject<Player>();
+	
+	private currentTable: number;
+	currentTableChanged = new Subject<number>();
 	
 	constructor(private socketService: SocketService)
 	{
@@ -20,12 +23,20 @@ export class CurrentPlayerService
 		this.socketService.getSocket().on('serverStart', () =>
 		{
 			this.currentPlayer = null;
+			this.currentTable = null;
 			this.currentPlayerChanged.next(this.currentPlayer);
+			this.currentTableChanged.next(this.currentTable);
 		});
 	}
 	
 	login(name)
 	{
 		this.socketService.getSocket().emit('login', name);
+	}
+	
+	setCurrentTable(roomID)
+	{
+		this.currentTable = roomID;
+		this.currentTableChanged.next(this.currentTable);
 	}
 }
