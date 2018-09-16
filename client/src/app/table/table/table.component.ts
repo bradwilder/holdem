@@ -43,7 +43,7 @@ export class TableComponent implements OnInit, OnDestroy
 			this.player8 = players[8];
 			this.player9 = players[9];
 			
-			
+			this.board = gameState.board;
 			
 			
 			

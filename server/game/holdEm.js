@@ -340,7 +340,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				case HoldEmState().BLINDS:
 				case HoldEmState().DEAL_HOLES:
 				case HoldEmState().BET_PREFLOP:
-					return null;
+					return [];
 				case HoldEmState().DEAL_FLOP:
 				case HoldEmState().BET_FLOP:
 					return board.getFlop();
