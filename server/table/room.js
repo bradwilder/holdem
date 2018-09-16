@@ -11,7 +11,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 	
 	let visitors = [];
 	
-	let getNumPlayersSittingIn = () =>
+	let getNumPlayersAtTable = () =>
 	{
 		let count = 0;
 		tablePlayers.forEach((player) =>
@@ -24,7 +24,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 		return count;
 	}
 	
-	let getPlayersSittingIn = () =>
+	let getPlayersAtTable = () =>
 	{
 		let players = [];
 		tablePlayers.forEach((tablePlayer) =>
@@ -35,6 +35,66 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			}
 		});
 		return players;
+	}
+	
+	let tablePlayersToPlayersSimpleWithOrigin = (tablePlayerOrigin, gamePlayers) =>
+	{
+		let indexOrigin;
+		let gamePlayerIndex = 0;
+		for (let i = 0; i < maxPlayers; i++)
+		{
+			let tablePlayer = tablePlayers[i];
+			if (tablePlayer)
+			{
+				if (tablePlayer.getPlayer() === tablePlayerOrigin.getPlayer())
+				{
+					indexOrigin = i;
+					break;
+				}
+				gamePlayerIndex++;
+			}
+		}
+		
+		if (indexOrigin >= 0)
+		{
+			let playersSimple = Array(maxPlayers).fill(null);
+			
+			playersSimple[0] = gamePlayers[gamePlayerIndex];
+			
+			gamePlayerIndex = (gamePlayerIndex + 1) % gamePlayers.length;
+			let currentAddIndex = 1;
+			for (let i = (indexOrigin + 1) % maxPlayers; i != indexOrigin; i = (i + 1) % maxPlayers)
+			{
+				let tablePlayer = tablePlayers[i];
+				if (tablePlayer)
+				{
+					playersSimple[currentAddIndex] = gamePlayers[gamePlayerIndex];
+					gamePlayerIndex = (gamePlayerIndex + 1) % gamePlayers.length;
+				}
+				currentAddIndex++;
+			}
+			return playersSimple;
+		}
+		else
+		{
+			return tablePlayersToPlayersSimple(gamePlayers);
+		}
+	}
+	
+	let tablePlayersToPlayersSimple = (gamePlayers) =>
+	{
+		let playersSimple = Array(maxPlayers).fill(null);
+		let gamePlayerIndex = 0;
+		for (let i = 0; i < maxPlayers; i++)
+		{
+			let tablePlayer = tablePlayers[i];
+			if (tablePlayer)
+			{
+				playersSimple[i] = gamePlayers[gamePlayerIndex];
+				gamePlayerIndex++;
+			}
+		}
+		return playersSimple;
 	}
 	
 	let tablePlayersToPlayersSimpleWithOriginNoGame = (tablePlayerOrigin) =>
@@ -55,8 +115,8 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			let playersSimple = Array(maxPlayers).fill(null);
 			
 			let playerOrigin = tablePlayers[indexOrigin].getPlayer();
-			let playerSimple = PlayerSimple(playerOrigin.getName(), playerOrigin.getChips(), false, null);
-			playersSimple[0] = playerSimple;
+			let playerSimpleOrigin = PlayerSimple(playerOrigin.getName(), playerOrigin.getChips(), false, null);
+			playersSimple[0] = playerSimpleOrigin;
 			
 			let currentAddIndex = 1;
 			for (let i = (indexOrigin + 1) % maxPlayers; i != indexOrigin; i = (i + 1) % maxPlayers)
@@ -126,7 +186,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			
 			self.removeVisitor(tablePlayer.getSocket());
 			
-			if (!holdEm && getNumPlayersSittingIn() >= 2)
+			if (!holdEm && getNumPlayersAtTable() >= 2)
 			{
 				self.startGame();
 			}
@@ -146,7 +206,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 		},
 		startGame: () =>
 		{
-			let players = getPlayersSittingIn();
+			let players = getPlayersAtTable();
 			
 			// TODO
 			console.log('startHand called');
@@ -180,15 +240,16 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			if (holdEm)
 			{
 				gameState = holdEm.generateGameState();
-				
-				// TODO!!!
-				console.log('gameState');
-				console.log(gameState);
-				console.log('gameState2');
-				
-				
-				
-				
+				let playersSimple;
+				if (player)
+				{
+					playersSimple = tablePlayersToPlayersSimpleWithOrigin(player, gameState.players);
+				}
+				else
+				{
+					playersSimple = tablePlayersToPlayersSimple(gameState.players);
+				}
+				gameState.players = playersSimple;
 			}
 			else
 			{
