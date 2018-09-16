@@ -3,7 +3,7 @@ export class OngoingRoundAction
 	private value: number;
 	private className: string;
 	
-	constructor(className: string, value: number)
+	constructor(className: string, value = 0)
 	{
 		this.className = className;
 		this.value = value;
