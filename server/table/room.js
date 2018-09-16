@@ -262,7 +262,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				{
 					playersSimple = tablePlayersToPlayersSimpleNoGame();
 				}
-				gameState = GameState(null, null, playersSimple, null);
+				gameState = GameState(null, null, null, playersSimple, null);
 			}
 			console.log('gameState');
 			console.log(gameState);

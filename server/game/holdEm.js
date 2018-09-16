@@ -245,7 +245,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				default:
 			}
 			
-			return GameState(state, self.getTotalPotSize(), getPlayersSimple(), nextAction);
+			return GameState(state, self.getTotalPotSize(), self.getBoard(), getPlayersSimple(), nextAction);
 		},
 		startHand: () =>
 		{
