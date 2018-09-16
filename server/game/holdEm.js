@@ -18,11 +18,6 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 	let board;
 	let actionLog = ActionLog();
 	
-	let emitEvent = (event) =>
-	{
-		// TODO
-	}
-	
 	let changeDealer = () =>
 	{
 		dealerIndex = getNextPlayerAtTableNotPending(dealerIndex);
