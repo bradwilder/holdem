@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { OngoingRoundAction } from './ongoing-round-action.model';
 
 @Component
 ({
