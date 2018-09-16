@@ -74,9 +74,9 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		return mainPlayers;
 	}
 	
-	let getChipsThisRound = (player) =>
+	let getOngoingRoundAction = (player) =>
 	{
-		return pots ? pots.getChipsThisRound(player) : 0;
+		return pots ? pots.getOngoingActionThisRound(player) : null;
 	}
 	
 	let getPlayersSimple = () =>
@@ -84,7 +84,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		let playersSimple = [];
 		players.forEach((player) =>
 		{
-			let playerSimple = PlayerSimple(player.getName(), player.getChips(), player.hasHoleCards(), getChipsThisRound(player));
+			let playerSimple = PlayerSimple(player.getName(), player.getChips(), player.hasHoleCards(), getOngoingRoundAction(player));
 			playersSimple.push(playerSimple);
 		});
 		return playersSimple;

@@ -1,3 +1,5 @@
+import { OngoingRoundAction } from "./player-action/ongoing-round-action.model";
+
 export class Player
 {
 	name: string;

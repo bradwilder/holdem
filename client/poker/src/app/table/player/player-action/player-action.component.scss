@@ -16,9 +16,14 @@
 	z-index: 1;
 }
 
+.action-circle-label {
+	font-weight: bold;
+}
+
 .action-dialogue {
 	display: inline-block;
 	height: 20px;
+	line-height: 20px;
 	padding: 0 20px 0 30px;
 	border-radius: 10px;
 	opacity: .7;
@@ -27,7 +32,7 @@
 }
 
 .call,
-.bet {
+.big-blind {
 	& .action-circle {
 		background: greenyellow;
 	}
@@ -37,13 +42,24 @@
 	}
 }
 
+.small-blind {
+	& .action-circle {
+		background: yellow;
+	}
+	
+	& .action-dialogue {
+		color: yellow;
+	}
+}
+
 .call {
 	& .action-circle-label:after {
 		content: 'C';
 	}
 }
 
-.bet {
+.big-blind,
+.small-blind {
 	& .action-circle-label:after {
 		content: 'B';
 	}
@@ -71,6 +87,10 @@
 	& .action-circle-label:after {
 		content: '\f00c';
 	}
+	
+	& .action-dialogue {
+		color: lightblue;
+	}
 }
 
 .fold {
@@ -80,5 +100,9 @@
 	
 	& .action-circle-label:after {
 		content: '\f00d';
+	}
+	
+	& .action-dialogue {
+		color: orangered;
 	}
 }

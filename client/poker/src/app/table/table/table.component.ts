@@ -1,9 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Player } from '../player/player.model';
-// import { RaiseAction } from '../player/player-action/raise-action.model';
-// import { CallAction } from '../player/player-action/call-action.model';
-// import { CheckAction } from '../player/player-action/check-action.model';
-// import { FoldAction } from '../player/player-action/fold-action.model';
+import { OngoingRoundAction } from '../player/player-action/ongoing-round-action.model';
 import { GameStateService } from '../../game-state.service';
 
 @Component
@@ -91,10 +88,11 @@ export class TableComponent implements OnInit, OnDestroy
 		// //this.player8.holeCards = [19, 46];
 		// //this.player9.holeCards = [19, 46];
 		
-		// this.player0.ongoingRoundAction = new RaiseAction(50000);
-		// this.player2.ongoingRoundAction = new CallAction(50);
-		// this.player4.ongoingRoundAction = new CheckAction();
-		// this.player7.ongoingRoundAction = new FoldAction();
+		// this.player0.ongoingRoundAction = new OngoingRoundAction('raise', 499990);
+		// this.player2.ongoingRoundAction = new OngoingRoundAction('call', 50);
+		// this.player4.ongoingRoundAction = new OngoingRoundAction('check', 999999);
+		// this.player5.ongoingRoundAction = new OngoingRoundAction('fold', 5350);
+		// this.player7.ongoingRoundAction = new OngoingRoundAction('small-blind', 30);
 	}
 	
 	ngOnDestroy()

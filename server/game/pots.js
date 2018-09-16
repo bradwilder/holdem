@@ -1,6 +1,7 @@
 let Pot = require('./pot');
 let HoldEmState = require('./holdEmState');
 let ActionLogEntry = require('./actionLogEntry');
+let OngoingRoundAction = require('./ongoingRoundAction');
 
 let Pots = (players, pendingPlayers, bigBlind) =>
 {
@@ -8,7 +9,13 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 	
 	let pot = Pot(players);
 	potList.push(pot);
-		
+	
+	let ongoingRoundActions = {};
+	players.forEach((player) =>
+	{
+		ongoingRoundActions[player] = null;
+	});
+	
 	let currentPotIndex = 0;
 	
 	let currentRaise = 0
@@ -183,6 +190,8 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 						bettingOver = true;
 					}
 			}
+			
+			ongoingRoundActions[player] = 'check';
 		}
 		else
 		{
@@ -222,10 +231,12 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 						addition -= smallBlind;
 						getCurrentPot().addDeadChips(smallBlind);
 						action = "bought the button for " + chipsThisRound;
+						ongoingRoundActions[player] = 'big-blind';
 					}
 					else
 					{
 						action = "called " + chipsThisRound + " small blind";
+						ongoingRoundActions[player] = 'small-blind';
 					}
 				}
 				else if (!gotBigBlind)
@@ -234,19 +245,24 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 					bigBlindPlayer = player;
 					
 					action = "called " + chipsThisRound + " big blind";
+					ongoingRoundActions[player] = 'big-blind';
 				}
 				else
 				{
 					action = "raised to " + chipsThisRound;
+					ongoingRoundActions[player] = 'raise';
 				}
-			}
-			else if (chipsThisRound < currBet)
-			{
-				action = "called " + addition;
 			}
 			else
 			{
 				action = "called";
+				
+				if (chipsThisRound < currBet)
+				{
+					action += " " + addition;
+				}
+				
+				ongoingRoundActions[player] = 'call';
 			}
 			
 			if (player.getChips() == 0)
@@ -484,6 +500,12 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 			}
 			return chips;
 		},
+		getOngoingActionThisRound: (player) =>
+		{
+			let chips = self.getChipsThisRound(player);
+			let roundAction = ongoingRoundActions[player];
+			return OngoingRoundAction(roundAction, chips);
+		},
 		fold: () =>
 		{
 			let player = self.getNextActionPlayer();
@@ -510,6 +532,8 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 				{
 					entries.push(refund);
 				}
+				
+				ongoingRoundActions[player] = 'fold';
 			}
 			
 			// actionIndex should always point to a valid index within the current pot
