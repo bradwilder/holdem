@@ -24,6 +24,8 @@ export class TableComponent implements OnInit, OnDestroy
 	
 	private board: number[];
 	
+	private potSize: number;
+	
 	constructor(private gameStateService: GameStateService) {}
 	
 	ngOnInit()
@@ -44,6 +46,8 @@ export class TableComponent implements OnInit, OnDestroy
 			this.player9 = players[9];
 			
 			this.board = gameState.board;
+			
+			this.potSize = gameState.potSize;
 			
 			
 			

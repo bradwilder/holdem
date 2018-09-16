@@ -18,6 +18,7 @@ import { LobbyService } from './lobby/lobby.service';
 import { LoginComponent, LoginModalComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PotComponent } from './table/pot/pot.component';
 
 @NgModule
 ({
@@ -32,7 +33,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 		PlayerActionComponent,
 		MenuComponent,
 		LoginComponent,
-		LoginModalComponent
+		LoginModalComponent,
+		PotComponent
 	],
 	imports:
 	[

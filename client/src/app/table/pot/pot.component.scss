@@ -1,0 +1,32 @@
+.pot {
+	position: absolute;
+	left: 50%;
+	top: 30%;
+	transform: translateX(-50%);
+}
+
+.pot-inner {
+	position: relative;
+}
+
+.chip {
+	position: absolute;
+	left: 0;
+	top: 50%;
+	width: 45px;
+	height: 45px;
+	transform: translateY(-50%);
+	z-index: 1;
+}
+
+.pot-size {
+	display: inline-block;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 20px 0 55px;
+	border-radius: 20px;
+	opacity: .7;
+	background: #111;
+	font-weight: bold;
+	color: #E64C3C;
+}
