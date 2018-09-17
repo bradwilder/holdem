@@ -15,6 +15,7 @@ export class PlayerComponent
 {
 	@Input() player: Player;
 	@Input() position: number;
+	@Input() nextActionPlayer: Player;
 	
 	private roomID: number;
 	private routeSubscription: Subscription;

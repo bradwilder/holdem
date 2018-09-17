@@ -1,6 +1,7 @@
+import { Player } from "../player/player.model";
+
 export class NextAction
 {
-	call: number;
-	minRaise: number;
-	maxRaise: number;
+	player: Player;
+	action: {call: number, minRaise: number, maxRaise: number};
 }

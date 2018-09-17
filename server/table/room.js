@@ -262,13 +262,9 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 					});
 				}
 				
-				if (tablePlayer && gameState.nextAction.player === tablePlayer.getPlayer())
+				if (!tablePlayer || gameState.nextAction.player !== tablePlayer.getPlayer())
 				{
-					gameState.nextAction = gameState.nextAction.action;
-				}
-				else
-				{
-					gameState.nextAction = null;
+					gameState.nextAction.action = null;
 				}
 				
 				if (gameState.board)

@@ -1,4 +1,4 @@
-<div [ngClass]="{empty: !player}" class="player-box">
+<div [ngClass]="{empty: !player, 'next-action': player && nextActionPlayer && nextActionPlayer.name === player.name}" class="player-box">
 	<ng-container *ngIf="player; then player_box; else player_box_empty"></ng-container>
 </div>
 

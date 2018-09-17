@@ -10,6 +10,10 @@
 	&.empty {
 		opacity: .5;
 	}
+	
+	&.next-action {
+		border-color: yellow;
+	}
 }
 
 .join-link {

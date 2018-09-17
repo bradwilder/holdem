@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { NextAction } from './next-action.model';
 import { SocketService } from '../../socket.service';
 
 @Component
@@ -11,7 +10,7 @@ import { SocketService } from '../../socket.service';
 export class NextActionComponent
 {
 	@Input() roomID: number;
-	@Input() action: NextAction;
+	@Input() action: {call: number, minRaise: number, maxRaise: number};
 	@Input() bigBlind: number;
 	private raiseAmount: number;
 	private showingRaiseDialogue = false;
