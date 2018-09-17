@@ -93,18 +93,22 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			{
 				case HoldEmState().BLINDS:
 				case HoldEmState().DEAL_HOLES:
+					actionLog.addSystemEntry('Dealt holes');
 					state = HoldEmState().BET_PREFLOP;
 					break;
 				case HoldEmState().BET_PREFLOP:
 				case HoldEmState().DEAL_FLOP:
+					actionLog.addSystemEntry('Dealt flop');
 					state = HoldEmState().BET_FLOP;
 					break;
 				case HoldEmState().BET_FLOP:
 				case HoldEmState().DEAL_TURN:
+					actionLog.addSystemEntry('Dealt turn');
 					state = HoldEmState().BET_TURN;
 					break;
 				case HoldEmState().BET_TURN:
 				case HoldEmState().DEAL_RIVER:
+					actionLog.addSystemEntry('Dealt river');
 					state = HoldEmState().BET_RIVER;
 					break;
 				case HoldEmState().BET_RIVER:
