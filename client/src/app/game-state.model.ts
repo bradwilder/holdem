@@ -8,5 +8,6 @@ export class GameState
 	bigBlind: number;
 	players: Player[];
 	nextAction: NextAction;
+	nextActionPlayer: Player;
 	board: number[];
 }

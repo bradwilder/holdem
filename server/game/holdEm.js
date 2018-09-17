@@ -233,6 +233,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		generateGameState: () =>
 		{
 			let nextAction;
+			let nextActionPlayer;
 			switch (state)
 			{
 				case HoldEmState().BLINDS:
@@ -240,12 +241,13 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				case HoldEmState().BET_FLOP:
 				case HoldEmState().BET_TURN:
 				case HoldEmState().BET_RIVER:
-					nextAction = NextAction(getActionPlayer(), getCall(), getMinRaise(), getMaxRaise());
+					nextAction = NextAction(getCall(), getMinRaise(), getMaxRaise());
+					nextActionPlayer = getActionPlayer();
 					break;
 				default:
 			}
 			
-			return GameState(state, self.getTotalPotSize(), bigBlind, self.getBoard(), getPlayersSimple(), nextAction);
+			return GameState(state, self.getTotalPotSize(), bigBlind, self.getBoard(), getPlayersSimple(), nextAction, nextActionPlayer);
 		},
 		startHand: () =>
 		{

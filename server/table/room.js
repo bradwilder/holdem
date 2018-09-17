@@ -262,9 +262,9 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 					});
 				}
 				
-				if (!tablePlayer || gameState.nextAction.player !== tablePlayer.getPlayer())
+				if (!tablePlayer || gameState.nextActionPlayer !== tablePlayer.getPlayer())
 				{
-					gameState.nextAction.action = null;
+					gameState.nextAction = null;
 				}
 				
 				if (gameState.board)
@@ -284,7 +284,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				{
 					playersSimple = tablePlayersToPlayersSimpleNoGame();
 				}
-				gameState = GameState(null, null, null, null, playersSimple, null);
+				gameState = GameState(null, null, null, null, playersSimple, null, null);
 			}
 			console.log('gameState');
 			console.log(gameState);
