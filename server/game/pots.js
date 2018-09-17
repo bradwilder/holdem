@@ -11,10 +11,6 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 	potList.push(pot);
 	
 	let ongoingRoundActions = {};
-	players.forEach((player) =>
-	{
-		ongoingRoundActions[player] = null;
-	});
 	
 	let currentPotIndex = 0;
 	
@@ -58,6 +54,15 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 	let moveActionIndex = () =>
 	{
 		actionIndex = (actionIndex + 1) % getCurrentPot().getNumPlayers();
+	}
+	
+	let resetOngoingRoundActions = () =>
+	{
+		ongoingRoundActions = {};
+		players.forEach((player) =>
+		{
+			ongoingRoundActions[player] = null;
+		});
 	}
 	
 	let hasEligiblePlayers = () =>
@@ -445,6 +450,8 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 				}
 				
 				actionIndex = 0;
+				
+				resetOngoingRoundActions();
 			}
 			
 			bettingOver = getCurrentPot() == null;
@@ -679,8 +686,6 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 			return potsString
 		}
 	}
-	
-	self.startRound(HoldEmState().BLINDS);
 	
 	return self;
 }

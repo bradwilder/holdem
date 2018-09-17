@@ -1,11 +1,11 @@
-let PlayerSimple = (name, chips, isInHand, holeCards, chipsThisRound, isDealer) =>
+let PlayerSimple = (name, chips, isInHand, holeCards, ongoingRoundAction, isDealer) =>
 {
 	return {
 		name: name,
 		chips: chips,
 		isInHand: isInHand,
 		holeCards: holeCards,
-		chipsThisRound: chipsThisRound,
+		ongoingRoundAction: ongoingRoundAction,
 		isDealer: isDealer
 	}
 }

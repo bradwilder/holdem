@@ -57,13 +57,13 @@ export class NextActionComponent
 	{
 		if (!this.showingRaiseDialogue)
 		{
-			this.showingRaiseDialogue = true;
 			this.raiseAmount = this.action.minRaise;
 		}
 		else
 		{
 			this.socketService.getSocket().emit('tableAction', this.roomID, 'raise', this.raiseAmount);
 		}
+		this.showingRaiseDialogue = !this.showingRaiseDialogue;
 	}
 	
 	onRaiseIncrease()
