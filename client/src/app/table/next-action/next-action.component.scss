@@ -1,0 +1,74 @@
+.action-box {
+	position: absolute;
+	bottom: 1%;
+	right: 1%;
+	transform: translateY(-50%);
+	background: #111;
+	opacity: .6;
+	border: solid white 1px;
+	border-radius: 10px;
+	padding: 20px;
+}
+
+.action-btn-group {
+	margin-left: 10px;
+	margin-right: 10px;
+	display: inline-block;
+	vertical-align: bottom;
+}
+
+.action-btn-group-label {
+	margin: 0;
+	text-align: center;
+	display: block;
+}
+
+.action-btn {
+	height: 50px;
+	width: 50px;
+	border-radius: 25px;
+	text-align: center;
+	line-height: 40px;
+	font-size: 30px;
+	border: solid white 1px;
+	cursor: pointer;
+	outline: none;
+}
+
+.action-btn-label {
+	font-weight: bold;
+}
+
+.fold-btn {
+	background: orangered;
+}
+
+.fold-label {
+	color: orangered;
+}
+
+.check-btn {
+	background: lightblue;
+}
+
+.check-label {
+	color: lightblue;
+}
+
+.call-btn {
+	background: yellowgreen;
+	font-size: 18px;
+	line-height: 50px;
+}
+
+.call-label {
+	color: yellowgreen;
+}
+
+.raise-btn {
+	background: plum;
+}
+
+.raise-label {
+	color: plum;
+}

@@ -1,0 +1,25 @@
+<div *ngIf="action" class="action-box">
+	<span class="action-btn-group">
+		<p class="action-btn-group-label fold-label">Fold</p>
+		<button class="action-btn fold-btn"><i class="fa fa-close"></i></button>
+	</span>
+	<ng-container *ngIf="action.call === 0; then check; else call"></ng-container>
+	<span *ngIf="action.minRaise > 0" class="action-btn-group">
+		<p class="action-btn-group-label raise-label">Raise</p>
+		<button class="action-btn raise-btn"><i class="fa fa-chevron-up"></i></button>
+	</span>
+</div>
+
+<ng-template #check>
+	<span class="action-btn-group">
+		<p class="action-btn-group-label check-label">Check</p>
+		<button class="action-btn check-btn"><i class="fa fa-check"></i></button>
+	</span>
+</ng-template>
+
+<ng-template #call>
+	<span class="action-btn-group">
+		<p class="action-btn-group-label call-label">Call</p>
+		<button class="action-btn call-btn"><span class="action-btn-label">{{ getFormattedValue(action.call) }}</span></button>
+	</span>
+</ng-template>

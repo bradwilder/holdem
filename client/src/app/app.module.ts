@@ -19,6 +19,7 @@ import { LoginComponent, LoginModalComponent } from './login/login.component';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PotComponent } from './table/pot/pot.component';
+import { NextActionComponent } from './table/next-action/next-action.component';
 
 @NgModule
 ({
@@ -34,7 +35,8 @@ import { PotComponent } from './table/pot/pot.component';
 		MenuComponent,
 		LoginComponent,
 		LoginModalComponent,
-		PotComponent
+		PotComponent,
+		NextActionComponent
 	],
 	imports:
 	[

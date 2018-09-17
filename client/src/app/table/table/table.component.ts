@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Player } from '../player/player.model';
 import { OngoingRoundAction } from '../player/player-action/ongoing-round-action.model';
 import { GameStateService } from '../../game-state.service';
+import { NextAction } from '../../next-action.model';
 
 @Component
 ({
@@ -26,6 +27,8 @@ export class TableComponent implements OnInit, OnDestroy
 	
 	private potSize: number;
 	
+	private nextAction: NextAction;
+	
 	constructor(private gameStateService: GameStateService) {}
 	
 	ngOnInit()
@@ -49,7 +52,7 @@ export class TableComponent implements OnInit, OnDestroy
 			
 			this.potSize = gameState.potSize;
 			
-			
+			this.nextAction = gameState.action;
 			
 		});
 		
