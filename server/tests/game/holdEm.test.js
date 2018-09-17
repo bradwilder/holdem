@@ -7,11 +7,12 @@ let verifyPlayerAction = (holdEm, expectedHoldEmState, expectedPlayer, expectedM
 {
 	let gameState = holdEm.generateGameState();
 	let nextAction = gameState.nextAction;
+	let nextActionPlayer = gameState.nextActionPlayer;
 	
-	expect(nextAction.player.getName()).toBe(expectedPlayer.getName());
-	expect(nextAction.action.minRaise).toBe(expectedMinRaise);
-	expect(nextAction.action.maxRaise).toBe(expectedMaxRaise);
-	expect(nextAction.action.call).toBe(expectedCall);
+	expect(nextActionPlayer.getName()).toBe(expectedPlayer.getName());
+	expect(nextAction.minRaise).toBe(expectedMinRaise);
+	expect(nextAction.maxRaise).toBe(expectedMaxRaise);
+	expect(nextAction.call).toBe(expectedCall);
 	
 	expect(gameState.state).toBe(expectedHoldEmState);
 	expect(holdEm.getTotalPotSize()).toBe(expectedTotalPotSize);
