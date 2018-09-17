@@ -1,7 +1,8 @@
 <nav class="type__title">
-	<span *ngIf="showLobbyButton" class="nav-btn nav-item left-item" [routerLink]="['/']">Lobby</span>
+	<span *ngIf="!menuObject.isLobby && currentTable == null" class="nav-btn nav-item left-item" [routerLink]="['/']">Lobby</span>
+	<span *ngIf="!menuObject.isLobby && currentTable != null" class="nav-btn nav-item left-item" (click)="standClicked()">Stand Up</span>
 	
-	<span class="nav-title">{{ pageTitle }}</span>
+	<span class="nav-title">{{ menuObject.title }}</span>
 	
 	<ng-container *ngIf="currentPlayer; then current_player; else login"></ng-container>
 </nav>

@@ -8,7 +8,8 @@ import { NextAction } from '../next-action/next-action.model';
 ({
 	selector: 'app-table',
 	templateUrl: './table.component.html',
-	styleUrls: ['./table.component.scss']
+	styleUrls: ['./table.component.scss'],
+	providers: [GameStateService]
 })
 export class TableComponent implements OnInit, OnDestroy
 {
@@ -38,32 +39,11 @@ export class TableComponent implements OnInit, OnDestroy
 	
 	ngOnInit()
 	{
+		this.processGameState(this.gameStateService.getGameState());
+		
 		this.gameStateService.gameStateChanged.subscribe((gameState) =>
 		{
-			console.log(gameState);
-			
-			let players = gameState.players;
-			
-			this.player0 = players[0];
-			this.player1 = players[1];
-			this.player2 = players[2];
-			this.player3 = players[3];
-			this.player4 = players[4];
-			this.player5 = players[5];
-			this.player6 = players[6];
-			this.player7 = players[7];
-			this.player8 = players[8];
-			this.player9 = players[9];
-			
-			this.board = gameState.board;
-			
-			this.potSize = gameState.potSize;
-			
-			this.nextAction = gameState.nextAction;
-			this.nextActionPlayer = gameState.nextActionPlayer;
-			
-			this.bigBlind = gameState.bigBlind;
-			
+			this.processGameState(gameState);
 		});
 		
 				
@@ -110,6 +90,39 @@ export class TableComponent implements OnInit, OnDestroy
 		// this.player4.ongoingRoundAction = new OngoingRoundAction('check', 999999);
 		// this.player5.ongoingRoundAction = new OngoingRoundAction('fold', 5350);
 		// this.player7.ongoingRoundAction = new OngoingRoundAction('small-blind', 30);
+	}
+	
+	processGameState(gameState)
+	{
+		console.log(gameState);
+		
+		if (gameState)
+		{
+			let players = gameState.players;
+			
+			this.player0 = players[0];
+			this.player1 = players[1];
+			this.player2 = players[2];
+			this.player3 = players[3];
+			this.player4 = players[4];
+			this.player5 = players[5];
+			this.player6 = players[6];
+			this.player7 = players[7];
+			this.player8 = players[8];
+			this.player9 = players[9];
+			
+			this.board = gameState.board;
+			
+			this.potSize = gameState.potSize;
+			
+			this.nextAction = gameState.nextAction;
+			this.nextActionPlayer = gameState.nextActionPlayer;
+			
+			this.bigBlind = gameState.bigBlind;
+			
+			
+			
+		}
 	}
 	
 	ngOnDestroy()

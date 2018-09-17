@@ -21,6 +21,8 @@ export class LobbyComponent implements OnInit, OnDestroy
 	
 	ngOnInit()
 	{
+		this.rooms = this.lobbyService.getRooms();
+		
 		this.roomsSubscription = this.lobbyService.roomsChanged.subscribe((rooms) =>
 		{
 			this.rooms = rooms;
@@ -40,5 +42,6 @@ export class LobbyComponent implements OnInit, OnDestroy
 	{
 		this.roomsSubscription.unsubscribe();
 		this.socketService.getSocket().emit('leaveLobby');
+		this.socketService.getSocket().off('serverStart');
 	}
 }

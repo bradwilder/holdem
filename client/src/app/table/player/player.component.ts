@@ -33,10 +33,14 @@ export class PlayerComponent
 			this.roomID = +params['id'];
 		});
 		
+		this.currentPlayer = this.currentPlayerService.getCurrentPlayer();
+		
 		this.currentPlayerSubscription = this.currentPlayerService.currentPlayerChanged.subscribe((currentPlayer) =>
 		{
 			this.currentPlayer = currentPlayer;
 		});
+		
+		this.currentTable = this.currentPlayerService.getCurrentTable();
 		
 		this.currentTableSubscription = this.currentPlayerService.currentTableChanged.subscribe((currentTable) =>
 		{

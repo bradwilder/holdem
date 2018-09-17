@@ -141,6 +141,18 @@ io.sockets.on('connection', function(socket)
 		}
 	});
 	
+	socket.on('leaveTable', function(id)
+	{
+		console.log('leaveTable ' + id + ': ' + socket.id);
+		
+		
+		
+		
+		
+		// TODO!!!
+		
+	});
+	
 	socket.on('tableAction', function(id, actionType, value = null)
 	{
 		console.log('tableAction ' + id + ', action: ' + actionType + ', value: ' + value + ': ' + socket.id);

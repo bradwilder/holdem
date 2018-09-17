@@ -3,6 +3,7 @@ import { MenuService } from './menu.service';
 import { Subscription } from 'rxjs/Subscription';
 import { CurrentPlayerService } from '../current-player.service';
 import { Player } from '../table/player/player.model';
+import { SocketService } from '../socket.service';
 
 @Component
 ({
@@ -12,31 +13,50 @@ import { Player } from '../table/player/player.model';
 })
 export class MenuComponent implements OnInit, OnDestroy
 {
-	private pageTitle = "";
 	private showLobbyButton = false;
+	private menuObject: {title: string, isLobby: boolean} = {title: '', isLobby: false};
 	private menuSubscription: Subscription;
 	private currentPlayer: Player;
+	private currentTable: number;
 	private currentPlayerSubscription: Subscription;
+	private currentTableSubscription: Subscription;
 	
-	constructor(private menuService: MenuService, private currentPlayerService: CurrentPlayerService) {}
+	constructor(private menuService: MenuService, private currentPlayerService: CurrentPlayerService, private socketService: SocketService) {}
 	
 	ngOnInit()
 	{
+		this.menuObject = this.menuService.getRoomData();
+		
 		this.menuSubscription = this.menuService.roomChanged.subscribe((menuObject) =>
 		{
-			this.pageTitle = menuObject.title;
+			this.menuObject = menuObject;
 			this.showLobbyButton = !menuObject.isLobby;
 		});
+		
+		this.currentPlayer = this.currentPlayerService.getCurrentPlayer();
 		
 		this.currentPlayerSubscription = this.currentPlayerService.currentPlayerChanged.subscribe((currentPlayer) =>
 		{
 			this.currentPlayer = currentPlayer;
 		});
+		
+		this.currentTable = this.currentPlayerService.getCurrentTable();
+		
+		this.currentTableSubscription = this.currentPlayerService.currentTableChanged.subscribe((currentTable) =>
+		{
+			this.currentTable = currentTable;
+		});
+	}
+	
+	standClicked()
+	{
+		this.socketService.getSocket().emit('leaveTable', this.currentTable);
 	}
 	
 	ngOnDestroy()
 	{
 		this.menuSubscription.unsubscribe();
 		this.currentPlayerSubscription.unsubscribe();
+		this.currentTableSubscription.unsubscribe();
 	}
 }

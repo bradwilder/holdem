@@ -21,4 +21,9 @@ export class MenuService
 		this.isLobby = false;
 		this.roomChanged.next({title: this.pageTitle, isLobby: this.isLobby});
 	}
+	
+	getRoomData(): {title: string, isLobby: boolean}
+	{
+		return {title: this.pageTitle, isLobby: this.isLobby};
+	}
 }

@@ -76,6 +76,16 @@ let Lobby = () =>
 			}
 			return true;
 		},
+		leaveTable: (visitor, roomID) =>
+		{
+			
+			
+			
+			
+			
+			
+			
+		},
 		removeVisitorCompletely: (visitor) =>
 		{
 			let tablePlayer = visitors[visitor];

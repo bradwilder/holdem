@@ -29,6 +29,16 @@ export class CurrentPlayerService
 		});
 	}
 	
+	getCurrentPlayer()
+	{
+		return this.currentPlayer;
+	}
+	
+	getCurrentTable()
+	{
+		return this.currentTable;
+	}
+	
 	login(name)
 	{
 		this.socketService.getSocket().emit('login', name);

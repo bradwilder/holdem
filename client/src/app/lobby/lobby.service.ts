@@ -42,4 +42,9 @@ export class LobbyService
 	{
 		return this.rooms.find((room) => room.id === roomID);
 	}
+	
+	getRooms()
+	{
+		return this.rooms;
+	}
 }

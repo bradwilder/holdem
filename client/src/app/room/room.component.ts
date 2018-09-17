@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { SocketService } from '../socket.service';
-import { GameStateService } from '../game-state.service';
 import { MenuService } from '../menu/menu.service';
 import { LobbyService } from '../lobby/lobby.service';
 
@@ -10,8 +9,7 @@ import { LobbyService } from '../lobby/lobby.service';
 ({
 	selector: 'app-room',
 	templateUrl: './room.component.html',
-	styleUrls: ['./room.component.css'],
-	providers: [GameStateService]
+	styleUrls: ['./room.component.css']
 })
 export class RoomComponent implements OnInit, OnDestroy
 {
@@ -40,6 +38,7 @@ export class RoomComponent implements OnInit, OnDestroy
 			this.socketService.getSocket().emit('enterRoom', this.roomID);
 		});
 		
+		// TODO: what the hell is this?
 		this.lobbySubscription = this.lobbyService.roomsChanged.subscribe((rooms) =>
 		{
 			if (this.roomID >= 0)
@@ -52,6 +51,7 @@ export class RoomComponent implements OnInit, OnDestroy
 	ngOnDestroy()
 	{
 		this.socketService.getSocket().emit('leaveRoom', this.roomID);
+		this.socketService.getSocket().off('serverStart');
 		this.routeSubscription.unsubscribe();
 		this.lobbySubscription.unsubscribe();
 	}
