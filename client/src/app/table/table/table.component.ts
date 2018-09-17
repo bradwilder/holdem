@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Player } from '../player/player.model';
-//import { OngoingRoundAction } from '../player/player-action/ongoing-round-action.model';
+// import { OngoingRoundAction } from '../player/player-action/ongoing-round-action.model';
 import { GameStateService } from '../../game-state.service';
 import { NextAction } from '../next-action/next-action.model';
 
@@ -12,6 +12,8 @@ import { NextAction } from '../next-action/next-action.model';
 })
 export class TableComponent implements OnInit, OnDestroy
 {
+	@Input() roomID: number;
+	
 	private player0: Player;
 	private player1: Player;
 	private player2: Player;
@@ -76,9 +78,9 @@ export class TableComponent implements OnInit, OnDestroy
 		// this.player8 = new Player('mark', 25000);
 		// this.player9 = new Player('cheech', 25000);
 		
-		// // //this.currentPlayer = this.player0;
+		// //this.currentPlayer = this.player0;
 		
-		// this.player0.isInHand = false;
+		// this.player0.isInHand = true;
 		// //this.player1.isInHand = true;
 		// this.player2.isInHand = true;
 		// //this.player3.isInHand = true;

@@ -115,7 +115,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			let playersSimple = Array(maxPlayers).fill(null);
 			
 			let playerOrigin = tablePlayers[indexOrigin].getPlayer();
-			let playerSimpleOrigin = PlayerSimple(playerOrigin.getName(), playerOrigin.getChips(), false, null);
+			let playerSimpleOrigin = PlayerSimple(playerOrigin.getName(), playerOrigin.getChips(), false, null, null, false);
 			playersSimple[0] = playerSimpleOrigin;
 			
 			let currentAddIndex = 1;
@@ -125,7 +125,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				if (tablePlayer)
 				{
 					let player = tablePlayer.getPlayer();
-					let playerSimple = PlayerSimple(player.getName(), player.getChips(), false, null);
+					let playerSimple = PlayerSimple(player.getName(), player.getChips(), false, null, null, false);
 					playersSimple[currentAddIndex] = playerSimple;
 				}
 				currentAddIndex++;
@@ -147,7 +147,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			if (tablePlayer)
 			{
 				let player = tablePlayer.getPlayer();
-				let playerSimple = PlayerSimple(player.getName(), player.getChips(), false, null);
+				let playerSimple = PlayerSimple(player.getName(), player.getChips(), false, null, null, false);
 				playersSimple[i] = playerSimple;
 			}
 		}
@@ -234,16 +234,16 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				visitors.splice(index, 1);
 			}
 		},
-		getGameState: (player = null) =>
+		getGameState: (tablePlayer = null) =>
 		{
 			let gameState;
 			if (holdEm)
 			{
 				gameState = holdEm.generateGameState();
 				let playersSimple;
-				if (player)
+				if (tablePlayer)
 				{
-					playersSimple = tablePlayersToPlayersSimpleWithOrigin(player, gameState.players);
+					playersSimple = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, gameState.players);
 				}
 				else
 				{
@@ -251,7 +251,18 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				}
 				gameState.players = playersSimple;
 				
-				if (player && gameState.nextAction.player === player.getPlayer())
+				if (tablePlayer)
+				{
+					gameState.players.forEach((gamePlayer) =>
+					{
+						if (gamePlayer && gamePlayer.name === tablePlayer.getPlayer().getName())
+						{
+							gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards().map((card) => card.code);
+						}
+					});
+				}
+				
+				if (tablePlayer && gameState.nextAction.player === tablePlayer.getPlayer())
 				{
 					gameState.nextAction = gameState.nextAction.action;
 				}
@@ -259,13 +270,19 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				{
 					gameState.nextAction = null;
 				}
+				
+				if (gameState.board)
+				{
+					let board = gameState.board;
+					gameState.board = board.map((card) => card.code);
+				}
 			}
 			else
 			{
 				let playersSimple;
-				if (player)
+				if (tablePlayer)
 				{
-					playersSimple = tablePlayersToPlayersSimpleWithOriginNoGame(player);
+					playersSimple = tablePlayersToPlayersSimpleWithOriginNoGame(tablePlayer);
 				}
 				else
 				{
@@ -277,6 +294,33 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			console.log(gameState);
 			console.log('gameState end');
 			return gameState;
+		},
+		performGameAction: (action, value = null) =>
+		{
+			if (holdEm)
+			{
+				switch (action)
+				{
+					case 'fold':
+						holdEm.fold();
+						break;
+					case 'check':
+						holdEm.check();
+						break;
+					case 'call':
+						holdEm.call();
+						break;
+					case 'raise':
+						holdEm.bet(value);
+						break;
+				}
+				
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 	}
 	

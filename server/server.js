@@ -96,6 +96,32 @@ io.sockets.on('connection', function(socket)
 		}
 	});
 	
+	const updateRoomOccupants = (room) =>
+	{
+		let roomVisitors = room.getVisitors();
+		let gameState = room.getGameState();
+		// console.log('visitor gameState');
+		// console.log(gameState);
+		// console.log('visitor gameState2');
+		roomVisitors.forEach((roomVisitor) =>
+		{
+			io.sockets.connected[roomVisitor].emit('gameState', gameState);
+		});
+		
+		let tablePlayers = room.getTablePlayers();
+		tablePlayers.forEach((tablePlayer) =>
+		{
+			if (tablePlayer)
+			{
+				let gameState = room.getGameState(tablePlayer);
+				// console.log('player gameState: ' + tablePlayer.getPlayer().getName());
+				// console.log(gameState);
+				// console.log('player gameState2');
+				io.sockets.connected[tablePlayer.getSocket()].emit('gameState', gameState);
+			}
+		});
+	}
+	
 	socket.on('joinTable', function(id, position)
 	{
 		console.log('joinTable ' + id + ', position: ' + position + ': ' + socket.id);
@@ -106,33 +132,30 @@ io.sockets.on('connection', function(socket)
 			let room = lobby.getRoom(id);
 			if (room)
 			{
-				let roomVisitors = room.getVisitors();
-				let gameState = room.getGameState();
-				// console.log('visitor gameState');
-				// console.log(gameState);
-				// console.log('visitor gameState2');
-				roomVisitors.forEach((roomVisitor) =>
-				{
-					io.sockets.connected[roomVisitor].emit('gameState', gameState);
-				});
-				
-				let tablePlayers = room.getTablePlayers();
-				tablePlayers.forEach((tablePlayer) =>
-				{
-					if (tablePlayer)
-					{
-						let gameState = room.getGameState(tablePlayer);
-						// console.log('player gameState: ' + tablePlayer.getPlayer().getName());
-						// console.log(gameState);
-						// console.log('player gameState2');
-						io.sockets.connected[tablePlayer.getSocket()].emit('gameState', gameState);
-					}
-				});
+				updateRoomOccupants(room);
 			}
 		}
 		else
 		{
 			// TODO: error
+		}
+	});
+	
+	socket.on('tableAction', function(id, actionType, value = null)
+	{
+		console.log('tableAction ' + id + ', action: ' + actionType + ', value: ' + value + ': ' + socket.id);
+		
+		let room = lobby.getRoom(id);
+		if (room)
+		{
+			if (room.performGameAction(actionType, value))
+			{
+				updateRoomOccupants(room);
+			}
+			else
+			{
+				// TODO: error
+			}
 		}
 	});
 	

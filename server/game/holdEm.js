@@ -79,7 +79,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 		let playersSimple = [];
 		players.forEach((player) =>
 		{
-			let playerSimple = PlayerSimple(player.getName(), player.getChips(), player.hasHoleCards(), getOngoingRoundAction(player));
+			let playerSimple = PlayerSimple(player.getName(), player.getChips(), player.hasHoleCards(), [], getOngoingRoundAction(player), self.getDealerPlayer() === player);
 			playersSimple.push(playerSimple);
 		});
 		return playersSimple;
@@ -302,6 +302,12 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			}
 			
 			return self.generateGameState();
+		},
+		call: () =>
+		{
+			let gameState = self.generateGameState();
+			let nextAction = gameState.nextAction.action;
+			return self.bet(nextAction.call);
 		},
 		check: () => self.bet(0),
 		fold: () =>

@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { NextAction } from './next-action.model';
+import { SocketService } from '../../socket.service';
 
 @Component
 ({
@@ -9,10 +10,13 @@ import { NextAction } from './next-action.model';
 })
 export class NextActionComponent
 {
+	@Input() roomID: number;
 	@Input() action: NextAction;
 	@Input() bigBlind: number;
 	private raiseAmount: number;
 	private showingRaiseDialogue = false;
+	
+	constructor(private socketService: SocketService) {}
 	
 	getFormattedValue(value: number): string
 	{
@@ -36,20 +40,17 @@ export class NextActionComponent
 	
 	foldClicked()
 	{
-		// TODO
-		console.log('fold');
+		this.socketService.getSocket().emit('tableAction', this.roomID, 'fold');
 	}
 	
 	checkClicked()
 	{
-		// TODO
-		console.log('check');
+		this.socketService.getSocket().emit('tableAction', this.roomID, 'check');
 	}
 	
 	callClicked()
 	{
-		// TODO
-		console.log('call');
+		this.socketService.getSocket().emit('tableAction', this.roomID, 'call');
 	}
 	
 	raiseClicked()
@@ -61,8 +62,7 @@ export class NextActionComponent
 		}
 		else
 		{
-			// TODO
-			console.log('raise ' + this.raiseAmount);
+			this.socketService.getSocket().emit('tableAction', this.roomID, 'raise', this.raiseAmount);
 		}
 	}
 	

@@ -23,6 +23,7 @@ let Card = (code) =>
 	return {
 		suit: suit,
 		value: value,
+		code: code,
 		toString: () =>
 		{
 			let valueStr;

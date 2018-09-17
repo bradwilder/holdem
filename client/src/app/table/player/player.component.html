@@ -33,7 +33,7 @@
 </ng-template>
 
 <ng-template #hole_cards_showing>
-	<div class="hole-cards--showing" [ngClass]="{'active-player': player === currentPlayer, 'not-in-hand': !player.isInHand}">
+	<div class="hole-cards--showing" [ngClass]="{'active-player': currentPlayer && player.name === currentPlayer.name, 'not-in-hand': !player.isInHand}">
 		<img class="hole-card--showing bottom" [src]="'assets/cards/' + player.holeCards[0] + '.svg'">
 		<img class="hole-card--showing top" [src]="'assets/cards/' + player.holeCards[1] + '.svg'">
 	</div>
