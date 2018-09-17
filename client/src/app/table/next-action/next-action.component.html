@@ -1,25 +1,35 @@
 <div *ngIf="action" class="action-box">
 	<span class="action-btn-group">
-		<p class="action-btn-group-label fold-label">Fold</p>
-		<button class="action-btn fold-btn"><i class="fa fa-close"></i></button>
+		<p class="label fold-label">Fold</p>
+		<button class="action-btn fold-btn" (click)="foldClicked()"><i class="fa fa-close"></i></button>
 	</span>
 	<ng-container *ngIf="action.call === 0; then check; else call"></ng-container>
 	<span *ngIf="action.minRaise > 0" class="action-btn-group">
-		<p class="action-btn-group-label raise-label">Raise</p>
-		<button class="action-btn raise-btn"><i class="fa fa-chevron-up"></i></button>
+		<p class="label raise-label">Raise</p>
+		<button class="action-btn raise-btn"><span [ngClass]="{fa: !showingRaiseDialogue, 'fa-chevron-up': !showingRaiseDialogue, 'action-btn-label': showingRaiseDialogue}" (click)="raiseClicked()">{{ showingRaiseDialogue ? getFormattedValue(raiseAmount) : '' }}</span></button>
+		
+		<div *ngIf="showingRaiseDialogue" class="raise-dialogue">
+			<div class="label plus-minus-container">
+				<button class="action-btn raise-btn" [disabled]="raiseAmount === action.maxRaise" (click)="onRaiseIncrease()"><i class="fa fa-plus"></i></button>
+			</div>
+			<input type="range" orient="vertical" [min]="action.minRaise" [max]="action.maxRaise" [(ngModel)]="raiseAmount" [step]="bigBlind">
+			<div class="label plus-minus-container">
+				<button class="action-btn raise-btn" [disabled]="raiseAmount === action.minRaise" (click)="onRaiseDecrease()"><i class="fa fa-minus"></i></button>
+			</div>
+		</div>
 	</span>
 </div>
 
 <ng-template #check>
 	<span class="action-btn-group">
-		<p class="action-btn-group-label check-label">Check</p>
-		<button class="action-btn check-btn"><i class="fa fa-check"></i></button>
+		<p class="label check-label">Check</p>
+		<button class="action-btn check-btn" (click)="checkClicked()"><i class="fa fa-check"></i></button>
 	</span>
 </ng-template>
 
 <ng-template #call>
 	<span class="action-btn-group">
-		<p class="action-btn-group-label call-label">Call</p>
-		<button class="action-btn call-btn"><span class="action-btn-label">{{ getFormattedValue(action.call) }}</span></button>
+		<p class="label call-label">Call</p>
+		<button class="action-btn call-btn" (click)="callClicked()"><span class="action-btn-label">{{ getFormattedValue(action.call) }}</span></button>
 	</span>
 </ng-template>

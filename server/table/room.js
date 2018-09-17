@@ -250,6 +250,15 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 					playersSimple = tablePlayersToPlayersSimple(gameState.players);
 				}
 				gameState.players = playersSimple;
+				
+				if (player && gameState.nextAction.player === player.getPlayer())
+				{
+					gameState.nextAction = gameState.nextAction.action;
+				}
+				else
+				{
+					gameState.nextAction = null;
+				}
 			}
 			else
 			{
@@ -262,7 +271,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				{
 					playersSimple = tablePlayersToPlayersSimpleNoGame();
 				}
-				gameState = GameState(null, null, null, playersSimple, null);
+				gameState = GameState(null, null, null, null, playersSimple, null);
 			}
 			console.log('gameState');
 			console.log(gameState);

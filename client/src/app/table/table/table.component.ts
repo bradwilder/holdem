@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Player } from '../player/player.model';
-import { OngoingRoundAction } from '../player/player-action/ongoing-round-action.model';
+//import { OngoingRoundAction } from '../player/player-action/ongoing-round-action.model';
 import { GameStateService } from '../../game-state.service';
-import { NextAction } from '../../next-action.model';
+import { NextAction } from '../next-action/next-action.model';
 
 @Component
 ({
@@ -29,12 +29,16 @@ export class TableComponent implements OnInit, OnDestroy
 	
 	private nextAction: NextAction;
 	
+	private bigBlind: number;
+	
 	constructor(private gameStateService: GameStateService) {}
 	
 	ngOnInit()
 	{
 		this.gameStateService.gameStateChanged.subscribe((gameState) =>
 		{
+			console.log(gameState);
+			
 			let players = gameState.players;
 			
 			this.player0 = players[0];
@@ -52,7 +56,9 @@ export class TableComponent implements OnInit, OnDestroy
 			
 			this.potSize = gameState.potSize;
 			
-			this.nextAction = gameState.action;
+			this.nextAction = gameState.nextAction;
+			
+			this.bigBlind = gameState.bigBlind;
 			
 		});
 		

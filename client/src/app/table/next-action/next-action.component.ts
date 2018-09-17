@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { NextAction } from './next-action.model';
 
 @Component
 ({
@@ -8,7 +9,10 @@ import { Component, Input } from '@angular/core';
 })
 export class NextActionComponent
 {
-	@Input() action: {call: number, minRaise: number, maxRaise: number} = {call: 50, minRaise: 100, maxRaise: 200};
+	@Input() action: NextAction;
+	@Input() bigBlind: number;
+	private raiseAmount: number;
+	private showingRaiseDialogue = false;
 	
 	getFormattedValue(value: number): string
 	{
@@ -28,5 +32,49 @@ export class NextActionComponent
 		{
 			return String(value);
 		}
+	}
+	
+	foldClicked()
+	{
+		// TODO
+		console.log('fold');
+	}
+	
+	checkClicked()
+	{
+		// TODO
+		console.log('check');
+	}
+	
+	callClicked()
+	{
+		// TODO
+		console.log('call');
+	}
+	
+	raiseClicked()
+	{
+		if (!this.showingRaiseDialogue)
+		{
+			this.showingRaiseDialogue = true;
+			this.raiseAmount = this.action.minRaise;
+		}
+		else
+		{
+			// TODO
+			console.log('raise ' + this.raiseAmount);
+		}
+	}
+	
+	onRaiseIncrease()
+	{
+		this.raiseAmount += this.bigBlind;
+		this.raiseAmount = Math.min(this.raiseAmount, this.action.maxRaise);
+	}
+	
+	onRaiseDecrease()
+	{
+		this.raiseAmount -= this.bigBlind;
+		this.raiseAmount = Math.max(this.raiseAmount, this.action.minRaise);
 	}
 }

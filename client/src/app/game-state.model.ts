@@ -1,11 +1,12 @@
-import { NextAction } from "./next-action.model";
 import { Player } from "./table/player/player.model";
+import { NextAction } from "./table/next-action/next-action.model";
 
 export class GameState
 {
 	holdEmState: number;
 	potSize: number;
+	bigBlind: number;
 	players: Player[];
-	action: NextAction;
+	nextAction: NextAction;
 	board: number[];
 }
