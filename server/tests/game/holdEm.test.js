@@ -51,41 +51,37 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player0.getChips()).toBe(1990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player1.getChips()).toBe(1980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 2000, 20, 30);
 		
-		gameState = holdEm.bet(50);
+		holdEm.bet(50);
 		expect(player2.getChips()).toBe(1950);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 80, 2000, 50, 80);
 		
-		gameState = holdEm.fold();
+		holdEm.fold();
 		expect(player3.getChips()).toBe(2000);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player4, 80, 2000, 50, 80);
 		
-		gameState = holdEm.fold();
+		holdEm.fold();
 		expect(player4.getChips()).toBe(2000);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player5, 80, 2000, 50, 80);
 		
-		gameState = holdEm.fold();
+		holdEm.fold();
 		expect(player5.getChips()).toBe(2000);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player0, 70, 1990, 40, 80);
 		
-		gameState = holdEm.fold();
+		holdEm.fold();
 		expect(player0.getChips()).toBe(1990);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player1, 60, 1980, 30, 80);
 		
-		gameState = holdEm.fold();
+		holdEm.fold();
 		expect(player1.getChips()).toBe(1980);
 		verify(holdEm, HoldEmState().WINNER, 0);
 		expect(player2.getChips()).toBe(2030);
@@ -112,41 +108,37 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player0.getChips()).toBe(90);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player1.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 100, 20, 30);
 		
-		gameState = holdEm.bet(100);
+		holdEm.bet(100);
 		expect(player2.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 0, 0, 100, 130);
 		
-		gameState = holdEm.bet(100);
+		holdEm.bet(100);
 		expect(player3.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player4, 0, 0, 100, 230);
 		
-		gameState = holdEm.bet(100);
+		holdEm.bet(100);
 		expect(player4.getChips()).toBe(9900);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player5, 0, 0, 100, 330);
 		
-		gameState = holdEm.bet(100);
+		holdEm.bet(100);
 		expect(player5.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player0, 0, 0, 90, 430);
 		
-		gameState = holdEm.bet(90);
+		holdEm.bet(90);
 		expect(player0.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player1, 0, 0, 80, 520);
 		
-		gameState = holdEm.bet(80);
+		holdEm.bet(80);
 		expect(player1.getChips()).toBe(0);
 		verify(holdEm, HoldEmState().WINNER, 600);
 		
@@ -198,41 +190,37 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player0.getChips()).toBe(90);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player1.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 100, 20, 30);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player2.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 40, 100, 20, 50);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player3.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player4, 40, 100, 20, 70);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player4.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player5, 40, 100, 20, 90);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player5.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player0, 30, 90, 10, 110);
 		
-		gameState = holdEm.bet(10);
+		holdEm.bet(10);
 		expect(player0.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player1, 20, 80, 0, 120);
 		
-		gameState = holdEm.check();
+		holdEm.check();
 		expect(player1.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_FLOP, player0, 20, 80, 0, 120);
 	});
@@ -258,29 +246,25 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player0.getChips()).toBe(990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player1.getChips()).toBe(980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 1000, 20, 30);
 		
-		gameState = holdEm.bet(50);
+		holdEm.bet(50);
 		expect(player2.getChips()).toBe(950);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 75, 75, 50, 80);
 		
-		gameState = holdEm.bet(75);
+		holdEm.bet(75);
 		expect(player3.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player4, 80, 1000, 75, 155);
 		
-		gameState = holdEm.bet(90);
+		holdEm.bet(90);
 		expect(player4.getChips()).toBe(910);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player5, 130, 1000, 90, 245);
 	});
@@ -306,17 +290,13 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player0.getChips()).toBe(990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player1.getChips()).toBe(980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 1000, 20, 30);
 		
@@ -344,29 +324,25 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player0.getChips()).toBe(990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player1.getChips()).toBe(980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 1000, 20, 30);
 		
 		expect(() => holdEm.bet(30)).toThrow();
 	});
 	
-	it('should throw on more than maxRaise', () =>
+	it('should correct the bet on more than maxRaise', () =>
 	{
 		let player0 = Player("0", 1000);
 		let player1 = Player("1", 1000);
 		let player2 = Player("2", 1000);
-		let player3 = Player("3", 75);
+		let player3 = Player("3", 1000);
 		let player4 = Player("4", 1000);
 		let player5 = Player("5", 1000);
 		
@@ -382,21 +358,19 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player0.getChips()).toBe(990);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player1.getChips()).toBe(980);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 1000, 20, 30);
 		
-		expect(() => holdEm.bet(3000)).toThrow();
+		holdEm.bet(3000);
+		expect(player2.getChips()).toBe(0);
+		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 0, 0, 1000, 1030);
 	});
 	
 	it('should refund an incontestable bet when the last potentially matching player folds', () =>
@@ -420,41 +394,37 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player0.getChips()).toBe(90);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player1.getChips()).toBe(80);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 50, 20, 30);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player2.getChips()).toBe(30);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 40, 50, 20, 50);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player3.getChips()).toBe(30);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player4, 40, 50, 20, 70);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player4.getChips()).toBe(30);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player5, 40, 50, 20, 90);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player5.getChips()).toBe(30);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player0, 30, 90, 10, 110);
 		
-		gameState = holdEm.bet(90);
+		holdEm.bet(90);
 		expect(player0.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player1, 0, 0, 80, 200);
 		
-		gameState = holdEm.fold();
+		holdEm.fold();
 		expect(player1.getChips()).toBe(80);
 		expect(player0.getChips()).toBe(50);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 0, 0, 30, 150);
@@ -481,61 +451,57 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player0.getChips()).toBe(90);
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
 		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(player1.getChips()).toBe(155);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 50, 20, 30);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player2.getChips()).toBe(30);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 40, 150, 20, 50);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player3.getChips()).toBe(130);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player4, 40, 80, 20, 70);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player4.getChips()).toBe(60);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player5, 40, 175, 20, 90);
 		
-		gameState = holdEm.bet(20);
+		holdEm.bet(20);
 		expect(player5.getChips()).toBe(180);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player0, 30, 90, 10, 110);
 		
-		gameState = holdEm.bet(90);
+		holdEm.bet(90);
 		expect(player0.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player1, 155, 155, 80, 200);
 		
-		gameState = holdEm.bet(80);
+		holdEm.bet(80);
 		expect(player1.getChips()).toBe(75);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 0, 0, 30, 280);
 		
-		gameState = holdEm.bet(30);
+		holdEm.bet(30);
 		expect(player2.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 130, 130, 80, 310);
 		
-		gameState = holdEm.bet(130);
+		holdEm.bet(130);
 		expect(player3.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player4, 0, 0, 60, 440);
 		
-		gameState = holdEm.bet(60);
+		holdEm.bet(60);
 		expect(player4.getChips()).toBe(0);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player5, 155, 155, 130, 500);
 		
-		gameState = holdEm.bet(155);
+		holdEm.bet(155);
 		expect(player5.getChips()).toBe(25);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player1, 0, 0, 75, 655);
 		
-		gameState = holdEm.fold();
+		holdEm.fold();
 		expect(player1.getChips()).toBe(75);
 		expect(player5.getChips()).toBe(50);
 		verify(holdEm, HoldEmState().WINNER, 630);
@@ -565,13 +531,9 @@ describe('betting', () =>
 		
 		holdEm.startHand();
 		
-		let gameState;
-		
 		verifyPlayerAction(holdEm, HoldEmState().BLINDS, playerNew0, 0, 0, 30, 0);
 		
-		gameState = holdEm.generateGameState();
-		
-		gameState = holdEm.call();
+		holdEm.call();
 		expect(playerNew0.getChips()).toBe(470);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player0, 40, 100, 20, 30);
 	});

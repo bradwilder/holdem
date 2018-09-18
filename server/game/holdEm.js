@@ -299,7 +299,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			
 			if (addition !== nextAction.call && addition > nextAction.maxRaise)
 			{
-				throw 'Bet ' + addition + ' is greater than the max raise ' + nextAction.maxRaise;
+				addition = nextAction.maxRaise;
 			}
 			
 			actionLog.addEntry(pots.addToPot(addition));
