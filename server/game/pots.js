@@ -400,6 +400,45 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 		}
 	}
 	
+	let foldPlayer = (player) =>
+	{
+		let entries = [];
+		
+		let playerIndex = self.getMainPot().getIndex(player);
+		
+		player.fold();
+		
+		potList.forEach((pot) =>
+		{
+			pot.fold(player);
+		});
+		
+		entries.push(ActionLogEntry("folded", [player]));
+		
+		let refund = refundIncontestableBet();
+		if (refund)
+		{
+			entries.push(refund);
+		}
+		
+		ongoingRoundActions[player] = 'fold';
+		
+		if (playerIndex < actionIndex)
+		{
+			actionIndex--;
+		}
+		
+		// actionIndex should always point to a valid index within the current pot
+		// If we remove the last player, this will reset the index back to 0 instead of leaving it pointing to nothing
+		let currentPlayers = getCurrentPlayerCount();
+		if (currentPlayers > 0)
+		{
+			actionIndex = actionIndex % currentPlayers;
+		}
+		
+		return entries;
+	}
+	
 	let self =
 	{
 		getMainPot: () => potList[0],
@@ -521,37 +560,15 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 				throw "Tried to fold with no action player";
 			}
 			
-			let entries = [];
-			
-			if (player.hasHoleCards())
+			return foldPlayer(player);
+		},
+		foldOutOfTurn: (player) =>
+		{
+			if (self.getMainPot().contains(player))
 			{
-				player.fold();
-				
-				potList.forEach((pot) =>
-				{
-					pot.fold(player);
-				});
-				
-				entries.push(ActionLogEntry("folded", [player]));
-				
-				let refund = refundIncontestableBet();
-				if (refund)
-				{
-					entries.push(refund);
-				}
-				
-				ongoingRoundActions[player] = 'fold';
+				return foldPlayer(player);
 			}
-			
-			// actionIndex should always point to a valid index within the current pot
-			// If we remove the last player, this will reset the index back to 0 instead of leaving it pointing to nothing
-			let currentPlayers = getCurrentPlayerCount();
-			if (currentPlayers > 0)
-			{
-				actionIndex = actionIndex % currentPlayers;
-			}
-			
-			return entries;
+			return null;
 		},
 		addToPot: (addition) =>
 		{

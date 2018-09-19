@@ -318,10 +318,40 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		{
 			self.bet(self.generateGameState().nextAction.call);
 		},
-		check: () => self.bet(0),
+		check: () =>
+		{
+			self.bet(0)
+		},
 		fold: () =>
 		{
 			actionLog.addEntries(pots.fold());
+			if (pots.isEven() && !pots.isHandOver())
+			{
+				moveState();
+			}
+			else if (pots.isHandOver())
+			{
+				state = HoldEmState().WINNER;
+				let boardCards = self.getBoard();
+				let wonMainPot = pots.awardPot(boardCards);
+				let winners = wonMainPot.getWinners(boardCards);
+				let action;
+				if (winners.length == 1)
+				{
+					action = "won pot of " + wonMainPot.getSize();
+				}
+				else
+				{
+					action = "split pot of " + wonMainPot.getSize();
+				}
+				let entry = ActionLogEntry(action, winners);
+				
+				actionLog.addEntry(entry);
+			}
+		},
+		foldOutOfTurn: (player) =>
+		{
+			actionLog.addEntries(pots.foldOutOfTurn(player));
 			if (pots.isEven() && !pots.isHandOver())
 			{
 				moveState();
@@ -368,16 +398,13 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		},
 		removePlayer: (player) =>
 		{
-			if (player.hasHoleCards())
-			{
-				throw "Can't remove player with hole cards";
-			}
-			
 			let index = players.indexOf(player);
 			if (index === -1)
 			{
 				throw "Can't remove player that doesn't exist";
 			}
+			
+			self.foldOutOfTurn(player);
 			
 			players.splice(index, 1);
 			

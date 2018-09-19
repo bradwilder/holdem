@@ -46,6 +46,8 @@ let Lobby = (io) =>
 			{
 				room.removeOccupant(visitor);
 			});
+			
+			self.updateRoomCounts();
 		},
 		updateRoomCounts: () =>
 		{

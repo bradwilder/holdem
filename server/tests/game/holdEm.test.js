@@ -269,6 +269,46 @@ describe('betting', () =>
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player5, 130, 1000, 90, 245);
 	});
 	
+	it('should handle folding out of turn', () =>
+	{
+		let player0 = Player("0", 100);
+		let player1 = Player("1", 100);
+		let player2 = Player("2", 100);
+		let player3 = Player("3", 100);
+		let player4 = Player("4", 100);
+		let player5 = Player("5", 100);
+		
+		let players = [];
+		players.push(player0);
+		players.push(player1);
+		players.push(player2);
+		players.push(player3);
+		players.push(player4);
+		players.push(player5);
+		
+		holdEm = HoldEm(players, 20, Deck());
+		
+		holdEm.startHand();
+		
+		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player0, 0, 0, 10, 0);
+		
+		holdEm.call();
+		expect(player0.getChips()).toBe(90);
+		verifyPlayerAction(holdEm, HoldEmState().BLINDS, player1, 0, 0, 20, 10);
+		
+		holdEm.call();
+		expect(player1.getChips()).toBe(80);
+		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player2, 40, 100, 20, 30);
+		
+		holdEm.bet(20);
+		expect(player2.getChips()).toBe(80);
+		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 40, 100, 20, 50);
+		
+		holdEm.foldOutOfTurn(player1);
+		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 40, 100, 20, 50);
+		expect(player1.hasHoleCards()).toBe(false);
+	});
+	
 	it('should throw on bet less than call and not all in', () =>
 	{
 		let player0 = Player("0", 1000);

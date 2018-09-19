@@ -194,13 +194,17 @@ io.sockets.on('connection', function(socket)
 	{
 		console.log('tableAction ' + id + ', action: ' + actionType + ', value: ' + value + ': ' + socket.id);
 		let room = lobby.getRoom(id);
-		if (room)
+		let tablePlayer = allVisitors[socket.id];
+		if (tablePlayer)
 		{
-			room.performGameAction(actionType, value)
-		}
-		else
-		{
-			// TODO: error
+			if (room)
+			{
+				room.performGameAction(tablePlayer.getPlayer(), actionType, value)
+			}
+			else
+			{
+				// TODO: error
+			}
 		}
 	});
 	
@@ -209,10 +213,5 @@ io.sockets.on('connection', function(socket)
 		console.log('disconnect: ' + socket.id);
 		delete allVisitors[socket.id];
 		lobby.removeVisitorCompletely(socket.id);
-		lobby.updateRoomCounts();
-		lobby.getRooms().forEach((room) =>
-		{
-			room.updateRoomOccupants();
-		});
 	});
 });

@@ -66,6 +66,7 @@ let Pot = (players = null) =>
 		isContested: () => self.getNumPlayers() >= 2,
 		getPlayers: () => playerCounts.keySet(),
 		getPlayer: (i) => self.getPlayers()[i],
+		getIndex: (player) => players.indexOf(player),
 		contains: (player) => playerCounts.contains(player),
 		getWinners: (boardCards) =>
 		{

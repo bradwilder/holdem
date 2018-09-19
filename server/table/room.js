@@ -169,7 +169,45 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 		holdEm = HoldEm(players, bigBlind, Deck(), true);
 		holdEm.startHand();
 		startTimeout = null;
-		self.updateRoomOccupants();
+		updateRoomOccupants();
+	}
+	
+	let removePlayerFromTable = (tablePlayer) =>
+	{
+		let index;
+		for (let i = 0; i < tablePlayers.length; i++)
+		{
+			if (tablePlayer === tablePlayers[i])
+			{
+				index = i;
+				break;
+			}
+		}
+		
+		if (holdEm)
+		{
+			holdEm.removePlayer(tablePlayer.getPlayer());
+		}
+		
+		tablePlayers[index] = null;
+		updateRoomOccupants();
+	}
+	
+	let updateRoomOccupants = () =>
+	{
+		let gameState = self.getGameState();
+		self.getVisitors().forEach((roomVisitor) =>
+		{
+			io.sockets.connected[roomVisitor].emit('gameState', gameState);
+		});
+		
+		self.getTablePlayers().forEach((tablePlayer) =>
+		{
+			if (tablePlayer)
+			{
+				io.sockets.connected[tablePlayer.getSocket()].emit('gameState', self.getGameState(tablePlayer));
+			}
+		});
 	}
 	
 	let self =
@@ -210,36 +248,23 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 					clearTimeout(startTimeout);
 				}
 				
-				setTimeout(() => startGame(), 10000);
+				startTimeout = setTimeout(() => startGame(), 10000);
 			}
 			else if (holdEm)
 			{
 				// TODO: what if game is in progress? add them into game and hope it queues correctly...
+				
+				
+				
+				
 			}
 			
-			self.updateRoomOccupants();
+			updateRoomOccupants();
 		},
 		leaveTable: (tablePlayer) =>
 		{
-			let index;
-			for (let i = 0; i < tablePlayers.length; i++)
-			{
-				if (tablePlayer === tablePlayers[i])
-				{
-					index = i;
-					break;
-				}
-			}
-			
-			if (holdEm)
-			{
-				// TODO
-			}
-			
-			tablePlayers[index] = null;
-			
 			self.addVisitor(tablePlayer.getSocket());
-			self.updateRoomOccupants();
+			removePlayerFromTable(tablePlayer);
 		},
 		addVisitor: (visitor) =>
 		{
@@ -258,7 +283,7 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 				let tablePlayer = tablePlayers[i];
 				if (tablePlayer && tablePlayer.getSocket() === visitor)
 				{
-					tablePlayers[i] = null;
+					removePlayerFromTable(tablePlayer);
 				}
 			}
 		},
@@ -314,53 +339,42 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 				}
 				gameState = GameState(null, null, null, null, playersSimple, null, null);
 			}
-			console.log(gameState);
+			console.log(JSON.stringify(gameState, null, 4));
 			return gameState;
 		},
-		updateRoomOccupants: () =>
-		{
-			let gameState = self.getGameState();
-			self.getVisitors().forEach((roomVisitor) =>
-			{
-				io.sockets.connected[roomVisitor].emit('gameState', gameState);
-			});
-			
-			self.getTablePlayers().forEach((tablePlayer) =>
-			{
-				if (tablePlayer)
-				{
-					io.sockets.connected[tablePlayer.getSocket()].emit('gameState', self.getGameState(tablePlayer));
-				}
-			});
-		},
-		performGameAction: (action, value = null) =>
+		performGameAction: (player, action, value = null) =>
 		{
 			if (holdEm)
 			{
-				switch (action)
+				let gameState = holdEm.generateGameState();
+				if (gameState.nextActionPlayer === player)
 				{
-					case 'fold':
-						holdEm.fold();
-						break;
-					case 'check':
-						holdEm.check();
-						break;
-					case 'call':
-						holdEm.call();
-						break;
-					case 'raise':
-						holdEm.bet(value);
-						break;
+					switch (action)
+					{
+						case 'fold':
+							holdEm.fold();
+							break;
+						case 'check':
+							holdEm.check();
+							break;
+						case 'call':
+							holdEm.call();
+							break;
+						case 'raise':
+							holdEm.bet(value);
+							break;
+					}
+					updateRoomOccupants();
+					
+					return true;
 				}
-				self.updateRoomOccupants();
-				
-				return true;
 			}
 			else
 			{
 				// TODO: error here?
-				return false;
 			}
+			
+			return false;
 		}
 	}
 	
