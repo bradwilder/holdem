@@ -36,7 +36,8 @@ let HandFactory = () =>
 	
 	let getFlush = (cards, suit) =>
 	{
-		return cards.filter((card) => card.suit === suit).map((card) => card.value).sort(sortDesc);
+		let values = cards.filter((card) => card.suit === suit).map((card) => card.value).sort(sortDesc);
+		return values.slice(0, 5);
 	}
 	
 	let findStraightFlush = (cards, suit) =>
