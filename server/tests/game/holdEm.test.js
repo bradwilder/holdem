@@ -557,8 +557,8 @@ describe('betting', () =>
 		
 		holdEm = HoldEm(players, 20, Deck());
 		
-		let playerNew0 = Player('New0', 500);
-		holdEm.addPlayer(playerNew0, 5);
+		let playerNew6 = Player('New6', 500);
+		holdEm.addPlayer(playerNew6, 5);
 		
 		holdEm.startHand();
 		
