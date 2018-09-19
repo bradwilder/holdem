@@ -1,6 +1,6 @@
 <nav class="type__title">
-	<span *ngIf="!menuObject.isLobby && currentTable == null" class="nav-btn nav-item left-item" [routerLink]="['/']">Lobby</span>
-	<span *ngIf="!menuObject.isLobby && currentTable != null" class="nav-btn nav-item left-item" (click)="standClicked()">Stand Up</span>
+	<span *ngIf="!menuObject.isLobby && currentTable == null" class="nav-btn nav-item left-item" [routerLink]="['/']"><i class="fa fa-angle-left"></i> Lobby</span>
+	<span *ngIf="!menuObject.isLobby && currentTable != null" class="nav-btn nav-item left-item" (click)="standClicked()"><i class="fa fa-angle-up"></i> Stand Up</span>
 	
 	<span class="nav-title">{{ menuObject.title }}</span>
 	
@@ -12,5 +12,5 @@
 </ng-template>
 
 <ng-template #current_player>
-	<span class="nav-item right-item type__title--no-upper">{{ currentPlayer.name }}</span>
+	<span class="nav-item right-item type__title--no-upper"><i class="fa fa-user"></i> {{ currentPlayer.name }}</span>
 </ng-template>

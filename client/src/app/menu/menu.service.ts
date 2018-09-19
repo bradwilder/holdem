@@ -17,7 +17,7 @@ export class MenuService
 	
 	changeToRoom(room: string)
 	{
-		this.pageTitle = room + ' Table';
+		this.pageTitle = room;
 		this.isLobby = false;
 		this.roomChanged.next({title: this.pageTitle, isLobby: this.isLobby});
 	}
