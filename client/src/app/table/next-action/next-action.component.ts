@@ -41,16 +41,19 @@ export class NextActionComponent
 	foldClicked()
 	{
 		this.socketService.getSocket().emit('tableAction', this.roomID, 'fold');
+		this.showingRaiseDialogue = false;
 	}
 	
 	checkClicked()
 	{
 		this.socketService.getSocket().emit('tableAction', this.roomID, 'check');
+		this.showingRaiseDialogue = false;
 	}
 	
 	callClicked()
 	{
 		this.socketService.getSocket().emit('tableAction', this.roomID, 'call');
+		this.showingRaiseDialogue = false;
 	}
 	
 	raiseClicked()
