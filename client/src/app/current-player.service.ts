@@ -1,10 +1,10 @@
 import { SocketService } from "./socket.service";
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { Player } from "./table/player/player.model";
 import { Subject } from "rxjs/Subject";
 
 @Injectable()
-export class CurrentPlayerService
+export class CurrentPlayerService implements OnDestroy
 {
 	private currentPlayer: Player;
 	currentPlayerChanged = new Subject<Player>();
@@ -48,5 +48,11 @@ export class CurrentPlayerService
 	{
 		this.currentTable = roomID;
 		this.currentTableChanged.next(this.currentTable);
+	}
+	
+	ngOnDestroy()
+	{
+		this.socketService.getSocket().off('loggedIn');
+		this.socketService.getSocket().off('serverStart');
 	}
 }

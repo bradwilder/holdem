@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { DataService } from '../data.service';
 import { Subject } from 'rxjs/Subject';
 import { Room } from '../room/room.model';
 import { SocketService } from '../socket.service';
 
 @Injectable()
-export class LobbyService
+export class LobbyService implements OnDestroy
 {
 	private rooms: Room[] = [];
 	roomsChanged = new Subject<Room[]>();
@@ -46,5 +46,10 @@ export class LobbyService
 	getRooms()
 	{
 		return this.rooms;
+	}
+	
+	ngOnDestroy()
+	{
+		this.socketService.getSocket().off('roomCounts');
 	}
 }
