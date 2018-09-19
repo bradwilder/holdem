@@ -205,6 +205,28 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 			
 			self.updateRoomOccupants();
 		},
+		leaveTable: (tablePlayer) =>
+		{
+			let index;
+			for (let i = 0; i < tablePlayers.length; i++)
+			{
+				if (tablePlayer === tablePlayers[i])
+				{
+					index = i;
+					break;
+				}
+			}
+			
+			if (holdEm)
+			{
+				// TODO
+			}
+			
+			tablePlayers[index] = null;
+			
+			self.addVisitor(tablePlayer.getSocket());
+			self.updateRoomOccupants();
+		},
 		startGame: () =>
 		{
 			console.log('startHand called');
@@ -285,20 +307,18 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 				}
 				gameState = GameState(null, null, null, null, playersSimple, null, null);
 			}
-			//console.log(gameState);
+			console.log(gameState);
 			return gameState;
 		},
 		updateRoomOccupants: () =>
 		{
-			let roomVisitors = self.getVisitors();
 			let gameState = self.getGameState();
-			roomVisitors.forEach((roomVisitor) =>
+			self.getVisitors().forEach((roomVisitor) =>
 			{
 				io.sockets.connected[roomVisitor].emit('gameState', gameState);
 			});
 			
-			let tablePlayers = self.getTablePlayers();
-			tablePlayers.forEach((tablePlayer) =>
+			self.getTablePlayers().forEach((tablePlayer) =>
 			{
 				if (tablePlayer)
 				{

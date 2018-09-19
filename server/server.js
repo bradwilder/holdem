@@ -125,7 +125,6 @@ io.sockets.on('connection', function(socket)
 	socket.on('login', function(name)
 	{
 		console.log('login ' + name + ': ' + socket.id);
-		
 		if (hasPlayer(name))
 		{
 			// TODO: error
@@ -148,7 +147,6 @@ io.sockets.on('connection', function(socket)
 	socket.on('joinTable', function(id, position)
 	{
 		console.log('joinTable ' + id + ', position: ' + position + ': ' + socket.id);
-		
 		let tablePlayer = getPlayer(socket.id);
 		if (tablePlayer)
 		{
@@ -156,7 +154,6 @@ io.sockets.on('connection', function(socket)
 			if (room)
 			{
 				room.joinTable(tablePlayer, position);
-				
 				lobby.updateRoomCounts();
 			}
 			else
@@ -173,21 +170,37 @@ io.sockets.on('connection', function(socket)
 	socket.on('leaveTable', function(id)
 	{
 		console.log('leaveTable ' + id + ': ' + socket.id);
-		// TODO!!!
-		
-		
-		
-		
+		let tablePlayer = getPlayer(socket.id);
+		if (tablePlayer)
+		{
+			let room = lobby.getRoom(id);
+			if (room)
+			{
+				room.leaveTable(tablePlayer);
+				lobby.updateRoomCounts();
+			}
+			else
+			{
+				// TODO: error
+			}
+		}
+		else
+		{
+			// TODO: error
+		}
 	});
 	
 	socket.on('tableAction', function(id, actionType, value = null)
 	{
 		console.log('tableAction ' + id + ', action: ' + actionType + ', value: ' + value + ': ' + socket.id);
-		
 		let room = lobby.getRoom(id);
 		if (room)
 		{
 			room.performGameAction(actionType, value)
+		}
+		else
+		{
+			// TODO: error
 		}
 	});
 	

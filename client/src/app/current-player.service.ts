@@ -44,7 +44,7 @@ export class CurrentPlayerService implements OnDestroy
 		this.socketService.getSocket().emit('login', name);
 	}
 	
-	setCurrentTable(roomID)
+	setCurrentTable(roomID = null)
 	{
 		this.currentTable = roomID;
 		this.currentTableChanged.next(this.currentTable);

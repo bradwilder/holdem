@@ -51,6 +51,7 @@ export class MenuComponent implements OnInit, OnDestroy
 	standClicked()
 	{
 		this.socketService.getSocket().emit('leaveTable', this.currentTable);
+		this.currentPlayerService.setCurrentTable();
 	}
 	
 	ngOnDestroy()
