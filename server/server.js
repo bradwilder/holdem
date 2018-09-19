@@ -9,7 +9,7 @@ const Lobby = require('./table/lobby');
 const TablePlayer = require('./table/tablePlayer');
 const Player = require('./game/player');
 
-let lobby = Lobby();
+let lobby = Lobby(io);
 
 let allVisitors = {}; // socketID: tablePlayer
 
@@ -69,7 +69,6 @@ io.sockets.on('connection', function(socket)
 	{
 		console.log('enterLobby: ' + socket.id);
 		lobby.addVisitor(socket.id);
-		io.sockets.connected[socket.id].emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
 	});
 	
 	socket.on('leaveLobby', function()
@@ -86,7 +85,6 @@ io.sockets.on('connection', function(socket)
 		{
 			room.addVisitor(socket.id);
 		}
-		io.sockets.connected[socket.id].emit('gameState', lobby.getRoom(id).getGameState());
 	});
 	
 	socket.on('leaveRoom', function(id)
@@ -147,25 +145,6 @@ io.sockets.on('connection', function(socket)
 		}
 	});
 	
-	const updateRoomOccupants = (room) =>
-	{
-		let roomVisitors = room.getVisitors();
-		let gameState = room.getGameState();
-		roomVisitors.forEach((roomVisitor) =>
-		{
-			io.sockets.connected[roomVisitor].emit('gameState', gameState);
-		});
-		
-		let tablePlayers = room.getTablePlayers();
-		tablePlayers.forEach((tablePlayer) =>
-		{
-			if (tablePlayer)
-			{
-				io.sockets.connected[tablePlayer.getSocket()].emit('gameState', room.getGameState(tablePlayer));
-			}
-		});
-	}
-	
 	socket.on('joinTable', function(id, position)
 	{
 		console.log('joinTable ' + id + ', position: ' + position + ': ' + socket.id);
@@ -178,9 +157,7 @@ io.sockets.on('connection', function(socket)
 			{
 				room.joinTable(tablePlayer, position);
 				
-				io.emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
-				
-				updateRoomOccupants(room);
+				lobby.updateRoomCounts();
 			}
 			else
 			{
@@ -210,14 +187,7 @@ io.sockets.on('connection', function(socket)
 		let room = lobby.getRoom(id);
 		if (room)
 		{
-			if (room.performGameAction(actionType, value))
-			{
-				updateRoomOccupants(room);
-			}
-			else
-			{
-				// TODO: error
-			}
+			room.performGameAction(actionType, value)
 		}
 	});
 	
@@ -226,11 +196,10 @@ io.sockets.on('connection', function(socket)
 		console.log('disconnect: ' + socket.id);
 		delete allVisitors[socket.id];
 		lobby.removeVisitorCompletely(socket.id);
-		let rooms = lobby.getRooms();
-		io.emit('roomCounts', rooms.map((room) => ({id: room.id, players: room.getNumPlayers()})));
-		rooms.forEach((room) =>
+		lobby.updateRoomCounts();
+		lobby.getRooms().forEach((room) =>
 		{
-			updateRoomOccupants(room);
+			room.updateRoomOccupants();
 		});
 	});
 });

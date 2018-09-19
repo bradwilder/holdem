@@ -3,7 +3,7 @@ const Deck = require('../game/deck');
 const GameState = require('../game/gameState');
 const PlayerSimple = require('../game/playerSimple');
 
-let Room = (id, name, bigBlind, maxPlayers) =>
+let Room = (id, name, bigBlind, maxPlayers, io) =>
 {
 	let tablePlayers = Array(maxPlayers).fill(null);
 	
@@ -202,6 +202,8 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			{
 				// TODO: what if game is in progress? add them into game and hope it queues correctly...
 			}
+			
+			self.updateRoomOccupants();
 		},
 		startGame: () =>
 		{
@@ -215,6 +217,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			if (visitors.indexOf(visitor) === -1)
 			{
 				visitors.push(visitor);
+				io.sockets.connected[visitor].emit('gameState', self.getGameState());
 			}
 		},
 		removeOccupant: (visitor) =>
@@ -285,6 +288,24 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			//console.log(gameState);
 			return gameState;
 		},
+		updateRoomOccupants: () =>
+		{
+			let roomVisitors = self.getVisitors();
+			let gameState = self.getGameState();
+			roomVisitors.forEach((roomVisitor) =>
+			{
+				io.sockets.connected[roomVisitor].emit('gameState', gameState);
+			});
+			
+			let tablePlayers = self.getTablePlayers();
+			tablePlayers.forEach((tablePlayer) =>
+			{
+				if (tablePlayer)
+				{
+					io.sockets.connected[tablePlayer.getSocket()].emit('gameState', self.getGameState(tablePlayer));
+				}
+			});
+		},
 		performGameAction: (action, value = null) =>
 		{
 			if (holdEm)
@@ -304,11 +325,13 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 						holdEm.bet(value);
 						break;
 				}
+				self.updateRoomOccupants();
 				
 				return true;
 			}
 			else
 			{
+				// TODO: error here?
 				return false;
 			}
 		}

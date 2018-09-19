@@ -1,13 +1,18 @@
 let Room = require('./room');
 
-let Lobby = () =>
+let Lobby = (io) =>
 {
 	let rooms =
 	[
-		Room(0, '10-handed', 20, 10)
+		Room(0, '10-handed', 20, 10, io)
 	];
 	
 	let visitors = [];
+	
+	let createRoomCountObject = () =>
+	{
+		return self.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()}))
+	}
 	
 	let self =
 	{
@@ -22,6 +27,7 @@ let Lobby = () =>
 			if (visitors.indexOf(visitor) === -1)
 			{
 				visitors.push(visitor);
+				io.sockets.connected[visitor].emit('roomCounts', createRoomCountObject());
 			}
 		},
 		removeVisitor: (visitor) =>
@@ -40,6 +46,10 @@ let Lobby = () =>
 			{
 				room.removeOccupant(visitor);
 			});
+		},
+		updateRoomCounts: () =>
+		{
+			io.emit('roomCounts', createRoomCountObject());
 		}
 	}
 	
