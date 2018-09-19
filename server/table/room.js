@@ -230,14 +230,24 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 			});
 			return count;
 		},
-		joinTable: (tablePlayer, i) =>
+		joinTable: (tablePlayer, position) =>
 		{
-			if (i >= tablePlayers.length || i < 0)
+			if (position >= tablePlayers.length || position < 0)
 			{
-				throw "Can't seat player at position " + i + " with max players " + tablePlayers.length;
+				throw "Can't seat player at position " + position + " with max players " + tablePlayers.length;
 			}
 			
-			tablePlayers[i] = tablePlayer;
+			let playersBefore = 0;
+			for (let i = 0; i < position; i++)
+			{
+				let tablePlayer = tablePlayers[i];
+				if (tablePlayer)
+				{
+					playersBefore++;
+				}
+			}
+			
+			tablePlayers[position] = tablePlayer;
 			
 			removeVisitor(tablePlayer.getSocket());
 			
@@ -252,11 +262,7 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 			}
 			else if (holdEm)
 			{
-				// TODO: what if game is in progress? add them into game and hope it queues correctly...
-				
-				
-				
-				
+				holdEm.addPlayer(tablePlayer.getPlayer(), playersBefore);
 			}
 			
 			updateRoomOccupants();

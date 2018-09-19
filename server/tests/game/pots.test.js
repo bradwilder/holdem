@@ -176,7 +176,6 @@ describe('betting', () =>
 		catch (x)
 		{
 			expect(pots.getTotalSize()).toBe(totalPotSize);
-			expect(pots.isEven()).toBe(true);
 			expect(pots.getCurrentBet()).toBe(0);
 		}
 	});

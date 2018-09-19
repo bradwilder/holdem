@@ -10,6 +10,7 @@ let Pots = require('./pots');
 let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 {
 	let players = tablePlayers.slice();
+	let newPlayers = [];
 	let pendingPlayers = [];
 	
 	let state = HoldEmState().WINNER;
@@ -20,10 +21,10 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	
 	let changeDealer = () =>
 	{
-		dealerIndex = getNextPlayerAtTableNotPending(dealerIndex);
+		dealerIndex = getNextPlayerAtTableNotNew(dealerIndex);
 	}
 	
-	let getNextPlayerAtTableNotPending = (i) =>
+	let getNextPlayerAtTableNotNew = (i) =>
 	{
 		let playersCount = self.getPlayersCount();
 		if (i >= playersCount)
@@ -33,7 +34,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		
 		let nextIndex = (i + 1) % playersCount;
 		let index = nextIndex;
-		while (index !== i && pendingPlayers.indexOf(self.getPlayer(index)) !== -1)
+		while (index !== i && (newPlayers.indexOf(players[index]) !== -1 || pendingPlayers.indexOf(players[index]) !== -1))
 		{
 			index = (index + 1) % playersCount;
 		}
@@ -41,7 +42,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		if (index == i)
 		{
 			// Looped back to original player; let all pending players in for free
-			pendingPlayers = [];
+			newPlayers = [];
 			return nextIndex;
 		}
 		return index;
@@ -55,7 +56,13 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			throw 'Invalid index' + i;
 		}
 		
-		return (i + 1) % playersCount;
+		let index = (i + 1) % playersCount;
+		while (pendingPlayers.indexOf(players[index]) !== -1)
+		{
+			index = (i + 1) % playersCount;
+		}
+		
+		return index;
 	}
 	
 	let getPlayersForMainPot = () =>
@@ -63,9 +70,9 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		let mainPlayers = [];
 		for (let i = getNextIndexAtTable(dealerIndex); i != dealerIndex; i = getNextIndexAtTable(i))
 		{
-			mainPlayers.push(self.getPlayer(i));
+			mainPlayers.push(players[i]);
 		}
-		mainPlayers.push(self.getPlayer(dealerIndex));
+		mainPlayers.push(players[dealerIndex]);
 		return mainPlayers;
 	}
 	
@@ -227,9 +234,9 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	let self =
 	{
 		getLogEntries: () => actionLog.getEntries(),
-		getPlayersCount: () => players.length,
+		getPlayersCount: () => players.length - pendingPlayers.length,
 		getPlayer: (i) => players[i],
-		getDealerPlayer: () => self.getPlayer(dealerIndex),
+		getDealerPlayer: () => players[dealerIndex],
 		isBettingOver: () => pots.isBettingOver(),
 		getTotalPotSize: () => pots ? pots.getTotalSize() : 0,
 		getPotSizeWithoutRound: () => pots ? pots.getSizeWithoutRound() : 0,
@@ -266,8 +273,9 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			{
 				return null;
 			}
-			pots = Pots(mainPlayers, pendingPlayers, bigBlind);
+			pots = Pots(mainPlayers, newPlayers, bigBlind);
 			
+			newPlayers = [];
 			pendingPlayers = [];
 			
 			players.forEach((player) =>
@@ -421,20 +429,21 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 				throw 'Tried to add player that already exists';
 			}
 			
-			if (state !== HoldEmState().WINNER)
+			if (state === HoldEmState().WINNER)
 			{
-				return false;
+				newPlayers.push(player);
+			}
+			else
+			{
+				pendingPlayers.push(player);
 			}
 			
 			players.splice(i, 0, player);
-			pendingPlayers.push(player);
 			
 			if (i <= dealerIndex)
 			{
 				dealerIndex++;
 			}
-			
-			return true;
 		}
 	}
 	

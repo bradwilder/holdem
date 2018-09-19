@@ -3,7 +3,7 @@ let HoldEmState = require('./holdEmState');
 let ActionLogEntry = require('./actionLogEntry');
 let OngoingRoundAction = require('./ongoingRoundAction');
 
-let Pots = (players, pendingPlayers, bigBlind) =>
+let Pots = (players, newPlayers, bigBlind) =>
 {
 	let potList = [];
 	
@@ -23,11 +23,7 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 	
 	let gotSmallBlind;
 	let gotBigBlind;
-	let playersActed = {};
-	players.forEach((player) =>
-	{
-		playersActed[player.getName()] = false;
-	});
+	let playersActed;
 	
 	let state;
 	
@@ -176,6 +172,15 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 		return true;
 	}
 	
+	let initializePlayersActed = () =>
+	{
+		playersActed = {};
+		players.forEach((player) =>
+		{
+			playersActed[player.getName()] = false;
+		});
+	}
+	
 	let addPlayerChips = (player, addition) =>
 	{
 		let entry;
@@ -220,7 +225,7 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 				if (!gotSmallBlind)
 				{
 					gotSmallBlind = true;
-					if (pendingPlayers.indexOf(player) !== -1)
+					if (newPlayers.indexOf(player) !== -1)
 					{
 						gotBigBlind = true;
 						let smallBlind = getSmallBlind();
@@ -457,6 +462,8 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 			
 			if (state !== HoldEmState().BET_PREFLOP)
 			{
+				initializePlayersActed();
+				
 				let pot;
 				while (pot = getCurrentPot())
 				{
@@ -595,7 +602,7 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 				case HoldEmState().BLINDS:
 					if (!gotSmallBlind)
 					{
-						if (pendingPlayers.indexOf(player) !== -1)
+						if (newPlayers.indexOf(player) !== -1)
 						{
 							currOwed = Math.min(maxChipsRemainingPlayers, getSmallBlind() + bigBlind);
 						}
