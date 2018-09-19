@@ -154,6 +154,15 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 		return playersSimple;
 	}
 	
+	let removeVisitor = (visitor) =>
+	{
+		let index = visitors.indexOf(visitor);
+		if (index !== -1)
+		{
+			visitors.splice(index, 1);
+		}
+	}
+	
 	let self =
 	{
 		id: id,
@@ -174,50 +183,32 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 			});
 			return count;
 		},
-		addPlayer: (tablePlayer, i) =>
+		joinTable: (tablePlayer, i) =>
 		{
 			if (i >= tablePlayers.length || i < 0)
 			{
 				throw "Can't seat player at position " + i + " with max players " + tablePlayers.length;
 			}
 			
-			// TODO: what if game is in progress? add them into game and hope it queues correctly...
 			tablePlayers[i] = tablePlayer;
 			
-			self.removeVisitor(tablePlayer.getSocket());
+			removeVisitor(tablePlayer.getSocket());
 			
 			if (!holdEm && getNumPlayersAtTable() >= 2)
 			{
 				self.startGame();
 			}
-		},
-		removePlayer: (tablePlayerToRemove) =>
-		{
-			for (let i = 0; i < tablePlayers.length; i++)
+			else if (holdEm)
 			{
-				let tablePlayer = tablePlayers[i];
-				if (tablePlayer === tablePlayerToRemove)
-				{
-					tablePlayers[i] = null;
-				}
+				// TODO: what if game is in progress? add them into game and hope it queues correctly...
 			}
-			
-			self.removeVisitor(tablePlayerToRemove.getSocket());
 		},
 		startGame: () =>
 		{
-			let players = getPlayersAtTable();
-			
-			// TODO
 			console.log('startHand called');
+			let players = getPlayersAtTable();
 			holdEm = HoldEm(players, bigBlind, Deck());
 			holdEm.startHand();
-			
-			
-			
-			
-			
-			
 		},
 		addVisitor: (visitor) =>
 		{
@@ -226,12 +217,17 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				visitors.push(visitor);
 			}
 		},
-		removeVisitor: (visitor) =>
+		removeOccupant: (visitor) =>
 		{
-			let index = visitors.indexOf(visitor);
-			if (index !== -1)
+			removeVisitor(visitor);
+			
+			for (let i = 0; i < tablePlayers.length; i++)
 			{
-				visitors.splice(index, 1);
+				let tablePlayer = tablePlayers[i];
+				if (tablePlayer && tablePlayer.getSocket() === visitor)
+				{
+					tablePlayers[i] = null;
+				}
 			}
 		},
 		getGameState: (tablePlayer = null) =>
@@ -286,7 +282,7 @@ let Room = (id, name, bigBlind, maxPlayers) =>
 				}
 				gameState = GameState(null, null, null, null, playersSimple, null, null);
 			}
-			console.log(gameState);
+			//console.log(gameState);
 			return gameState;
 		},
 		performGameAction: (action, value = null) =>

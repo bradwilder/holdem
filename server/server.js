@@ -6,8 +6,12 @@ const io = require('socket.io').listen(server);
 const router = require('express').Router();
 
 const Lobby = require('./table/lobby');
+const TablePlayer = require('./table/tablePlayer');
+const Player = require('./game/player');
 
 let lobby = Lobby();
+
+let allVisitors = {}; // socketID: tablePlayer
 
 // Error handling
 const sendError = (err, res) =>
@@ -55,37 +59,84 @@ server.listen(port, () => console.log('Listening on port ' + port));
 io.sockets.on('connection', function(socket)
 {
 	console.log('connection: ' + socket.id);
-	lobby.addVisitor(socket.id);
+	if (!allVisitors.hasOwnProperty(socket.id))
+	{
+		allVisitors[socket.id] = null;
+	}
 	io.sockets.connected[socket.id].emit('serverStart');
 	
 	socket.on('enterLobby', function()
 	{
 		console.log('enterLobby: ' + socket.id);
+		lobby.addVisitor(socket.id);
 		io.sockets.connected[socket.id].emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
 	});
 	
 	socket.on('leaveLobby', function()
 	{
 		console.log('leaveLobby: ' + socket.id);
+		lobby.removeVisitor(socket.id);
 	});
 	
 	socket.on('enterRoom', function(id)
 	{
 		console.log('enterRoom ' + id + ': ' + socket.id);
-		lobby.addRoomVisitor(socket.id, id);
+		let room = lobby.getRoom(id);
+		if (room)
+		{
+			room.addVisitor(socket.id);
+		}
 		io.sockets.connected[socket.id].emit('gameState', lobby.getRoom(id).getGameState());
 	});
 	
 	socket.on('leaveRoom', function(id)
 	{
 		console.log('leaveRoom ' + id + ': ' + socket.id);
-		lobby.removeRoomVisitor(socket.id, id);
+		let room = lobby.getRoom(id);
+		if (room)
+		{
+			room.removeOccupant(socket.id);
+		}
 	});
+	
+	const hasPlayer = (name) =>
+	{
+		let tablePlayers = Object.values(allVisitors);
+		for (let i = 0; i < tablePlayers.length; i++)
+		{
+			let tablePlayer = tablePlayers[i];
+			if (tablePlayer && tablePlayer.getPlayer().name === name)
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	const getPlayer = (visitor) =>
+	{
+		if (!allVisitors.hasOwnProperty(visitor) || !allVisitors[visitor])
+		{
+			return false;
+		}
+		
+		return allVisitors[visitor];
+	}
 	
 	socket.on('login', function(name)
 	{
 		console.log('login ' + name + ': ' + socket.id);
-		let newPlayer = lobby.createPlayer(socket.id, name);
+		
+		if (hasPlayer(name))
+		{
+			// TODO: error
+		}
+		
+		let newPlayer = Player(name, 20000);
+		let tablePlayer = TablePlayer(newPlayer, socket.id);
+		allVisitors[socket.id] = tablePlayer;
+		
 		if (newPlayer)
 		{
 			io.sockets.connected[socket.id].emit('loggedIn', newPlayer);
@@ -100,9 +151,6 @@ io.sockets.on('connection', function(socket)
 	{
 		let roomVisitors = room.getVisitors();
 		let gameState = room.getGameState();
-		// console.log('visitor gameState');
-		// console.log(gameState);
-		// console.log('visitor gameState2');
 		roomVisitors.forEach((roomVisitor) =>
 		{
 			io.sockets.connected[roomVisitor].emit('gameState', gameState);
@@ -113,11 +161,7 @@ io.sockets.on('connection', function(socket)
 		{
 			if (tablePlayer)
 			{
-				let gameState = room.getGameState(tablePlayer);
-				// console.log('player gameState: ' + tablePlayer.getPlayer().getName());
-				// console.log(gameState);
-				// console.log('player gameState2');
-				io.sockets.connected[tablePlayer.getSocket()].emit('gameState', gameState);
+				io.sockets.connected[tablePlayer.getSocket()].emit('gameState', room.getGameState(tablePlayer));
 			}
 		});
 	}
@@ -125,14 +169,22 @@ io.sockets.on('connection', function(socket)
 	socket.on('joinTable', function(id, position)
 	{
 		console.log('joinTable ' + id + ', position: ' + position + ': ' + socket.id);
-		if (lobby.joinTable(socket.id, id, position))
+		
+		let tablePlayer = getPlayer(socket.id);
+		if (tablePlayer)
 		{
-			io.emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
-			
 			let room = lobby.getRoom(id);
 			if (room)
 			{
+				room.joinTable(tablePlayer, position);
+				
+				io.emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
+				
 				updateRoomOccupants(room);
+			}
+			else
+			{
+				// TODO: error
 			}
 		}
 		else
@@ -144,12 +196,10 @@ io.sockets.on('connection', function(socket)
 	socket.on('leaveTable', function(id)
 	{
 		console.log('leaveTable ' + id + ': ' + socket.id);
-		
-		
-		
-		
-		
 		// TODO!!!
+		
+		
+		
 		
 	});
 	
@@ -174,7 +224,13 @@ io.sockets.on('connection', function(socket)
 	socket.on('disconnect', function(error)
 	{
 		console.log('disconnect: ' + socket.id);
+		delete allVisitors[socket.id];
 		lobby.removeVisitorCompletely(socket.id);
-		io.emit('roomCounts', lobby.getRooms().map((room) => ({id: room.id, players: room.getNumPlayers()})));
+		let rooms = lobby.getRooms();
+		io.emit('roomCounts', rooms.map((room) => ({id: room.id, players: room.getNumPlayers()})));
+		rooms.forEach((room) =>
+		{
+			updateRoomOccupants(room);
+		});
 	});
 });
