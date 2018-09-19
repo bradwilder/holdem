@@ -21,10 +21,13 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 	
 	let actionIndex = 0;
 	
-	let bettingOver;
 	let gotSmallBlind;
 	let gotBigBlind;
-	let bigBlindPlayer;
+	let playersActed = {};
+	players.forEach((player) =>
+	{
+		playersActed[player.getName()] = false;
+	});
 	
 	let state;
 	
@@ -161,35 +164,30 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 		return 0;
 	}
 	
+	let isBettingRoundOver = () =>
+	{
+		for (let playerName in playersActed)
+		{
+			if (!playersActed[playerName])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	let addPlayerChips = (player, addition) =>
 	{
 		let entry;
 		
+		if (state !== HoldEmState().BLINDS)
+		{
+			playersActed[player.getName()] = true;
+		}
+		
 		if (addition == 0)
 		{
-			switch (state)
-			{
-				case HoldEmState().BET_PREFLOP:
-					if (player === bigBlindPlayer)
-					{
-						// This means the big blind has checked the option
-						bettingOver = true;
-						entry = ActionLogEntry("checked the option", [player]);
-					}
-					else
-					{
-						entry = ActionLogEntry("checked", [player]);
-					}
-					break;
-				default:
-					entry = ActionLogEntry("checked", [player]);
-					if (actionIndex == getCurrentPot().getNumPlayers() - 1)
-					{
-						// When the last player checks the table has checked around
-						bettingOver = true;
-					}
-			}
-			
+			entry = ActionLogEntry("checked", [player]);
 			ongoingRoundActions[player] = 'check';
 		}
 		else
@@ -225,7 +223,6 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 					if (pendingPlayers.indexOf(player) !== -1)
 					{
 						gotBigBlind = true;
-						bigBlindPlayer = player;
 						let smallBlind = getSmallBlind();
 						addition -= smallBlind;
 						getCurrentPot().addDeadChips(smallBlind);
@@ -241,7 +238,6 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 				else if (!gotBigBlind)
 				{
 					gotBigBlind = true;
-					bigBlindPlayer = player;
 					
 					action = "called " + chipsThisRound + " big blind";
 					ongoingRoundActions[player] = 'big-blind';
@@ -255,7 +251,6 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 			else
 			{
 				action = "called";
-				
 				if (chipsThisRound < currBet)
 				{
 					action += " " + addition;
@@ -276,12 +271,6 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 			}
 			
 			addPlayerChipsToPot(player, addition, currentPotIndex);
-			
-			if (state > HoldEmState().BET_PREFLOP || addition > bigBlind)
-			{
-				// Set this to true so isEven() will only rely on whether the betting is even
-				bettingOver = true; 
-			}
 		}
 		
 		return entry;
@@ -402,6 +391,8 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 		
 		let playerIndex = self.getMainPot().getIndex(player);
 		
+		delete playersActed[player.getName()];
+		
 		player.fold();
 		
 		potList.forEach((pot) =>
@@ -495,8 +486,6 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 				currentRoundSize = 0;
 			}
 			
-			bettingOver = getCurrentPot() == null;
-			
 			currentRaise = bigBlind;
 			shortStackOverraise = 0;
 		},
@@ -519,7 +508,7 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 						}
 					}
 			}
-			return bettingEven && bettingOver;
+			return bettingEven && isBettingRoundOver();
 		},
 		getTotalSize: () =>
 		{
