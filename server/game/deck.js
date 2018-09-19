@@ -1,8 +1,8 @@
 let Card = require('./card');
 
-let Deck = () =>
+let Deck = (suits = 4, values = 13) =>
 {
-	const NUM_CARDS = 52;
+	const NUM_CARDS = suits * values;
 	
 	let cardIndex = 0;
 	let cards = [];
