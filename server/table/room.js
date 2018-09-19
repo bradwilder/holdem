@@ -6,10 +6,9 @@ const PlayerSimple = require('../game/playerSimple');
 let Room = (id, name, bigBlind, maxPlayers, io) =>
 {
 	let tablePlayers = Array(maxPlayers).fill(null);
-	
-	let holdEm;
-	
 	let visitors = [];
+	let holdEm;
+	let startTimeout;
 	
 	let getNumPlayersAtTable = () =>
 	{
@@ -163,6 +162,16 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 		}
 	}
 	
+	let startGame = () =>
+	{
+		console.log('startHand called');
+		let players = getPlayersAtTable();
+		holdEm = HoldEm(players, bigBlind, Deck());
+		holdEm.startHand();
+		startTimeout = null;
+		self.updateRoomOccupants();
+	}
+	
 	let self =
 	{
 		id: id,
@@ -196,7 +205,12 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 			
 			if (!holdEm && getNumPlayersAtTable() >= 2)
 			{
-				self.startGame();
+				if (startTimeout)
+				{
+					clearTimeout(startTimeout);
+				}
+				
+				setTimeout(() => startGame(), 10000);
 			}
 			else if (holdEm)
 			{
@@ -226,13 +240,6 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 			
 			self.addVisitor(tablePlayer.getSocket());
 			self.updateRoomOccupants();
-		},
-		startGame: () =>
-		{
-			console.log('startHand called');
-			let players = getPlayersAtTable();
-			holdEm = HoldEm(players, bigBlind, Deck());
-			holdEm.startHand();
 		},
 		addVisitor: (visitor) =>
 		{
