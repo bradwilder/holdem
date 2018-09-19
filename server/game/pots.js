@@ -13,6 +13,7 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 	let ongoingRoundActions = {};
 	
 	let currentPotIndex = 0;
+	let currentRoundSize = 0;
 	
 	let currentRaise = 0
 	let shortStackOverraise = 0;
@@ -54,15 +55,6 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 	let moveActionIndex = () =>
 	{
 		actionIndex = (actionIndex + 1) % getCurrentPot().getNumPlayers();
-	}
-	
-	let resetOngoingRoundActions = () =>
-	{
-		ongoingRoundActions = {};
-		players.forEach((player) =>
-		{
-			ongoingRoundActions[player] = null;
-		});
 	}
 	
 	let hasEligiblePlayers = () =>
@@ -126,6 +118,8 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 			
 			if (refund > 0)
 			{
+				currentRoundSize -= refund;
+				
 				if (refund == lastPotBet)
 				{
 					if (lastPot.isContested())
@@ -297,6 +291,8 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 	{
 		try
 		{
+			currentRoundSize += addition;
+			
 			let pot = potList[potIndex];
 			
 			let amountOwedToCurrentPot = pot.getRoundOwed(player);
@@ -490,7 +486,13 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 				
 				actionIndex = 0;
 				
-				resetOngoingRoundActions();
+				ongoingRoundActions = {};
+				players.forEach((player) =>
+				{
+					ongoingRoundActions[player] = null;
+				});
+				
+				currentRoundSize = 0;
 			}
 			
 			bettingOver = getCurrentPot() == null;
@@ -527,6 +529,10 @@ let Pots = (players, pendingPlayers, bigBlind) =>
 				potSize += pot.getSize();
 			});
 			return potSize;
+		},
+		getSizeWithoutRound: () =>
+		{
+			return self.getTotalSize() - currentRoundSize;
 		},
 		getCurrentBet: () =>
 		{

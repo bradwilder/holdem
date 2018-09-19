@@ -232,6 +232,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		getDealerPlayer: () => self.getPlayer(dealerIndex),
 		isBettingOver: () => pots.isBettingOver(),
 		getTotalPotSize: () => pots ? pots.getTotalSize() : 0,
+		getPotSizeWithoutRound: () => pots ? pots.getSizeWithoutRound() : 0,
 		potsToString: () => pots.toString(),
 		getMainPot: () => pots.getMainPot(),
 		awardPot: () => pots.awardPot(self.getBoard()),
@@ -252,7 +253,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 				default:
 			}
 			
-			return GameState(state, self.getTotalPotSize(), bigBlind, self.getBoard(), getPlayersSimple(), nextAction, nextActionPlayer);
+			return GameState(state, self.getPotSizeWithoutRound(), bigBlind, self.getBoard(), getPlayersSimple(), nextAction, nextActionPlayer);
 		},
 		startHand: () =>
 		{
