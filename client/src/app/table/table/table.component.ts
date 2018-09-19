@@ -62,15 +62,15 @@ export class TableComponent implements OnInit, OnDestroy
 		
 		// //this.currentPlayer = this.player0;
 		
-		// this.player0.isInHand = true;
-		// //this.player1.isInHand = true;
-		// this.player2.isInHand = true;
-		// //this.player3.isInHand = true;
-		// this.player4.isInHand = true;
-		// this.player5.isInHand = true;
-		// //this.player6.isInHand = true;
-		// this.player7.isInHand = true;
-		// this.player8.isInHand = true;
+		// this.player0.hasHoleCards = true;
+		// //this.player1.hasHoleCards = true;
+		// this.player2.hasHoleCards = true;
+		// //this.player3.hasHoleCards = true;
+		// this.player4.hasHoleCards = true;
+		// this.player5.hasHoleCards = true;
+		// //this.player6.hasHoleCards = true;
+		// this.player7.hasHoleCards = true;
+		// this.player8.hasHoleCards = true;
 		
 		// this.player0.isDealer = true;
 		

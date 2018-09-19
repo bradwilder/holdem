@@ -7,7 +7,7 @@ let GameState = require('./gameState');
 let NextAction = require('./nextAction');
 let Pots = require('./pots');
 
-let HoldEm = (tablePlayers, bigBlind, deck) =>
+let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 {
 	let players = tablePlayers.slice();
 	let pendingPlayers = [];
@@ -93,6 +93,7 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			{
 				case HoldEmState().BLINDS:
 				case HoldEmState().DEAL_HOLES:
+					dealCards();
 					actionLog.addSystemEntry('Dealt holes');
 					state = HoldEmState().BET_PREFLOP;
 					break;
@@ -274,13 +275,18 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			});
 			
 			state = HoldEmState().BLINDS;
-			dealCards();
 			
 			pots.startRound(state);
 			
 			actionLog.addSystemEntry("Started hand");
 			
-			return self.generateGameState();
+			if (autoPostBlinds)
+			{
+				while (self.generateGameState().state === HoldEmState().BLINDS)
+				{
+					self.call();
+				}
+			}
 		},
 		bet: (addition) =>
 		{
@@ -307,13 +313,10 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 			{
 				moveState();
 			}
-			
-			return self.generateGameState();
 		},
 		call: () =>
 		{
-			let gameState = self.generateGameState();
-			return self.bet(gameState.nextAction.call);
+			self.bet(self.generateGameState().nextAction.call);
 		},
 		check: () => self.bet(0),
 		fold: () =>
@@ -342,8 +345,6 @@ let HoldEm = (tablePlayers, bigBlind, deck) =>
 				
 				actionLog.addEntry(entry);
 			}
-			
-			return self.generateGameState();
 		},
 		getBoard: () =>
 		{

@@ -166,7 +166,7 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 	{
 		console.log('startHand called');
 		let players = getPlayersAtTable();
-		holdEm = HoldEm(players, bigBlind, Deck());
+		holdEm = HoldEm(players, bigBlind, Deck(), true);
 		holdEm.startHand();
 		startTimeout = null;
 		self.updateRoomOccupants();

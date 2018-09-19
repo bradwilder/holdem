@@ -19,25 +19,25 @@
 	</ng-template>
 </ng-template>
 
-<ng-container *ngIf="player && player.isInHand">
+<ng-container *ngIf="player && player.hasHoleCards">
 	<ng-container *ngIf="player.holeCards.length == 2; then hole_cards_showing; else hole_cards_hidden"></ng-container>
-</ng-container>
-
-<ng-template #hole_cards_hidden>
-	<ng-container *ngIf="player.isInHand">
-		<div class="hole-cards--hidden">
-			<img class="hole-card--hidden bottom" src="assets/cards/back-design-purple.svg">
-			<img class="hole-card--hidden" src="assets/cards/back-design-purple.svg">
+	
+	<ng-template #hole_cards_hidden>
+		<ng-container *ngIf="player.hasHoleCards">
+			<div class="hole-cards--hidden">
+				<img class="hole-card--hidden bottom" src="assets/cards/back-design-purple.svg">
+				<img class="hole-card--hidden" src="assets/cards/back-design-purple.svg">
+			</div>
+		</ng-container>
+	</ng-template>
+	
+	<ng-template #hole_cards_showing>
+		<div class="hole-cards--showing" [ngClass]="{'active-player': currentPlayer && player.name === currentPlayer.name, 'not-in-hand': !player.hasHoleCards}">
+			<img class="hole-card--showing bottom" [src]="'assets/cards/' + player.holeCards[0] + '.svg'">
+			<img class="hole-card--showing top" [src]="'assets/cards/' + player.holeCards[1] + '.svg'">
 		</div>
-	</ng-container>
-</ng-template>
-
-<ng-template #hole_cards_showing>
-	<div class="hole-cards--showing" [ngClass]="{'active-player': currentPlayer && player.name === currentPlayer.name, 'not-in-hand': !player.isInHand}">
-		<img class="hole-card--showing bottom" [src]="'assets/cards/' + player.holeCards[0] + '.svg'">
-		<img class="hole-card--showing top" [src]="'assets/cards/' + player.holeCards[1] + '.svg'">
-	</div>
-</ng-template>
+	</ng-template>
+</ng-container>
 
 <div *ngIf="player" class="action-box">
 	<app-player-action [ongoingRoundAction]='player.ongoingRoundAction'></app-player-action>

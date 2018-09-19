@@ -4,7 +4,7 @@ export class Player
 {
 	name: string;
 	chips: number;
-	isInHand = false;
+	hasHoleCards = false;
 	isDealer = false;
 	holeCards: number[] = [];
 	ongoingRoundAction: OngoingRoundAction;
