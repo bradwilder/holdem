@@ -21,7 +21,7 @@ let Deck = (suits = 4, values = 13) =>
 			for (let i = 0; i < NUM_CARDS; i++)
 			{
 				let randomIndex = Math.floor(Math.random() * remaining);
-				shuffledCards[i] = cards.splice(randomIndex, 1);
+				shuffledCards[i] = cards.splice(randomIndex, 1)[0];
 				remaining--;
 			}
 			
