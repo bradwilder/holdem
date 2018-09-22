@@ -30,14 +30,12 @@ let HandFactory = () =>
 		return -1;
 	}
 	
-	let sortAsc = (a, b) => a - b;
+	let sortCardsDesc = (a, b) => b.value - a.value;
 	
-	let sortDesc = (a, b) => b - a;
-	
-	let getFlush = (cards, suit) =>
+	let createFlush = (cards, suit) =>
 	{
-		let values = cards.filter((card) => card.suit === suit).map((card) => card.value).sort(sortDesc);
-		return values.slice(0, 5);
+		let flushCards = cards.filter((card) => card.suit === suit).sort(sortCardsDesc);
+		return flushCards.slice(0, 5);
 	}
 	
 	let findStraightFlush = (cards, suit) =>
@@ -77,147 +75,88 @@ let HandFactory = () =>
 		return -1;
 	}
 	
+	let createStraight = (cards, highValue) => {
+		let card1 = cards.filter((card) => card.value === highValue)[0];
+		let card2 = cards.filter((card) => card.value === highValue - 1)[0];
+		let card3 = cards.filter((card) => card.value === highValue - 2)[0];
+		let card4 = cards.filter((card) => card.value === highValue - 3)[0];
+		let card5 = cards.filter((card) => card.value === (highValue - 4 < 0 ? 12 : highValue - 4))[0];
+		return [card1, card2, card3, card4, card5];
+	}
+	
 	let findPairs = (valueCounts) =>
 	{
-		let pairs = 0;
-		valueCounts.forEach((valueCount) =>
-		{
-			if (valueCount >= 2)
-			{
-				pairs++;
-			}
-		});
-		return pairs;
-	}
-	
-	let getPair = (valueCounts) =>
-	{
-		let values = [];
-		for (let i = 12; i >= 0 ; i--)
-		{
-			if (valueCounts[i] == 2)
-			{
-				values.push(i);
-				valueCounts[i] = 0;
-				break;
-			}
-		}
-		
-		let kickers = getKickers(valueCounts, 3);
-		values.push(kickers[0]);
-		values.push(kickers[1]);
-		values.push(kickers[2]);
-		return values;
-	}
-	
-	let getTwoPair = (valueCounts) =>
-	{
-		let values = [];
-		let pairs = 0;
-		for (let i = 12; i >= 0 ; i--)
-		{
-			if (valueCounts[i] == 2)
-			{
-				values.push(i);
-				valueCounts[i] = 0;
-				pairs++;
-				if (pairs == 2)
-				{
-					break;
-				}
-			}
-		}
-		
-		let kickers = getKickers(valueCounts, 1);
-		values.push(kickers[0]);
-		return values;
-	}
-	
-	let getFullHouse = (valueCounts) =>
-	{
-		let values = [];
-		for (let i = 12; i >= 0 ; i--)
-		{
-			if (valueCounts[i] == 3)
-			{
-				values[0] = i;
-				valueCounts[i] = 0;
-				break;
-			}
-		}
-		
+		let pairs = [];
 		for (let i = 12; i >= 0 ; i--)
 		{
 			if (valueCounts[i] >= 2)
 			{
-				values[1] = i;
-				break;
+				pairs.push(i);
 			}
 		}
-		return values;
+		return pairs;
 	}
 	
-	let getTrip = (valueCounts) =>
+	let createPair = (cards, pairValue) =>
 	{
-		let values = [];
-		for (let i = 12; i >= 0 ; i--)
-		{
-			if (valueCounts[i] == 3)
-			{
-				values[0] = i;
-				valueCounts[i] = 0;
-				break;
-			}
-		}
-		
-		let kickers = getKickers(valueCounts, 2);
-		values.push(kickers[0]);
-		values.push(kickers[1]);
-		return values;
+		let pair = cards.filter((card) => card.value === pairValue);
+		let kickers = cards.filter((card) => card.value !== pairValue).sort(sortCardsDesc).slice(0, 3);
+		return pair.concat(kickers);
 	}
 	
-	let hasTrip = (valueCounts) =>
+	let createTwoPair = (cards, pairValues) =>
 	{
-		for (let i = 0; i < valueCounts.length; i++)
+		let pair1 = cards.filter((card) => card.value === pairValues[0]);
+		let pair2 = cards.filter((card) => card.value === pairValues[1]);
+		let kicker = cards.filter((card) => card.value !== pairValues[0] && card.value !== pairValues[1]).sort(sortCardsDesc).slice(0, 1);
+		return pair1.concat(pair2).concat(kicker);
+	}
+	
+	let createFullHouse = (cards, tripValue, pairValue) =>
+	{
+		let trip = cards.filter((card) => card.value === tripValue);
+		let pair = cards.filter((card) => card.value === pairValue).slice(0, 2);
+		return trip.concat(pair);
+	}
+	
+	let findTrip = (valueCounts) =>
+	{
+		for (let i = 12; i >= 0; i--)
 		{
 			valueCount = valueCounts[i];
 			if (valueCount >= 3)
 			{
-				return true;
+				return i;
 			}
 		}
-		return false;
+		return -1;
 	}
 	
-	let getQuad = (valueCounts) =>
+	let createTrip = (cards, tripValue) =>
 	{
-		let values = [];
-		for (let i = 12; i >= 0 ; i--)
-		{
-			if (valueCounts[i] == 4)
-			{
-				values[0] = i;
-				valueCounts[i] = 0;
-				break;
-			}
-		}
-		
-		let kickers = getKickers(valueCounts, 1);
-		values.push(kickers[0]);
-		return values;
+		let trips = cards.filter((card) => card.value === tripValue);
+		let kickers = cards.filter((card) => card.value !== tripValue).sort(sortCardsDesc).slice(0, 2);
+		return trips.concat(kickers);
 	}
 	
-	let hasQuad = (valueCounts) =>
+	let findQuad = (valueCounts) =>
 	{
 		for (let i = 0; i < valueCounts.length; i++)
 		{
 			valueCount = valueCounts[i];
 			if (valueCount == 4)
 			{
-				return true;
+				return i;
 			}
 		}
-		return false;
+		return -1;
+	}
+	
+	let createQuad = (cards, quadValue) =>
+	{
+		let quads = cards.filter((card) => card.value === quadValue);
+		let kicker = cards.filter((card) => card.value !== quadValue).sort(sortCardsDesc).slice(0, 1);
+		return quads.concat(kicker);
 	}
 	
 	let getValueCounts = (cards) =>
@@ -230,23 +169,6 @@ let HandFactory = () =>
 		return valueCounts;
 	}
 	
-	let getKickers = (valueCounts, kickersNeeded) =>
-	{
-		let kickers = [];
-		for (let i = 12; i >= 0 ; i--)
-		{
-			if (valueCounts[i] > 0)
-			{
-				kickers.push(i);
-				if (kickers.length == kickersNeeded)
-				{
-					break;
-				}
-			}
-		}
-		return kickers;
-	}
-	
 	let self =
 	{
 		createHandWithHoles: (boardCards, holeCards) =>
@@ -256,19 +178,7 @@ let HandFactory = () =>
 				return null;
 			}
 			
-			let allCards = [];
-			
-			for (let i = 0; i < boardCards.length; i++)
-			{
-				allCards.push(boardCards[i]);
-			}
-			
-			for (let i = 0; i < holeCards.length; i++)
-			{
-				allCards.push(holeCards[i]);
-			}
-			
-			return self.createHand(allCards);
+			return self.createHand(boardCards.concat(holeCards));
 		},
 		createHand: (cards) =>
 		{
@@ -283,45 +193,48 @@ let HandFactory = () =>
 				let straightFlushHighValue = findStraightFlush(cards, flushSuit);
 				if (straightFlushHighValue !== -1)
 				{
-					return StraightFlush(straightFlushHighValue);
+					return StraightFlush(createStraight(cards.filter((card) => card.suit === flushSuit), straightFlushHighValue));
 				}
-				return Flush(getFlush(cards, flushSuit));
+				return Flush(createFlush(cards, flushSuit));
 			}
 			
 			let straightHigh = findStraight(cards);
 			if (straightHigh !== -1)
 			{
-				return Straight(straightHigh);
+				return Straight(createStraight(cards, straightHigh));
 			}
 			
 			let valueCounts = getValueCounts(cards);
 			
-			let pairCount = findPairs(valueCounts);
-			if (pairCount === 0)
+			let pairValues = findPairs(valueCounts);
+			if (pairValues.length === 0)
 			{
-				return HighCard(getKickers(valueCounts, 5));
+				return HighCard(cards.sort(sortCardsDesc).slice(0, 5));
 			}
 			
-			if (hasTrip(valueCounts))
+			let tripValue = findTrip(valueCounts);
+			if (tripValue >= 0)
 			{
-				if (hasQuad(valueCounts))
+				let quadValue = findQuad(valueCounts);
+				
+				if (quadValue >= 0)
 				{
-					return FourOfAKind(getQuad(valueCounts));
+					return FourOfAKind(createQuad(cards, quadValue));
 				}
 				
-				if (pairCount >= 2)
+				if (pairValues.length >= 2)
 				{
-					return FullHouse(getFullHouse(valueCounts));
+					return FullHouse(createFullHouse(cards, tripValue, pairValues[1]));
 				}
 				
-				return ThreeOfAKind(getTrip(valueCounts));
+				return ThreeOfAKind(createTrip(cards, tripValue));
 			}
-			else if (pairCount > 1)
+			else if (pairValues.length > 1)
 			{
-				return TwoPair(getTwoPair(valueCounts));
+				return TwoPair(createTwoPair(cards, pairValues.slice(0, 2)));
 			}
 			
-			return Pair(getPair(valueCounts));
+			return Pair(createPair(cards, pairValues[0]));
 		}
 	}
 	

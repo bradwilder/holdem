@@ -1,14 +1,4 @@
 let HandFactory = require('../../../game/hand/handFactory');
-// let Hand = require('../../../game/hand/hand');
-// let HighCard = require('../../../game/hand/highCard');
-// let Pair = require('../../../game/hand/pair');
-// let TwoPair = require('../../../game/hand/twoPair');
-// let ThreeOfAKind = require('../../../game/hand/threeOfAKind');
-// let Straight = require('../../../game/hand/straight');
-// let Flush = require('../../../game/hand/flush');
-// let FullHouse = require('../../../game/hand/fullHouse');
-// let FourOfAKind = require('../../../game/hand/fourOfAKind');
-// let StraightFlush = require('../../../game/hand/straightFlush');
 let Card = require('../../../game/card');
 
 describe('creating with holes', () =>
@@ -39,6 +29,34 @@ describe('creating with holes', () =>
 		expect(hand.getValue(2)).toBe(4);
 		expect(hand.getValue(3)).toBe(2);
 		expect(hand.getValue(4)).toBe(0);
+	});
+	
+	it('should create a flush with too many of the same suit', () =>
+	{
+		let boardCards =
+		[
+			Card(17),
+			Card(13),
+			Card(15),
+			Card(20),
+			Card(18)
+		];
+		
+		let holeCards =
+		[
+			Card(21),
+			Card(24)
+		];
+		// 1/4, 1/0, 1/2, 1/7, 1/5, 1/8, 1/11
+		
+		let hand = HandFactory().createHandWithHoles(boardCards, holeCards);
+		expect(hand).not.toBe(null);
+		expect(hand.getRank().getRank()).toBe(5);
+		expect(hand.getValue(0)).toBe(11);
+		expect(hand.getValue(1)).toBe(8);
+		expect(hand.getValue(2)).toBe(7);
+		expect(hand.getValue(3)).toBe(5);
+		expect(hand.getValue(4)).toBe(4);
 	});
 	
 	it('should create a flush instead of a straight', () =>
@@ -185,7 +203,7 @@ describe('creating with holes', () =>
 			Card(35),
 			Card(40)
 		];
-		// 2/12, 1/3, 0/8, 0/2, 1/0, 2/9, 3/1
+		// 2/12, 1/3, 0/12, 0/2, 1/0, 2/9, 3/1
 		
 		let hand = HandFactory().createHandWithHoles(boardCards, holeCards);
 		expect(hand).not.toBe(null);
@@ -225,7 +243,7 @@ describe('creating with holes', () =>
 			Card(23),
 			Card(8),
 			Card(10),
-			Card(23)
+			Card(36)
 		];
 		
 		let holeCards =
@@ -233,7 +251,7 @@ describe('creating with holes', () =>
 			Card(35),
 			Card(49)
 		];
-		// 2/7, 1/10, 0/8, 0/10, 1/10, 2/9, 3/10
+		// 2/7, 1/10, 0/8, 0/10, 2/10, 2/9, 3/10
 		
 		let hand = HandFactory().createHandWithHoles(boardCards, holeCards);
 		expect(hand).not.toBe(null);

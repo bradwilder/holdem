@@ -1,6 +1,6 @@
 let Hand = require('./hand');
 
-let HighCard = (values) =>
+let HighCard = (cards) =>
 {
 	const HIGH_CARD = 0;
 	
@@ -8,6 +8,7 @@ let HighCard = (values) =>
 	
 	let self =
 	{
+		cards: cards,
 		getRank: () => rank,
 		compare: (hand) =>
 		{
@@ -23,23 +24,23 @@ let HighCard = (values) =>
 		{
 			for (let i = 0; i < 5; i++)
 			{
-				if (values[i] !== highCard.getValue(i))
+				if (cards[i].value !== highCard.getValue(i))
 				{
-					return values[i] - highCard.getValue(i);
+					return cards[i].value - highCard.getValue(i);
 				}
 			}
 			
 			return 0;
 		},
-		getValue: (i) => values[i],
+		getValue: (i) => cards[i].value,
 		toString: () =>
 		{
 			let valuesStr = '';
 			for (let i = 0; i < 4; i++)
 			{
-				valuesStr += (values[i] + ', ');
+				valuesStr += (cards[i].value + ', ');
 			}
-			valuesStr += values[4];
+			valuesStr += cards[4].value;
 			
 			return 'High card (' + valuesStr + ')';
 		}

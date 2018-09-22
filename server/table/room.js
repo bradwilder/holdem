@@ -172,6 +172,11 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 		updateRoomOccupants();
 	}
 	
+	let startGameOnTimer = (seconds = 10) =>
+	{
+		startTimeout = setTimeout(() => startGame(), seconds * 1000);
+	}
+	
 	let removePlayerFromTable = (tablePlayer) =>
 	{
 		let index;
@@ -258,7 +263,7 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 					clearTimeout(startTimeout);
 				}
 				
-				startTimeout = setTimeout(() => startGame(), 10000);
+				startGameOnTimer();
 			}
 			else if (holdEm)
 			{
@@ -326,7 +331,47 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 					gameState.nextAction = null;
 				}
 				
-				if (gameState.board)
+				let winners = gameState.winners;
+				if (winners)
+				{
+					// TODO: figure out how to do this with already existing holdEm object
+					//startGameOnTimer(Math.min(winner.pots.length * 3, 8));
+					
+					
+					
+					
+					
+				}
+				
+				let isPotContested = true;
+				if (winners && winners.pots[0] && winners.pots[0].players.length <= 1)
+				{
+					isPotContested = false;
+				}
+				
+				if (!isPotContested)
+				{
+					gameState.players.forEach((playerSimple) =>
+					{
+						if (playerSimple)
+						{
+							playerSimple.hasHoleCards = false;
+						}
+					});
+				}
+				else if (winners)
+				{
+					// TODO: Somehow set it up for hole card showdown depending on lastAggressor
+					
+					
+					
+					
+					
+					
+					
+				}
+				
+				if (gameState.board && isPotContested)
 				{
 					let board = gameState.board;
 					gameState.board = board.map((card) => card.code);

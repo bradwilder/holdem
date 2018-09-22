@@ -1,16 +1,19 @@
 let Hand = require('./hand');
 
-let TwoPair = (values) =>
+let TwoPair = (cards) =>
 {
 	const TWO_PAIR = 2;
 	
 	let rank = Hand(TWO_PAIR);
 	
-	let pairValues = values.slice(0, 2);
-	let kicker = values[2];
+	let pairValues = [];
+	pairValues[0] = cards[0].value;
+	pairValues[1] = cards[2].value;
+	let kicker = cards[4].value;
 	
 	let self =
 	{
+		cards: cards,
 		getRank: () => rank,
 		compare: (hand) =>
 		{

@@ -2,6 +2,7 @@ let Pot = require('./pot');
 let HoldEmState = require('./holdEmState');
 let ActionLogEntry = require('./actionLogEntry');
 let OngoingRoundAction = require('./ongoingRoundAction');
+let PotSimple = require('./potSimple');
 
 let Pots = (players, newPlayers, bigBlind) =>
 {
@@ -398,6 +399,11 @@ let Pots = (players, newPlayers, bigBlind) =>
 		
 		delete playersActed[player.getName()];
 		
+		if (lastAggressor === player)
+		{
+			lastAggressor = null;
+		}
+		
 		player.fold();
 		
 		potList.forEach((pot) =>
@@ -671,7 +677,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 					let potSize = pot.getSize();
 					if (numWinners == 1)
 					{
-						winners[0].awardChips(potSize);
+						winners[0].player.awardChips(potSize);
 					}
 					else
 					{
@@ -679,7 +685,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 						let chipsPerWinner = Math.floor(potSize / numWinners);
 						winners.forEach((winner) =>
 						{
-							winner.awardChips(chipsPerWinner);
+							winner.player.awardChips(chipsPerWinner);
 						});
 						if (rem > 0)
 						{
@@ -694,6 +700,20 @@ let Pots = (players, newPlayers, bigBlind) =>
 				}
 			}
 			return pot;
+		},
+		awardPots: (boardCards) =>
+		{
+			let potWinners = {};
+			potWinners.lastAggressor = lastAggressor;
+			potWinners.pots = [];
+			let pot;
+			while (pot = self.awardPot(boardCards))
+			{
+				let players = pot.getPlayers();
+				let winners = pot.getWinners(boardCards);
+				potWinners.pots.push(PotSimple(pot.getSize(), players, winners));
+			}
+			return potWinners;
 		},
 		toString: () =>
 		{

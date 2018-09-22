@@ -19,6 +19,8 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	let board;
 	let actionLog = ActionLog();
 	
+	let winners;
+	
 	let changeDealer = () =>
 	{
 		dealerIndex = getNextPlayerAtTableNotNew(dealerIndex);
@@ -94,7 +96,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	
 	let moveState = () =>
 	{
-		if (!self.isBettingOver())
+		if (!pots.isBettingOver())
 		{
 			switch (state)
 			{
@@ -120,7 +122,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 					state = HoldEmState().BET_RIVER;
 					break;
 				case HoldEmState().BET_RIVER:
-					state = HoldEmState().WINNER;
+					moveToWinner();
 					break;
 				case HoldEmState().WINNER:
 					state = HoldEmState().BLINDS;
@@ -131,7 +133,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		}
 		else
 		{
-			state = HoldEmState().WINNER;
+			moveToWinner();
 		}
 		
 		pots.startRound(state);
@@ -231,22 +233,51 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	
 	let getActionPlayer = () => pots.getNextActionPlayer();
 	
+	let moveToWinner = () =>
+	{
+		state = HoldEmState().WINNER;
+		if (!winners)
+		{
+			winners = self.awardPots();
+		}
+	}
+	
 	let self =
 	{
 		getLogEntries: () => actionLog.getEntries(),
 		getPlayersCount: () => players.length - pendingPlayers.length,
 		getPlayer: (i) => players[i],
 		getDealerPlayer: () => players[dealerIndex],
-		isBettingOver: () => pots.isBettingOver(),
 		getTotalPotSize: () => pots ? pots.getTotalSize() : 0,
 		getPotSizeWithoutRound: () => pots ? pots.getSizeWithoutRound() : 0,
 		potsToString: () => pots.toString(),
 		getMainPot: () => pots.getMainPot(),
 		awardPot: () => pots.awardPot(self.getBoard()),
+		awardPots: () =>
+		{
+			let potWinners = pots.awardPots(self.getBoard());
+			potWinners.pots.forEach((pot) =>
+			{
+				let action;
+				if (pot.winners.length == 1)
+				{
+					action = "won pot of " + pot.size;
+				}
+				else
+				{
+					action = "split pot of " + pot.size;
+				}
+				let entry = ActionLogEntry(action, pot.winners);
+				actionLog.addEntry(entry);
+			});
+			
+			return potWinners;
+		},
 		generateGameState: () =>
 		{
 			let nextAction;
 			let nextActionPlayer;
+			let board = self.getBoard();
 			switch (state)
 			{
 				case HoldEmState().BLINDS:
@@ -257,10 +288,16 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 					nextAction = NextAction(getCall(), getMinRaise(), getMaxRaise());
 					nextActionPlayer = getActionPlayer();
 					break;
+				case HoldEmState().WINNER:
+					if (!winners)
+					{
+						winners = self.awardPots();
+					}
+					break;
 				default:
 			}
 			
-			return GameState(state, self.getPotSizeWithoutRound(), bigBlind, self.getBoard(), getPlayersSimple(), nextAction, nextActionPlayer);
+			return GameState(state, self.getPotSizeWithoutRound(), bigBlind, board, getPlayersSimple(), nextAction, nextActionPlayer, winners);
 		},
 		startHand: () =>
 		{
@@ -277,6 +314,8 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			
 			newPlayers = [];
 			pendingPlayers = [];
+			
+			winners = null;
 			
 			players.forEach((player) =>
 			{
@@ -340,22 +379,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			}
 			else if (pots.isHandOver())
 			{
-				state = HoldEmState().WINNER;
-				let boardCards = self.getBoard();
-				let wonMainPot = pots.awardPot(boardCards);
-				let winners = wonMainPot.getWinners(boardCards);
-				let action;
-				if (winners.length == 1)
-				{
-					action = "won pot of " + wonMainPot.getSize();
-				}
-				else
-				{
-					action = "split pot of " + wonMainPot.getSize();
-				}
-				let entry = ActionLogEntry(action, winners);
-				
-				actionLog.addEntry(entry);
+				moveToWinner();
 			}
 		},
 		foldOutOfTurn: (player) =>
@@ -367,22 +391,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			}
 			else if (pots.isHandOver())
 			{
-				state = HoldEmState().WINNER;
-				let boardCards = self.getBoard();
-				let wonMainPot = pots.awardPot(boardCards);
-				let winners = wonMainPot.getWinners(boardCards);
-				let action;
-				if (winners.length == 1)
-				{
-					action = "won pot of " + wonMainPot.getSize();
-				}
-				else
-				{
-					action = "split pot of " + wonMainPot.getSize();
-				}
-				let entry = ActionLogEntry(action, winners);
-				
-				actionLog.addEntry(entry);
+				moveToWinner();
 			}
 		},
 		getBoard: () =>

@@ -1,16 +1,17 @@
 let Hand = require('./hand');
 
-let FullHouse = (values) =>
+let FullHouse = (cards) =>
 {
 	const FULL_HOUSE = 6;
 	
 	let rank = Hand(FULL_HOUSE);
 	
-	let threeKindValue = values[0];
-	let pairValue = values[1];
+	let threeKindValue = cards[0].value;
+	let pairValue = cards[3].value;
 	
 	let self =
 	{
+		cards: cards,
 		getRank: () => rank,
 		compare: (hand) =>
 		{

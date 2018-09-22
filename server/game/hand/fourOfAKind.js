@@ -1,16 +1,17 @@
 let Hand = require('./hand');
 
-let FourOfAKind = (values) =>
+let FourOfAKind = (cards) =>
 {
 	const FOUR_KIND = 7;
 	
 	let rank = Hand(FOUR_KIND);
 	
-	let fourKindValue = values[0];
-	let kicker = values[1];
+	let fourKindValue = cards[0].value;
+	let kicker = cards[4].value;
 	
 	let self =
 	{
+		cards: cards,
 		getRank: () => rank,
 		compare: (hand) =>
 		{

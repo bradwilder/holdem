@@ -1,13 +1,16 @@
 let Hand = require('./hand');
 
-let StraightFlush = (highValue) =>
+let StraightFlush = (cards) =>
 {
 	const STRAIGHT_FLUSH = 8;
 	
 	let rank = Hand(STRAIGHT_FLUSH);
 	
+	let highValue = cards[0].value;
+	
 	let self =
 	{
+		cards: cards,
 		getRank: () => rank,
 		compare: (hand) =>
 		{

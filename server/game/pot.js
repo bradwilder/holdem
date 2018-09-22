@@ -1,5 +1,6 @@
 let LinkedHashMap = require('./linkedHashMap');
 let HandFactory = require('./hand/handFactory');
+let PotWinner = require('./potWinner');
 
 let Pot = (players = null) =>
 {
@@ -84,8 +85,8 @@ let Pot = (players = null) =>
 			// Add the first player into the list; this will start as the best hand
 			let winners = [];
 			let firstPlayer = players[0];
-			winners.push(firstPlayer);
 			let bestHand = HandFactory().createHandWithHoles(boardCards, firstPlayer.getHoleCards());
+			winners.push(PotWinner(firstPlayer, bestHand));
 			
 			// If the best hand is null, we must be pre-flop; there's only a winner if there's only 1 player left
 			if (!bestHand)
@@ -112,7 +113,7 @@ let Pot = (players = null) =>
 						winners = [];
 					}
 					bestHand = playerHand;
-					winners.push(player);
+					winners.push(PotWinner(player, playerHand));
 				}
 			}
 			

@@ -1,13 +1,16 @@
 let Hand = require('./hand');
 
-let Straight = (highValue) =>
+let Straight = (cards) =>
 {
 	const STRAIGHT = 4;
 	
 	let rank = Hand(STRAIGHT);
 	
+	let highValue = cards[0].value;
+	
 	let self =
 	{
+		cards: cards,
 		getRank: () => rank,
 		compare: (hand) =>
 		{

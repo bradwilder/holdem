@@ -1,16 +1,17 @@
 let Hand = require('./hand');
 
-let ThreeOfAKind = (values) =>
+let ThreeOfAKind = (cards) =>
 {
 	const THREE_KIND = 3;
 	
 	let rank = Hand(THREE_KIND);
 	
-	let threeKindValue = values[0];
-	let kickers = values.slice(1);
+	let threeKindValue = cards[0].value;
+	let kickers = cards.map((card) => card.value).slice(3);
 	
 	let self =
 	{
+		cards: cards,
 		getRank: () => rank,
 		compare: (hand) =>
 		{
