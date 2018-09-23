@@ -5,7 +5,7 @@ let GameState = (state, potSize, bigBlind, board, players, nextAction, nextActio
 		potSize: potSize,
 		bigBlind: bigBlind,
 		board: board,
-		players: players,
+		players: players.slice(),
 		nextAction: nextAction,
 		nextActionPlayer: nextActionPlayer,
 		winners: winners

@@ -97,7 +97,9 @@ describe('room', () =>
 		expect(gameState.nextActionPlayer.name).toBe('1');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[4].name).toBe('2');
+		expect(gameState.players[4].holeCards.length).toBe(0);
 		expect(gameState.players[2].name).toBe('1');
+		expect(gameState.players[2].holeCards.length).toBe(0);
 		
 		gameState = room.getGameState(tablePlayer1);
 		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
@@ -108,8 +110,10 @@ describe('room', () =>
 		expect(gameState.nextAction.maxRaise).toBe(434);
 		expect(gameState.nextActionPlayer.name).toBe('1');
 		expect(gameState.winners).toBeNull();
-		expect(gameState.players[2].name).toBe('2');
 		expect(gameState.players[0].name).toBe('1');
+		expect(gameState.players[0].holeCards.length).toBe(2);
+		expect(gameState.players[2].name).toBe('2');
+		expect(gameState.players[2].holeCards.length).toBe(0);
 		
 		gameState = room.getGameState(tablePlayer2);
 		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
@@ -119,7 +123,9 @@ describe('room', () =>
 		expect(gameState.nextActionPlayer.name).toBe('1');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
+		expect(gameState.players[0].holeCards.length).toBe(2);
 		expect(gameState.players[3].name).toBe('1');
+		expect(gameState.players[3].holeCards.length).toBe(0);
 	});
 	
 	it("should let you remove a player after a game has started", () =>

@@ -4,8 +4,8 @@ let PlayerSimple = (name, chips, hasHoleCards, holeCards, ongoingRoundAction, is
 		name: name,
 		chips: chips,
 		hasHoleCards: hasHoleCards,
-		holeCards: holeCards,
-		ongoingRoundAction: ongoingRoundAction,
+		holeCards: holeCards.slice(),
+		ongoingRoundAction: Object.assign({}, ongoingRoundAction),
 		isDealer: isDealer
 	}
 }

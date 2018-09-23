@@ -5,11 +5,11 @@ let HoldEmState = require('../../game/holdEmState');
 
 let verifyPlayerAction = (holdEm, expectedHoldEmState, expectedPlayer, expectedMinRaise, expectedMaxRaise, expectedCall, expectedTotalPotSize) =>
 {
-	let gameState = holdEm.generateGameState();
+	let gameState = holdEm.getGameState();
 	let nextAction = gameState.nextAction;
 	let nextActionPlayer = gameState.nextActionPlayer;
 	
-	expect(nextActionPlayer.getName()).toBe(expectedPlayer.getName());
+	expect(nextActionPlayer.name).toBe(expectedPlayer.name);
 	expect(nextAction.minRaise).toBe(expectedMinRaise);
 	expect(nextAction.maxRaise).toBe(expectedMaxRaise);
 	expect(nextAction.call).toBe(expectedCall);
@@ -20,7 +20,7 @@ let verifyPlayerAction = (holdEm, expectedHoldEmState, expectedPlayer, expectedM
 
 let verify = (holdEm, expectedHoldEmState, expectedTotalPotSize) =>
 {
-	let gameState = holdEm.generateGameState();
+	let gameState = holdEm.getGameState();
 	let nextAction = gameState.nextAction;
 	
 	expect(nextAction).toBeNull();

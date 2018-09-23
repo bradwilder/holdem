@@ -22,19 +22,6 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		return count;
 	}
 	
-	let getPlayersAtTable = () =>
-	{
-		let players = [];
-		tablePlayers.forEach((tablePlayer) =>
-		{
-			if (tablePlayer)
-			{
-				players.push(tablePlayer.getPlayer());
-			}
-		});
-		return players;
-	}
-	
 	let tablePlayersToPlayersSimpleWithOrigin = (tablePlayerOrigin, gamePlayers) =>
 	{
 		let indexOrigin;
@@ -118,7 +105,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		
 		let startHand = () =>
 		{
-			console.log('startHand called');
+//			console.log('startHand called');
 			holdEm.startHand();
 			startTimeout = null;
 			updateRoomOccupants();
@@ -267,7 +254,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		},
 		getGameState: (tablePlayer = null) =>
 		{
-			let gameState = holdEm.generateGameState();
+			let gameState = holdEm.getGameState();
 			let playersSimple;
 			if (tablePlayer)
 			{
@@ -283,14 +270,14 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			{
 				gameState.players.forEach((gamePlayer) =>
 				{
-					if (gamePlayer && gamePlayer.name === tablePlayer.getPlayer().getName())
+					if (gamePlayer && gamePlayer.name === tablePlayer.getPlayer().name)
 					{
 						gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards();
 					}
 				});
 			}
 			
-			if (!tablePlayer || gameState.nextActionPlayer !== tablePlayer.getPlayer())
+			if (!tablePlayer || (!gameState.nextActionPlayer || gameState.nextActionPlayer.name !== tablePlayer.getPlayer().name))
 			{
 				gameState.nextAction = null;
 			}
@@ -300,7 +287,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			{
 				if (getNumPlayersAtTable() >= 2)
 				{
-					startGameOnTimer(Math.min(winners.pots.length * 5, 12));
+					startGameOnTimer(Math.max(winners.pots.length * 5, 10));
 				}
 				else
 				{
@@ -351,8 +338,8 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		},
 		performGameAction: (player, action, value = null) =>
 		{
-			let gameState = holdEm.generateGameState();
-			if (gameState.nextActionPlayer === player)
+			let gameState = holdEm.getGameState();
+			if (gameState.nextActionPlayer.name === player.name)
 			{
 				switch (action)
 				{

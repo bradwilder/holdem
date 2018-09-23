@@ -89,7 +89,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		players.forEach((player) =>
 		{
 			let isDealer = self.getDealerPlayer() === player && state !== HoldEmState().NO_GAME;
-			let playerSimple = PlayerSimple(player.getName(), player.getChips(), player.hasHoleCards(), [], getOngoingRoundAction(player), isDealer);
+			let playerSimple = PlayerSimple(player.name, player.getChips(), player.hasHoleCards(), [], getOngoingRoundAction(player), isDealer);
 			playersSimple.push(playerSimple);
 		});
 		return playersSimple;
@@ -245,23 +245,37 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		return maxRaise;
 	}
 	
-	let getActionPlayer = () => pots.getNextActionPlayer();
-	
-	let self =
+	let getBoard = () =>
 	{
-		getLogEntries: () => actionLog.getEntries(),
-		getPlayersCount: () => players.length - pendingPlayers.length,
-		getPlayer: (i) => players[i],
-		getDealerPlayer: () => players[dealerIndex],
-		getTotalPotSize: () => pots ? pots.getTotalSize() : 0,
-		getPotSizeWithoutRound: () => pots ? pots.getSizeWithoutRound() : 0,
-		potsToString: () => pots.toString(),
-		getMainPot: () => pots.getMainPot(),
-		awardPot: () => pots.awardPot(self.getBoard()),
-		awardPots: () =>
+		switch (state)
 		{
-			let potWinners = pots.awardPots(self.getBoard());
-			potWinners.pots.forEach((pot) =>
+			case HoldEmState().BLINDS:
+			case HoldEmState().DEAL_HOLES:
+			case HoldEmState().BET_PREFLOP:
+				return [];
+			case HoldEmState().DEAL_FLOP:
+			case HoldEmState().BET_FLOP:
+				return board.getFlop();
+			case HoldEmState().DEAL_TURN:
+			case HoldEmState().BET_TURN:
+				let flop = board.getFlop();
+				let turn = board.getTurn();
+				return flop.concat(turn);
+			case HoldEmState().DEAL_RIVER:
+			case HoldEmState().BET_RIVER:
+			case HoldEmState().WINNER:
+					return board.getBoard();
+			default:
+				return null;
+		}
+	}
+	
+	let awardPots = () =>
+	{
+		if (!winners)
+		{
+			winners = pots.awardPots(getBoard());
+			winners.pots.forEach((pot) =>
 			{
 				let action;
 				if (pot.winners.length == 1)
@@ -275,35 +289,28 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 				let entry = ActionLogEntry(action, pot.winners);
 				actionLog.addEntry(entry);
 			});
-			
-			return potWinners;
-		},
-		generateGameState: () =>
+		}
+	}
+	
+	let getActionPlayer = () => pots.getNextActionPlayer();
+	
+	let self =
+	{
+		getLogEntries: () => actionLog.getEntries(),
+		getPlayersCount: () => players.length - pendingPlayers.length,
+		getPlayer: (i) => players[i],
+		getDealerPlayer: () => players[dealerIndex],
+		getTotalPotSize: () => pots ? pots.getTotalSize() : 0,
+		getPotSizeWithoutRound: () => pots ? pots.getSizeWithoutRound() : 0,
+		potsToString: () => pots.toString(),
+		getMainPot: () => pots.getMainPot(),
+		getGameState: () =>
 		{
-//			console.log('***generate***');
-			let nextAction = null;
-			let nextActionPlayer = null;
-			let board = self.getBoard();
-			switch (state)
+			if (!gameState)
 			{
-				case HoldEmState().BLINDS:
-				case HoldEmState().BET_PREFLOP:
-				case HoldEmState().BET_FLOP:
-				case HoldEmState().BET_TURN:
-				case HoldEmState().BET_RIVER:
-					nextAction = NextAction(getCall(), getMinRaise(), getMaxRaise());
-					nextActionPlayer = getActionPlayer();
-					break;
-				case HoldEmState().WINNER:
-					if (!winners)
-					{
-						winners = self.awardPots();
-					}
-					break;
-				default:
+				gameState = generateGameState();
 			}
-			
-			return GameState(state, self.getPotSizeWithoutRound(), bigBlind, board, getPlayersSimple(), nextAction, nextActionPlayer, winners);
+			return JSON.parse(JSON.stringify(gameState));
 		},
 		startHand: () =>
 		{
@@ -334,9 +341,11 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			
 			actionLog.addSystemEntry("Started hand");
 			
+			gameState = generateGameState();
+			
 			if (autoPostBlinds)
 			{
-				while (self.generateGameState().state === HoldEmState().BLINDS)
+				while (self.getGameState().state === HoldEmState().BLINDS)
 				{
 					self.call();
 				}
@@ -344,9 +353,9 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		},
 		bet: (addition) =>
 		{
-			let gameState = self.generateGameState();
-			let nextAction = gameState.nextAction;
-			let nextActionPlayer = gameState.nextActionPlayer;
+			let newGameState = self.getGameState();
+			let nextAction = newGameState.nextAction;
+			let nextActionPlayer = newGameState.nextActionPlayer;
 			if (addition < nextAction.call && nextActionPlayer.getChips() > 0)
 			{
 				throw 'Bet ' + addition + ' is less than the call ' + nextAction.call;
@@ -364,10 +373,11 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			
 			actionLog.addEntry(pots.addToPot(addition));
 			moveState();
+			gameState = generateGameState();
 		},
 		call: () =>
 		{
-			self.bet(self.generateGameState().nextAction.call);
+			self.bet(self.getGameState().nextAction.call);
 		},
 		check: () =>
 		{
@@ -377,6 +387,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		{
 			actionLog.addEntries(pots.fold());
 			moveState();
+			gameState = generateGameState();
 		},
 		foldOutOfTurn: (player) =>
 		{
@@ -389,30 +400,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			{
 				state = HoldEmState().NO_GAME;
 			}
-		},
-		getBoard: () =>
-		{
-			switch (state)
-			{
-				case HoldEmState().BLINDS:
-				case HoldEmState().DEAL_HOLES:
-				case HoldEmState().BET_PREFLOP:
-					return [];
-				case HoldEmState().DEAL_FLOP:
-				case HoldEmState().BET_FLOP:
-					return board.getFlop();
-				case HoldEmState().DEAL_TURN:
-				case HoldEmState().BET_TURN:
-					let flop = board.getFlop();
-					let turn = board.getTurn();
-					return flop.concat(turn);
-				case HoldEmState().DEAL_RIVER:
-				case HoldEmState().BET_RIVER:
-				case HoldEmState().WINNER:
-						return board.getBoard();
-				default:
-					return null;
-			}
+			gameState = generateGameState();
 		},
 		removePlayer: (player) =>
 		{
@@ -430,6 +418,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			{
 				dealerIndex--;
 			}
+			gameState = generateGameState();
 		},
 		addPlayer: (player, i) =>
 		{
@@ -457,8 +446,34 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			{
 				dealerIndex = 0;
 			}
+			gameState = generateGameState();
 		}
 	}
+	
+	let generateGameState = () =>
+	{
+		let nextAction = null;
+		let nextActionPlayer = null;
+		switch (state)
+		{
+			case HoldEmState().BLINDS:
+			case HoldEmState().BET_PREFLOP:
+			case HoldEmState().BET_FLOP:
+			case HoldEmState().BET_TURN:
+			case HoldEmState().BET_RIVER:
+				nextAction = NextAction(getCall(), getMinRaise(), getMaxRaise());
+				nextActionPlayer = getActionPlayer();
+				break;
+			case HoldEmState().WINNER:
+				awardPots();
+				break;
+			default:
+		}
+		
+		return GameState(state, self.getPotSizeWithoutRound(), bigBlind, getBoard(), getPlayersSimple(), nextAction, nextActionPlayer, winners);
+	}
+	
+	let gameState = generateGameState();
 	
 	return self;
 }

@@ -9,17 +9,17 @@ let ActionLogEntry = (action, players = []) =>
 			}
 			else if (players.length === 1)
 			{
-				return players[0].getName() + ' ' + action;
+				return players[0].name + ' ' + action;
 			}
 			else
 			{
-				let playerStr = players[0].getName();
+				let playerStr = players[0].name;
 				for (let i = 1; i < players.length - 1; i++)
 				{
 					let player = players[i];
-					playerStr += ", " + player.getName();
+					playerStr += ", " + player.name;
 				}
-				playerStr += " and " + players[players.length - 1].getName();
+				playerStr += " and " + players[players.length - 1].name;
 				
 				return playerStr + " " + action;
 			}

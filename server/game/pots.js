@@ -178,7 +178,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 		playersActed = {};
 		players.forEach((player) =>
 		{
-			playersActed[player.getName()] = false;
+			playersActed[player.name] = false;
 		});
 	}
 	
@@ -188,7 +188,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 		
 		if (state !== HoldEmState().BLINDS)
 		{
-			playersActed[player.getName()] = true;
+			playersActed[player.name] = true;
 		}
 		
 		if (addition == 0)
@@ -397,7 +397,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 		
 		let playerIndex = self.getMainPot().getIndex(player);
 		
-		delete playersActed[player.getName()];
+		delete playersActed[player.name];
 		
 		if (lastAggressor === player)
 		{
