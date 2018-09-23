@@ -280,7 +280,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		},
 		generateGameState: () =>
 		{
-			console.log('***generate***');
+//			console.log('***generate***');
 			let nextAction = null;
 			let nextActionPlayer = null;
 			let board = self.getBoard();
