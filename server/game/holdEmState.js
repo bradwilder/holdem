@@ -10,7 +10,8 @@ let HoldEmState = () =>
 		BET_TURN: 6,
 		DEAL_RIVER: 7,
 		BET_RIVER: 8,
-		WINNER: 9
+		WINNER: 9,
+		NO_GAME: 10
 	}
 }
 

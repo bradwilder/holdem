@@ -78,7 +78,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 	
 	let refundIncontestableBet = () =>
 	{
-		if (self.isHandOver())
+		if (!self.hasTwoOrMorePlayers())
 		{
 			return null;
 		}
@@ -503,7 +503,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 			shortStackOverraise = 0;
 		},
 		isBettingOver: () => self.isEven() && !hasEligiblePlayers(),
-		isHandOver: () => getMainPlayersCount() <= 1,
+		hasTwoOrMorePlayers: () => getMainPlayersCount() >= 2,
 		isEven: () =>
 		{
 			let bettingEven = true;

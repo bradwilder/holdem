@@ -23,7 +23,7 @@ let verify = (holdEm, expectedHoldEmState, expectedTotalPotSize) =>
 	let gameState = holdEm.generateGameState();
 	let nextAction = gameState.nextAction;
 	
-	expect(nextAction).toBeUndefined();
+	expect(nextAction).toBeNull();
 	expect(gameState.state).toBe(expectedHoldEmState);
 	expect(holdEm.getTotalPotSize()).toBe(expectedTotalPotSize);
 }

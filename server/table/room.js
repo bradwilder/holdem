@@ -1,13 +1,12 @@
 const HoldEm = require('../game/holdEm');
+const HoldEmState = require('../game/holdEmState');
 const Deck = require('../game/deck');
-const GameState = require('../game/gameState');
-const PlayerSimple = require('../game/playerSimple');
 
-let Room = (id, name, bigBlind, maxPlayers, io) =>
+let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 {
 	let tablePlayers = Array(maxPlayers).fill(null);
 	let visitors = [];
-	let holdEm;
+	let holdEm = HoldEm([], bigBlind, Deck(), true);
 	let startTimeout;
 	
 	let getNumPlayersAtTable = () =>
@@ -96,63 +95,6 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 		return playersSimple;
 	}
 	
-	let tablePlayersToPlayersSimpleWithOriginNoGame = (tablePlayerOrigin) =>
-	{
-		let indexOrigin;
-		for (let i = 0; i < maxPlayers; i++)
-		{
-			let tablePlayer = tablePlayers[i];
-			if (tablePlayer && tablePlayer.getPlayer() === tablePlayerOrigin.getPlayer())
-			{
-				indexOrigin = i;
-				break;
-			}
-		}
-		
-		if (indexOrigin >= 0)
-		{
-			let playersSimple = Array(maxPlayers).fill(null);
-			
-			let playerOrigin = tablePlayers[indexOrigin].getPlayer();
-			let playerSimpleOrigin = PlayerSimple(playerOrigin.getName(), playerOrigin.getChips(), false, null, null, false);
-			playersSimple[0] = playerSimpleOrigin;
-			
-			let currentAddIndex = 1;
-			for (let i = (indexOrigin + 1) % maxPlayers; i != indexOrigin; i = (i + 1) % maxPlayers)
-			{
-				let tablePlayer = tablePlayers[i];
-				if (tablePlayer)
-				{
-					let player = tablePlayer.getPlayer();
-					let playerSimple = PlayerSimple(player.getName(), player.getChips(), false, null, null, false);
-					playersSimple[currentAddIndex] = playerSimple;
-				}
-				currentAddIndex++;
-			}
-			return playersSimple;
-		}
-		else
-		{
-			return tablePlayersToPlayersSimpleNoGame();
-		}
-	}
-	
-	let tablePlayersToPlayersSimpleNoGame = () =>
-	{
-		let playersSimple = Array(maxPlayers).fill(null);
-		for (let i = 0; i < maxPlayers; i++)
-		{
-			let tablePlayer = tablePlayers[i];
-			if (tablePlayer)
-			{
-				let player = tablePlayer.getPlayer();
-				let playerSimple = PlayerSimple(player.getName(), player.getChips(), false, null, null, false);
-				playersSimple[i] = playerSimple;
-			}
-		}
-		return playersSimple;
-	}
-	
 	let removeVisitor = (visitor) =>
 	{
 		let index = visitors.indexOf(visitor);
@@ -162,19 +104,34 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 		}
 	}
 	
-	let startGame = () =>
+	let hasVisitor = (visitor) =>
 	{
-		console.log('startHand called');
-		let players = getPlayersAtTable();
-		holdEm = HoldEm(players, bigBlind, Deck(), true);
-		holdEm.startHand();
-		startTimeout = null;
-		updateRoomOccupants();
+		return visitors.indexOf(visitor) !== -1;
 	}
 	
-	let startGameOnTimer = (seconds = 10) =>
+	let startGameOnTimer = (seconds = defaultWait) =>
 	{
-		startTimeout = setTimeout(() => startGame(), seconds * 1000);
+		if (startTimeout)
+		{
+			clearTimeout(startTimeout);
+		}
+		
+		let startHand = () =>
+		{
+			console.log('startHand called');
+			holdEm.startHand();
+			startTimeout = null;
+			updateRoomOccupants();
+		}
+		
+		if (seconds > 0)
+		{
+			startTimeout = setTimeout(() => startHand(), seconds * 1000);
+		}
+		else
+		{
+			startHand();
+		}
 	}
 	
 	let removePlayerFromTable = (tablePlayer) =>
@@ -189,13 +146,19 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 			}
 		}
 		
-		if (holdEm)
-		{
-			holdEm.removePlayer(tablePlayer.getPlayer());
-		}
+		holdEm.removePlayer(tablePlayer.getPlayer());
 		
 		tablePlayers[index] = null;
 		updateRoomOccupants();
+	}
+	
+	let sendGameState = (visitor, gameState) =>
+	{
+		let socket = io.sockets.connected[visitor];
+		if (socket)
+		{
+			socket.emit('gameState', gameState);
+		}
 	}
 	
 	let updateRoomOccupants = () =>
@@ -203,14 +166,14 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 		let gameState = self.getGameState();
 		self.getVisitors().forEach((roomVisitor) =>
 		{
-			io.sockets.connected[roomVisitor].emit('gameState', gameState);
+			sendGameState(roomVisitor, gameState);
 		});
 		
 		self.getTablePlayers().forEach((tablePlayer) =>
 		{
 			if (tablePlayer)
 			{
-				io.sockets.connected[tablePlayer.getSocket()].emit('gameState', self.getGameState(tablePlayer));
+				sendGameState(tablePlayer.getSocket(), self.getGameState(tablePlayer));
 			}
 		});
 	}
@@ -242,6 +205,16 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 				throw "Can't seat player at position " + position + " with max players " + tablePlayers.length;
 			}
 			
+			if (!hasVisitor(tablePlayer.getSocket()))
+			{
+				throw "Can't seat player that isn't in room";
+			}
+			
+			if (tablePlayers[position])
+			{
+				throw "Can't seat player at position " + position + " because it's occupied";
+			}
+			
 			let playersBefore = 0;
 			for (let i = 0; i < position; i++)
 			{
@@ -252,22 +225,16 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 				}
 			}
 			
+			holdEm.addPlayer(tablePlayer.getPlayer(), playersBefore);
+			
 			tablePlayers[position] = tablePlayer;
 			
 			removeVisitor(tablePlayer.getSocket());
 			
-			if (!holdEm && getNumPlayersAtTable() >= 2)
+			let gameState = self.getGameState();
+			if (gameState.state === HoldEmState().NO_GAME && getNumPlayersAtTable() >= 2)
 			{
-				if (startTimeout)
-				{
-					clearTimeout(startTimeout);
-				}
-				
 				startGameOnTimer();
-			}
-			else if (holdEm)
-			{
-				holdEm.addPlayer(tablePlayer.getPlayer(), playersBefore);
 			}
 			
 			updateRoomOccupants();
@@ -282,7 +249,7 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 			if (visitors.indexOf(visitor) === -1)
 			{
 				visitors.push(visitor);
-				io.sockets.connected[visitor].emit('gameState', self.getGameState());
+				sendGameState(visitor, self.getGameState());
 			}
 		},
 		removeOccupant: (visitor) =>
@@ -301,128 +268,118 @@ let Room = (id, name, bigBlind, maxPlayers, io) =>
 		getGameState: (tablePlayer = null) =>
 		{
 			let gameState;
-			if (holdEm)
+			gameState = holdEm.generateGameState();
+			let playersSimple;
+			if (tablePlayer)
 			{
-				gameState = holdEm.generateGameState();
-				let playersSimple;
-				if (tablePlayer)
-				{
-					playersSimple = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, gameState.players);
-				}
-				else
-				{
-					playersSimple = tablePlayersToPlayersSimple(gameState.players);
-				}
-				gameState.players = playersSimple;
-				
-				if (tablePlayer)
-				{
-					gameState.players.forEach((gamePlayer) =>
-					{
-						if (gamePlayer && gamePlayer.name === tablePlayer.getPlayer().getName())
-						{
-							gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards().map((card) => card.code);
-						}
-					});
-				}
-				
-				if (!tablePlayer || gameState.nextActionPlayer !== tablePlayer.getPlayer())
-				{
-					gameState.nextAction = null;
-				}
-				
-				let winners = gameState.winners;
-				if (winners)
-				{
-					// TODO: figure out how to do this with already existing holdEm object
-					//startGameOnTimer(Math.min(winner.pots.length * 3, 8));
-					
-					
-					
-					
-					
-				}
-				
-				let isPotContested = true;
-				if (winners && winners.pots[0] && winners.pots[0].players.length <= 1)
-				{
-					isPotContested = false;
-				}
-				
-				if (!isPotContested)
-				{
-					gameState.players.forEach((playerSimple) =>
-					{
-						if (playerSimple)
-						{
-							playerSimple.hasHoleCards = false;
-						}
-					});
-				}
-				else if (winners)
-				{
-					// TODO: Somehow set it up for hole card showdown depending on lastAggressor
-					
-					
-					
-					
-					
-					
-					
-				}
-				
-				if (gameState.board && isPotContested)
-				{
-					let board = gameState.board;
-					gameState.board = board.map((card) => card.code);
-				}
+				playersSimple = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, gameState.players);
 			}
 			else
 			{
-				let playersSimple;
-				if (tablePlayer)
+				playersSimple = tablePlayersToPlayersSimple(gameState.players);
+			}
+			gameState.players = playersSimple;
+			
+			if (tablePlayer)
+			{
+				gameState.players.forEach((gamePlayer) =>
 				{
-					playersSimple = tablePlayersToPlayersSimpleWithOriginNoGame(tablePlayer);
+					if (gamePlayer && gamePlayer.name === tablePlayer.getPlayer().getName())
+					{
+						gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards().map((card) => card.code);
+					}
+				});
+			}
+			
+			if (!tablePlayer || gameState.nextActionPlayer !== tablePlayer.getPlayer())
+			{
+				gameState.nextAction = null;
+			}
+			
+			let winners = gameState.winners;
+			if (winners)
+			{
+				if (getNumPlayersAtTable() >= 2)
+				{
+					startGameOnTimer(Math.min(winners.pots.length * 5, 12));
 				}
 				else
 				{
-					playersSimple = tablePlayersToPlayersSimpleNoGame();
+					// TODO: timer to go into NO_GAME state
 				}
-				gameState = GameState(null, null, null, null, playersSimple, null, null);
+				
+				
+				
+				
+				
 			}
-			console.log(JSON.stringify(gameState, null, 4));
+			
+			let isPotContested = true;
+			if (winners && winners.pots[0] && winners.pots[0].players.length <= 1)
+			{
+				isPotContested = false;
+			}
+			
+			if (!isPotContested)
+			{
+				gameState.players.forEach((playerSimple) =>
+				{
+					if (playerSimple)
+					{
+						playerSimple.hasHoleCards = false;
+					}
+				});
+			}
+			else if (winners)
+			{
+				// TODO: Somehow set it up for hole card showdown depending on lastAggressor
+				
+				
+				
+				
+				
+				
+				
+			}
+			
+			if (gameState.board)
+			{
+				if (isPotContested)
+				{
+					gameState.board = gameState.board.map((card) => card.code);
+				}
+				else
+				{
+					gameState.board = [];
+				}
+			}
+			
+//			console.log(JSON.stringify(gameState, null, 4));
 			return gameState;
 		},
 		performGameAction: (player, action, value = null) =>
 		{
-			if (holdEm)
+			let gameState = holdEm.generateGameState();
+			if (gameState.nextActionPlayer === player)
 			{
-				let gameState = holdEm.generateGameState();
-				if (gameState.nextActionPlayer === player)
+				switch (action)
 				{
-					switch (action)
-					{
-						case 'fold':
-							holdEm.fold();
-							break;
-						case 'check':
-							holdEm.check();
-							break;
-						case 'call':
-							holdEm.call();
-							break;
-						case 'raise':
-							holdEm.bet(value);
-							break;
-					}
-					updateRoomOccupants();
-					
-					return true;
+					case 'fold':
+						holdEm.fold();
+						break;
+					case 'check':
+						holdEm.check();
+						break;
+					case 'call':
+						holdEm.call();
+						break;
+					case 'raise':
+						holdEm.bet(value);
+						break;
 				}
-			}
-			else
-			{
-				// TODO: error here?
+				updateRoomOccupants();
+				
+				return true;
 			}
 			
 			return false;
