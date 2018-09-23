@@ -6,8 +6,8 @@ let FourOfAKind = (cards) =>
 	
 	let rank = Hand(FOUR_KIND);
 	
-	let fourKindValue = cards[0].value;
-	let kicker = cards[4].value;
+	let fourKindValue = cards[0].getValue();
+	let kicker = cards[4].getValue();
 	
 	let self =
 	{

@@ -280,6 +280,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		},
 		generateGameState: () =>
 		{
+			console.log('***generate***');
 			let nextAction = null;
 			let nextActionPlayer = null;
 			let board = self.getBoard();
@@ -379,10 +380,14 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		},
 		foldOutOfTurn: (player) =>
 		{
-			if (state !== HoldEmState().NO_GAME)
+			if (state !== HoldEmState().NO_GAME && state !== HoldEmState().WINNER)
 			{
 				actionLog.addEntries(pots.foldOutOfTurn(player));
 				moveState();
+			}
+			else if (state === HoldEmState().WINNER)
+			{
+				state = HoldEmState().NO_GAME;
 			}
 		},
 		getBoard: () =>

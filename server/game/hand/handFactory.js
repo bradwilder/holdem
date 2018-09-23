@@ -15,7 +15,7 @@ let HandFactory = () =>
 		let suitCounts = Array(4).fill(0);
 		cards.forEach(card =>
 		{
-			suitCounts[card.suit]++;
+			suitCounts[card.getSuit()]++;
 		});
 		
 		for (let i = 0; i < 4; i++)
@@ -30,17 +30,17 @@ let HandFactory = () =>
 		return -1;
 	}
 	
-	let sortCardsDesc = (a, b) => b.value - a.value;
+	let sortCardsDesc = (a, b) => b.getValue() - a.getValue();
 	
 	let createFlush = (cards, suit) =>
 	{
-		let flushCards = cards.filter((card) => card.suit === suit).sort(sortCardsDesc);
+		let flushCards = cards.filter((card) => card.getSuit() === suit).sort(sortCardsDesc);
 		return flushCards.slice(0, 5);
 	}
 	
 	let findStraightFlush = (cards, suit) =>
 	{
-		let suitedCards = cards.filter((card) => card.suit === suit);
+		let suitedCards = cards.filter((card) => card.getSuit() === suit);
 		return findStraight(suitedCards);
 	}
 	
@@ -52,8 +52,8 @@ let HandFactory = () =>
 		let valuesPresent = [];
 		cards.forEach((card) =>
 		{
-			valuesPresent[card.value + 1] = true; // Offset +1 for each value
-			if (card.value == 12)
+			valuesPresent[card.getValue() + 1] = true; // Offset +1 for each value
+			if (card.getValue() == 12)
 			{
 				// For ace, also set the value for ace-low
 				valuesPresent[0] = true;
@@ -77,11 +77,11 @@ let HandFactory = () =>
 	
 	let createStraight = (cards, highValue) =>
 	{
-		let card1 = cards.filter((card) => card.value === highValue)[0];
-		let card2 = cards.filter((card) => card.value === highValue - 1)[0];
-		let card3 = cards.filter((card) => card.value === highValue - 2)[0];
-		let card4 = cards.filter((card) => card.value === highValue - 3)[0];
-		let card5 = cards.filter((card) => card.value === (highValue - 4 < 0 ? 12 : highValue - 4))[0];
+		let card1 = cards.filter((card) => card.getValue() === highValue)[0];
+		let card2 = cards.filter((card) => card.getValue() === highValue - 1)[0];
+		let card3 = cards.filter((card) => card.getValue() === highValue - 2)[0];
+		let card4 = cards.filter((card) => card.getValue() === highValue - 3)[0];
+		let card5 = cards.filter((card) => card.getValue() === (highValue - 4 < 0 ? 12 : highValue - 4))[0];
 		return [card1, card2, card3, card4, card5];
 	}
 	
@@ -100,23 +100,23 @@ let HandFactory = () =>
 	
 	let createPair = (cards, pairValue) =>
 	{
-		let pair = cards.filter((card) => card.value === pairValue);
-		let kickers = cards.filter((card) => card.value !== pairValue).sort(sortCardsDesc).slice(0, 3);
+		let pair = cards.filter((card) => card.getValue() === pairValue);
+		let kickers = cards.filter((card) => card.getValue() !== pairValue).sort(sortCardsDesc).slice(0, 3);
 		return pair.concat(kickers);
 	}
 	
 	let createTwoPair = (cards, pairValues) =>
 	{
-		let pair1 = cards.filter((card) => card.value === pairValues[0]);
-		let pair2 = cards.filter((card) => card.value === pairValues[1]);
-		let kicker = cards.filter((card) => card.value !== pairValues[0] && card.value !== pairValues[1]).sort(sortCardsDesc).slice(0, 1);
+		let pair1 = cards.filter((card) => card.getValue() === pairValues[0]);
+		let pair2 = cards.filter((card) => card.getValue() === pairValues[1]);
+		let kicker = cards.filter((card) => card.getValue() !== pairValues[0] && card.getValue() !== pairValues[1]).sort(sortCardsDesc).slice(0, 1);
 		return pair1.concat(pair2).concat(kicker);
 	}
 	
 	let createFullHouse = (cards, tripValue, pairValue) =>
 	{
-		let trip = cards.filter((card) => card.value === tripValue);
-		let pair = cards.filter((card) => card.value === pairValue).slice(0, 2);
+		let trip = cards.filter((card) => card.getValue() === tripValue);
+		let pair = cards.filter((card) => card.getValue() === pairValue).slice(0, 2);
 		return trip.concat(pair);
 	}
 	
@@ -135,8 +135,8 @@ let HandFactory = () =>
 	
 	let createTrip = (cards, tripValue) =>
 	{
-		let trips = cards.filter((card) => card.value === tripValue);
-		let kickers = cards.filter((card) => card.value !== tripValue).sort(sortCardsDesc).slice(0, 2);
+		let trips = cards.filter((card) => card.getValue() === tripValue);
+		let kickers = cards.filter((card) => card.getValue() !== tripValue).sort(sortCardsDesc).slice(0, 2);
 		return trips.concat(kickers);
 	}
 	
@@ -155,8 +155,8 @@ let HandFactory = () =>
 	
 	let createQuad = (cards, quadValue) =>
 	{
-		let quads = cards.filter((card) => card.value === quadValue);
-		let kicker = cards.filter((card) => card.value !== quadValue).sort(sortCardsDesc).slice(0, 1);
+		let quads = cards.filter((card) => card.getValue() === quadValue);
+		let kicker = cards.filter((card) => card.getValue() !== quadValue).sort(sortCardsDesc).slice(0, 1);
 		return quads.concat(kicker);
 	}
 	
@@ -165,7 +165,7 @@ let HandFactory = () =>
 		let valueCounts = Array(13).fill(0);
 		cards.forEach((card) =>
 		{
-			valueCounts[card.value]++;
+			valueCounts[card.getValue()]++;
 		});
 		return valueCounts;
 	}
@@ -194,7 +194,7 @@ let HandFactory = () =>
 				let straightFlushHighValue = findStraightFlush(cards, flushSuit);
 				if (straightFlushHighValue !== -1)
 				{
-					return StraightFlush(createStraight(cards.filter((card) => card.suit === flushSuit), straightFlushHighValue));
+					return StraightFlush(createStraight(cards.filter((card) => card.getSuit() === flushSuit), straightFlushHighValue));
 				}
 				return Flush(createFlush(cards, flushSuit));
 			}

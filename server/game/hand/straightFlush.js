@@ -6,7 +6,7 @@ let StraightFlush = (cards) =>
 	
 	let rank = Hand(STRAIGHT_FLUSH);
 	
-	let highValue = cards[0].value;
+	let highValue = cards[0].getValue();
 	
 	let self =
 	{

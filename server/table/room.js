@@ -267,8 +267,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		},
 		getGameState: (tablePlayer = null) =>
 		{
-			let gameState;
-			gameState = holdEm.generateGameState();
+			let gameState = holdEm.generateGameState();
 			let playersSimple;
 			if (tablePlayer)
 			{
@@ -286,7 +285,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 				{
 					if (gamePlayer && gamePlayer.name === tablePlayer.getPlayer().getName())
 					{
-						gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards().map((card) => card.code);
+						gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards();
 					}
 				});
 			}
@@ -342,16 +341,9 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 				
 			}
 			
-			if (gameState.board)
+			if (gameState.board && !isPotContested)
 			{
-				if (isPotContested)
-				{
-					gameState.board = gameState.board.map((card) => card.code);
-				}
-				else
-				{
-					gameState.board = [];
-				}
+				gameState.board = [];
 			}
 			
 //			console.log(JSON.stringify(gameState, null, 4));

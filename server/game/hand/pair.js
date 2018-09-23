@@ -6,8 +6,8 @@ let Pair = (cards) =>
 	
 	let rank = Hand(PAIR);
 	
-	let pairValue = cards[0].value;
-	let kickers = cards.map((card) => card.value).slice(2);
+	let pairValue = cards[0].getValue();
+	let kickers = cards.map((card) => card.getValue()).slice(2);
 	
 	let self =
 	{

@@ -6,8 +6,8 @@ let FullHouse = (cards) =>
 	
 	let rank = Hand(FULL_HOUSE);
 	
-	let threeKindValue = cards[0].value;
-	let pairValue = cards[3].value;
+	let threeKindValue = cards[0].getValue();
+	let pairValue = cards[3].getValue();
 	
 	let self =
 	{

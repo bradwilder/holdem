@@ -6,8 +6,8 @@ let ThreeOfAKind = (cards) =>
 	
 	let rank = Hand(THREE_KIND);
 	
-	let threeKindValue = cards[0].value;
-	let kickers = cards.map((card) => card.value).slice(3);
+	let threeKindValue = cards[0].getValue();
+	let kickers = cards.map((card) => card.getValue()).slice(3);
 	
 	let self =
 	{

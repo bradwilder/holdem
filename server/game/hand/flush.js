@@ -24,23 +24,23 @@ let Flush = (cards) =>
 		{
 			for (let i = 0; i < 5; i++)
 			{
-				if (cards[i].value !== flush.getValue(i))
+				if (cards[i].getValue() !== flush.getValue(i))
 				{
-					return cards[i].value - flush.getValue(i);
+					return cards[i].getValue() - flush.getValue(i);
 				}
 			}
 			
 			return 0;
 		},
-		getValue: (i) => cards[i].value,
+		getValue: (i) => cards[i].getValue(),
 		toString: () =>
 		{
 			let valuesStr = '';
 			for (let i = 0; i < 4; i++)
 			{
-				valuesStr += (cards[i].value + ', ');
+				valuesStr += (cards[i].getValue() + ', ');
 			}
-			valuesStr += cards[4].value;
+			valuesStr += cards[4].getValue();
 			
 			return 'Flush (' + valuesStr + ')';
 		}

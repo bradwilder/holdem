@@ -24,23 +24,23 @@ let HighCard = (cards) =>
 		{
 			for (let i = 0; i < 5; i++)
 			{
-				if (cards[i].value !== highCard.getValue(i))
+				if (cards[i].getValue() !== highCard.getValue(i))
 				{
-					return cards[i].value - highCard.getValue(i);
+					return cards[i].getValue() - highCard.getValue(i);
 				}
 			}
 			
 			return 0;
 		},
-		getValue: (i) => cards[i].value,
+		getValue: (i) => cards[i].getValue(),
 		toString: () =>
 		{
 			let valuesStr = '';
 			for (let i = 0; i < 4; i++)
 			{
-				valuesStr += (cards[i].value + ', ');
+				valuesStr += (cards[i].getValue() + ', ');
 			}
-			valuesStr += cards[4].value;
+			valuesStr += cards[4].getValue();
 			
 			return 'High card (' + valuesStr + ')';
 		}

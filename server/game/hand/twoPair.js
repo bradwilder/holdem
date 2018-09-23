@@ -7,9 +7,9 @@ let TwoPair = (cards) =>
 	let rank = Hand(TWO_PAIR);
 	
 	let pairValues = [];
-	pairValues[0] = cards[0].value;
-	pairValues[1] = cards[2].value;
-	let kicker = cards[4].value;
+	pairValues[0] = cards[0].getValue();
+	pairValues[1] = cards[2].getValue();
+	let kicker = cards[4].getValue();
 	
 	let self =
 	{

@@ -21,8 +21,8 @@ let Card = (code) =>
 	}
 	
 	return {
-		suit: suit,
-		value: value,
+		getSuit: () => suit,
+		getValue: () => value,
 		code: code,
 		toString: () =>
 		{

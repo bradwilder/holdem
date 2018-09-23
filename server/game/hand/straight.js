@@ -6,7 +6,7 @@ let Straight = (cards) =>
 	
 	let rank = Hand(STRAIGHT);
 	
-	let highValue = cards[0].value;
+	let highValue = cards[0].getValue();
 	
 	let self =
 	{
