@@ -75,7 +75,8 @@ let HandFactory = () =>
 		return -1;
 	}
 	
-	let createStraight = (cards, highValue) => {
+	let createStraight = (cards, highValue) =>
+	{
 		let card1 = cards.filter((card) => card.value === highValue)[0];
 		let card2 = cards.filter((card) => card.value === highValue - 1)[0];
 		let card3 = cards.filter((card) => card.value === highValue - 2)[0];
