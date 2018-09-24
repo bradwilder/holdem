@@ -453,14 +453,15 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			
 			players.splice(i, 0, player);
 			
-			if (i <= dealerIndex)
+			if (players.length === 1 || players.length === 2)
+			{
+				dealerIndex = i;
+			}
+			else if (i <= dealerIndex)
 			{
 				dealerIndex++;
 			}
-			else if (players.length === 1)
-			{
-				dealerIndex = 0;
-			}
+			
 			gameState = generateGameState();
 		}
 	}

@@ -94,38 +94,38 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-		expect(gameState.nextActionPlayer.name).toBe('1');
+		expect(gameState.nextActionPlayer.name).toBe('2');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[4].name).toBe('2');
 		expect(gameState.players[4].holeCards.length).toBe(0);
 		expect(gameState.players[2].name).toBe('1');
 		expect(gameState.players[2].holeCards.length).toBe(0);
 		
-		gameState = room.getGameState(tablePlayer1);
+		gameState = room.getGameState(tablePlayer2);
 		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction.call).toBe(10);
 		expect(gameState.nextAction.minRaise).toBe(30);
 		expect(gameState.nextAction.maxRaise).toBe(434);
-		expect(gameState.nextActionPlayer.name).toBe('1');
-		expect(gameState.winners).toBeNull();
-		expect(gameState.players[0].name).toBe('1');
-		expect(gameState.players[0].holeCards.length).toBe(2);
-		expect(gameState.players[2].name).toBe('2');
-		expect(gameState.players[2].holeCards.length).toBe(0);
-		
-		gameState = room.getGameState(tablePlayer2);
-		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
-		expect(gameState.potSize).toBe(0);
-		expect(gameState.board.length).toBe(0);
-		expect(gameState.nextAction).toBeNull();
-		expect(gameState.nextActionPlayer.name).toBe('1');
+		expect(gameState.nextActionPlayer.name).toBe('2');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
 		expect(gameState.players[0].holeCards.length).toBe(2);
 		expect(gameState.players[3].name).toBe('1');
 		expect(gameState.players[3].holeCards.length).toBe(0);
+		
+		gameState = room.getGameState(tablePlayer1);
+		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
+		expect(gameState.potSize).toBe(0);
+		expect(gameState.board.length).toBe(0);
+		expect(gameState.nextAction).toBeNull();
+		expect(gameState.nextActionPlayer.name).toBe('2');
+		expect(gameState.winners).toBeNull();
+		expect(gameState.players[0].name).toBe('1');
+		expect(gameState.players[0].holeCards.length).toBe(2);
+		expect(gameState.players[2].name).toBe('2');
+		expect(gameState.players[2].holeCards.length).toBe(0);
 	});
 	
 	it("should let you remove a player after a game has started", () =>
@@ -214,7 +214,7 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-		expect(gameState.nextActionPlayer.name).toBe('2');
+		expect(gameState.nextActionPlayer.name).toBe('3');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
 		expect(gameState.players[4].name).toBe('3');
@@ -246,7 +246,7 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-		expect(gameState.nextActionPlayer.name).toBe('2');
+		expect(gameState.nextActionPlayer.name).toBe('3');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
 		expect(gameState.players[4].name).toBe('3');
@@ -258,13 +258,13 @@ describe('room', () =>
 		
 		room.addVisitor(visitor1);
 		
-		room.joinTable(tablePlayer1, 2);		
+		room.joinTable(tablePlayer1, 2);
 		gameState = room.getGameState();
 		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-		expect(gameState.nextActionPlayer.name).toBe('2');
+		expect(gameState.nextActionPlayer.name).toBe('3');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
 		expect(gameState.players[4].name).toBe('3');
@@ -276,7 +276,7 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-		expect(gameState.nextActionPlayer.name).toBe('2');
+		expect(gameState.nextActionPlayer.name).toBe('3');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
 		expect(gameState.players[4].name).toBe('3');
