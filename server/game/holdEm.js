@@ -88,7 +88,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		let playersSimple = [];
 		players.forEach((player) =>
 		{
-			let isDealer = self.getDealerPlayer() === player && state !== HoldEmState().NO_GAME;
+			let isDealer = players[dealerIndex] === player && state !== HoldEmState().NO_GAME;
 			let playerSimple = PlayerSimple(player.name, player.getChips(), player.hasHoleCards(), [], getOngoingRoundAction(player), isDealer);
 			playersSimple.push(playerSimple);
 		});
@@ -299,7 +299,6 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		getLogEntries: () => actionLog.getEntries(),
 		getPlayersCount: () => players.length - pendingPlayers.length,
 		getPlayer: (i) => players[i],
-		getDealerPlayer: () => players[dealerIndex],
 		getTotalPotSize: () => pots ? pots.getTotalSize() : 0,
 		getPotSizeWithoutRound: () => pots ? pots.getSizeWithoutRound() : 0,
 		potsToString: () => pots.toString(),
