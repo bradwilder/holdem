@@ -1,4 +1,4 @@
-let Hand = (rank) =>
+let Rank = (rank) =>
 {
 	return {
 		compare: (hand) => rank - hand.getRank(),
@@ -6,4 +6,4 @@ let Hand = (rank) =>
 	}
 }
 
-module.exports = Hand;
+module.exports = Rank;

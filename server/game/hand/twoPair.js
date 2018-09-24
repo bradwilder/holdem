@@ -1,10 +1,10 @@
-let Hand = require('./hand');
+let Rank = require('./rank');
 
 let TwoPair = (cards) =>
 {
 	const TWO_PAIR = 2;
 	
-	let rank = Hand(TWO_PAIR);
+	let rank = Rank(TWO_PAIR);
 	
 	let pairValues = [];
 	pairValues[0] = cards[0].getValue();

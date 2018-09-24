@@ -1,10 +1,10 @@
-let Hand = require('./hand');
+let Rank = require('./rank');
 
 let StraightFlush = (cards) =>
 {
 	const STRAIGHT_FLUSH = 8;
 	
-	let rank = Hand(STRAIGHT_FLUSH);
+	let rank = Rank(STRAIGHT_FLUSH);
 	
 	let highValue = cards[0].getValue();
 	

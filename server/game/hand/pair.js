@@ -1,10 +1,10 @@
-let Hand = require('./hand');
+let Rank = require('./rank');
 
 let Pair = (cards) =>
 {
 	const PAIR = 1;
 	
-	let rank = Hand(PAIR);
+	let rank = Rank(PAIR);
 	
 	let pairValue = cards[0].getValue();
 	let kickers = cards.map((card) => card.getValue()).slice(2);

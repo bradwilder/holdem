@@ -1,10 +1,10 @@
-let Hand = require('./hand');
+let Rank = require('./rank');
 
 let HighCard = (cards) =>
 {
 	const HIGH_CARD = 0;
 	
-	let rank = Hand(HIGH_CARD);
+	let rank = Rank(HIGH_CARD);
 	
 	let self =
 	{

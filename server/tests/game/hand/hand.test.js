@@ -1,4 +1,4 @@
-// let Hand = require('../../../game/hand/hand');
+// let Rank = require('../../../game/hand/rank');
 // let HighCard = require('../../../game/hand/highCard');
 let Pair = require('../../../game/hand/pair');
 // let TwoPair = require('../../../game/hand/twoPair');

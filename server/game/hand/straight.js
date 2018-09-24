@@ -1,10 +1,10 @@
-let Hand = require('./hand');
+let Rank = require('./rank');
 
 let Straight = (cards) =>
 {
 	const STRAIGHT = 4;
 	
-	let rank = Hand(STRAIGHT);
+	let rank = Rank(STRAIGHT);
 	
 	let highValue = cards[0].getValue();
 	

@@ -1,10 +1,10 @@
-let Hand = require('./hand');
+let Rank = require('./rank');
 
 let FourOfAKind = (cards) =>
 {
 	const FOUR_KIND = 7;
 	
-	let rank = Hand(FOUR_KIND);
+	let rank = Rank(FOUR_KIND);
 	
 	let fourKindValue = cards[0].getValue();
 	let kicker = cards[4].getValue();
