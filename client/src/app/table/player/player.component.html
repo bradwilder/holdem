@@ -1,5 +1,5 @@
-<div [ngClass]="{empty: !player, 'next-action': player && nextActionPlayer && nextActionPlayer.name === player.name}" class="player-box">
-	<ng-container *ngIf="player; then player_box; else player_box_empty"></ng-container>
+<div [ngClass]="{empty: !player.name, 'next-action': player.name && nextActionPlayer && nextActionPlayer.name === player.name}" class="player-box">
+	<ng-container *ngIf="player.name; then player_box; else player_box_empty"></ng-container>
 </div>
 
 <ng-template #player_box>
@@ -19,7 +19,7 @@
 	</ng-template>
 </ng-template>
 
-<ng-container *ngIf="player && player.hasHoleCards">
+<ng-container *ngIf="player.name && player.hasHoleCards">
 	<ng-container *ngIf="player.holeCards.length == 2; then hole_cards_showing; else hole_cards_hidden"></ng-container>
 	
 	<ng-template #hole_cards_hidden>
@@ -39,8 +39,8 @@
 	</ng-template>
 </ng-container>
 
-<div *ngIf="player" class="action-box">
+<div *ngIf="player.name" class="action-box">
 	<app-player-action [ongoingRoundAction]='player.ongoingRoundAction'></app-player-action>
 </div>
 
-<div *ngIf="player && player.isDealer" class="dealer-button">D</div>
+<div *ngIf="player.isDealer" class="dealer-button">D</div>

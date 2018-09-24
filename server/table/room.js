@@ -6,7 +6,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 {
 	let tablePlayers = Array(maxPlayers).fill(null);
 	let visitors = [];
-	let holdEm = HoldEm([], bigBlind, Deck(), true);
+	let holdEm = HoldEm(maxPlayers, bigBlind, Deck(), true);
 	let timeout;
 	
 	let getNumPlayersAtTable = () =>
@@ -24,62 +24,17 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 	
 	let tablePlayersToPlayersSimpleWithOrigin = (tablePlayerOrigin, gamePlayers) =>
 	{
-		let indexOrigin;
-		let gamePlayerIndex = 0;
-		for (let i = 0; i < maxPlayers; i++)
+		let indexOrigin = tablePlayers.indexOf(tablePlayerOrigin);
+		if (indexOrigin > 0)
 		{
-			let tablePlayer = tablePlayers[i];
-			if (tablePlayer)
-			{
-				if (tablePlayer.getPlayer() === tablePlayerOrigin.getPlayer())
-				{
-					indexOrigin = i;
-					break;
-				}
-				gamePlayerIndex++;
-			}
-		}
-		
-		if (indexOrigin >= 0)
-		{
-			let playersSimple = Array(maxPlayers).fill(null);
-			
-			playersSimple[0] = gamePlayers[gamePlayerIndex];
-			
-			gamePlayerIndex = (gamePlayerIndex + 1) % gamePlayers.length;
-			let currentAddIndex = 1;
-			for (let i = (indexOrigin + 1) % maxPlayers; i != indexOrigin; i = (i + 1) % maxPlayers)
-			{
-				let tablePlayer = tablePlayers[i];
-				if (tablePlayer)
-				{
-					playersSimple[currentAddIndex] = gamePlayers[gamePlayerIndex];
-					gamePlayerIndex = (gamePlayerIndex + 1) % gamePlayers.length;
-				}
-				currentAddIndex++;
-			}
+			let playersSimple = gamePlayers.slice();
+			playersSimple = playersSimple.splice(indexOrigin % maxPlayers, maxPlayers).concat(playersSimple);
 			return playersSimple;
 		}
 		else
 		{
-			return tablePlayersToPlayersSimple(gamePlayers);
+			return gamePlayers;
 		}
-	}
-	
-	let tablePlayersToPlayersSimple = (gamePlayers) =>
-	{
-		let playersSimple = Array(maxPlayers).fill(null);
-		let gamePlayerIndex = 0;
-		for (let i = 0; i < maxPlayers; i++)
-		{
-			let tablePlayer = tablePlayers[i];
-			if (tablePlayer)
-			{
-				playersSimple[i] = gamePlayers[gamePlayerIndex];
-				gamePlayerIndex++;
-			}
-		}
-		return playersSimple;
 	}
 	
 	let removeVisitor = (visitor) =>
@@ -227,17 +182,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 				throw "Can't seat player at position " + position + " because it's occupied";
 			}
 			
-			let playersBefore = 0;
-			for (let i = 0; i < position; i++)
-			{
-				let tablePlayer = tablePlayers[i];
-				if (tablePlayer)
-				{
-					playersBefore++;
-				}
-			}
-			
-			holdEm.addPlayer(tablePlayer.getPlayer(), playersBefore);
+			holdEm.addPlayer(tablePlayer.getPlayer(), position);
 			
 			tablePlayers[position] = tablePlayer;
 			
@@ -287,7 +232,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			}
 			else
 			{
-				playersSimple = tablePlayersToPlayersSimple(gameState.players);
+				playersSimple = gameState.players;
 			}
 			gameState.players = playersSimple;
 			
