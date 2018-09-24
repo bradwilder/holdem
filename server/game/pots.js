@@ -76,6 +76,8 @@ let Pots = (players, newPlayers, bigBlind) =>
 	
 	let getSmallBlind = () => bigBlind / 2;
 	
+	let getLastPot = () => potList[potList.length - 1];
+	
 	let refundIncontestableBet = () =>
 	{
 		if (!self.hasTwoOrMorePlayers())
@@ -102,7 +104,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 		
 		if (playerMatching)
 		{
-			let lastPot = self.getLastPot();
+			let lastPot = getLastPot();
 			let lastPotBet = lastPot.getRoundCount(playerMatching);
 			let refund = lastPotBet;
 			players.forEach((player) =>
@@ -437,10 +439,46 @@ let Pots = (players, newPlayers, bigBlind) =>
 		return entries;
 	}
 	
+	let awardPot = (boardCards) =>
+	{
+		let pot = getLastPot();
+		if (pot)
+		{
+			let winners = pot.getWinners(boardCards);
+			if (winners)
+			{
+				let numWinners = winners.length;
+				let potSize = pot.getSize();
+				if (numWinners == 1)
+				{
+					winners[0].player.awardChips(potSize);
+				}
+				else
+				{
+					let rem = potSize % numWinners;
+					let chipsPerWinner = Math.floor(potSize / numWinners);
+					winners.forEach((winner) =>
+					{
+						winner.player.awardChips(chipsPerWinner);
+					});
+					if (rem > 0)
+					{
+						let players = getFirstPlayersInPotByPosition(pot, iRem);
+						players.forEach((player) =>
+						{
+							player.awardChips(1);
+						});
+					}
+				}
+				removePot(pot);
+			}
+		}
+		return pot;
+	}
+	
 	let self =
 	{
 		getMainPot: () => potList[0],
-		getLastPot: () => potList[potList.length - 1],
 		getNextActionPlayer: () =>
 		{
 			let startingIndex = actionIndex;
@@ -547,6 +585,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 		},
 		getChipsThisRound: (player) =>
 		{
+			// TODO: make this private, rely on ongoing round action for tests
 			let chips = 0;
 			for (let i = currentPotIndex; i < potList.length; i++)
 			{
@@ -665,49 +704,13 @@ let Pots = (players, newPlayers, bigBlind) =>
 			let maxRaise = Math.min(playerChips, getMaxChipsRemainingPlayers() - self.getChipsThisRound(player)); 
 			return maxRaise == call ? 0 : maxRaise;
 		},
-		awardPot: (boardCards) =>
-		{
-			let pot = self.getLastPot();
-			if (pot)
-			{
-				let winners = pot.getWinners(boardCards);
-				if (winners)
-				{
-					let numWinners = winners.length;
-					let potSize = pot.getSize();
-					if (numWinners == 1)
-					{
-						winners[0].player.awardChips(potSize);
-					}
-					else
-					{
-						let rem = potSize % numWinners;
-						let chipsPerWinner = Math.floor(potSize / numWinners);
-						winners.forEach((winner) =>
-						{
-							winner.player.awardChips(chipsPerWinner);
-						});
-						if (rem > 0)
-						{
-							let players = getFirstPlayersInPotByPosition(pot, iRem);
-							players.forEach((player) =>
-							{
-								player.awardChips(1);
-							});
-						}
-					}
-					removePot(pot);
-				}
-			}
-			return pot;
-		},
 		awardPots: (boardCards) =>
 		{
 			let potWinners = {};
 			potWinners.lastAggressor = lastAggressor;
 			potWinners.pots = [];
 			let pot;
-			while (pot = self.awardPot(boardCards))
+			while (pot = awardPot(boardCards))
 			{
 				let players = pot.getPlayers();
 				let winners = pot.getWinners(boardCards);
