@@ -6,8 +6,8 @@ let ThreeOfAKind = (cards) =>
 	
 	let rank = Rank(THREE_KIND);
 	
-	let threeKindValue = cards[0].getValue();
-	let kickers = cards.map((card) => card.getValue()).slice(3);
+	let threeKindValue = cards[0];
+	let kickers = cards.slice(3);
 	
 	let self =
 	{
@@ -25,27 +25,27 @@ let ThreeOfAKind = (cards) =>
 		},
 		compareSameRank: (threeOfAKind) =>
 		{
-			if (threeKindValue !== threeOfAKind.getThreeKindValue())
+			if (threeKindValue.getValue() !== threeOfAKind.getThreeKindValue())
 			{
-				return threeKindValue - threeOfAKind.getThreeKindValue();
+				return threeKindValue.getValue() - threeOfAKind.getThreeKindValue();
 			}
 			
 			for (let i = 0; i < 2; i++)
 			{
-				if (kickers[i] !== threeOfAKind.getKicker(i))
+				if (kickers[i].getValue() !== threeOfAKind.getKicker(i))
 				{
-					return kickers[i] - threeOfAKind.getKicker(i);
+					return kickers[i].getValue() - threeOfAKind.getKicker(i);
 				}
 			}
 			
 			return 0;
 		},
-		getThreeKindValue: () => threeKindValue,
-		getKicker: (i) => kickers[i],
+		getThreeKindValue: () => threeKindValue.getValue(),
+		getKicker: (i) => kickers[i].getValue(),
 		toString: () =>
 		{
-			let kickerStr = kickers[0] + ', ' + kickers[1];
-			return 'Three of a kind (' + threeKindValue + "'s, [" + kickerStr + '] kickers)';
+			let kickerStr = kickers[0].toValueString() + ', ' + kickers[1].toValueString();
+			return 'Three of a kind (' + threeKindValue.toValueString() + "'s, [" + kickerStr + '] kickers)';
 		}
 	}
 	

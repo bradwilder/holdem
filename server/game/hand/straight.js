@@ -6,7 +6,7 @@ let Straight = (cards) =>
 	
 	let rank = Rank(STRAIGHT);
 	
-	let highValue = cards[0].getValue();
+	let highValue = cards[0];
 	
 	let self =
 	{
@@ -24,10 +24,10 @@ let Straight = (cards) =>
 		},
 		compareSameRank: (straight) =>
 		{
-			return highValue - straight.getHighValue();
+			return highValue.getValue() - straight.getHighValue();
 		},
-		getHighValue: () => highValue,
-		toString: () => 'Straight (' + highValue + ' high)'
+		getHighValue: () => highValue.getValue(),
+		toString: () => 'Straight (' + highValue.toValueString() + ' high)'
 	}
 	
 	return self;

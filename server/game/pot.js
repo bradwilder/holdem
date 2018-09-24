@@ -86,7 +86,7 @@ let Pot = (players = null) =>
 			let winners = [];
 			let firstPlayer = players[0];
 			let bestHand = HandFactory().createHandWithHoles(boardCards, firstPlayer.getHoleCards());
-			winners.push(PotWinner(firstPlayer, bestHand));
+			winners.push(PotWinner(firstPlayer, bestHand, bestHand.toString()));
 			
 			// If the best hand is null, we must be pre-flop; there's only a winner if there's only 1 player left
 			if (!bestHand)
@@ -113,7 +113,7 @@ let Pot = (players = null) =>
 						winners = [];
 					}
 					bestHand = playerHand;
-					winners.push(PotWinner(player, playerHand));
+					winners.push(PotWinner(player, playerHand, playerHand.toString()));
 				}
 			}
 			

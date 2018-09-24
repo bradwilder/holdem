@@ -6,8 +6,8 @@ let FourOfAKind = (cards) =>
 	
 	let rank = Rank(FOUR_KIND);
 	
-	let fourKindValue = cards[0].getValue();
-	let kicker = cards[4].getValue();
+	let fourKindValue = cards[0];
+	let kicker = cards[4];
 	
 	let self =
 	{
@@ -25,16 +25,16 @@ let FourOfAKind = (cards) =>
 		},
 		compareSameRank: (fourOfAKind) =>
 		{
-			if (fourKindValue !== fourOfAKind.getFourKindValue())
+			if (fourKindValue.getValue() !== fourOfAKind.getFourKindValue())
 			{
-				return fourKindValue - fourOfAKind.getourKindValue();
+				return fourKindValue.getValue() - fourOfAKind.getourKindValue();
 			}
 			
-			return kicker - fourOfAKind.getKicker();
+			return kicker.getValue() - fourOfAKind.getKicker();
 		},
-		getFourKindValue: () => fourKindValue,
-		getKicker: () => kicker,
-		toString: () => 'Four of a kind (' + fourKindValue + "'s, " + kicker + ' kicker)'
+		getFourKindValue: () => fourKindValue.getValue(),
+		getKicker: () => kicker.getValue(),
+		toString: () => 'Four of a kind (' + fourKindValue.toValueString() + "'s, " + kicker.toValueString() + ' kicker)'
 	}
 	
 	return self;

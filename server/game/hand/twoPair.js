@@ -7,9 +7,9 @@ let TwoPair = (cards) =>
 	let rank = Rank(TWO_PAIR);
 	
 	let pairValues = [];
-	pairValues[0] = cards[0].getValue();
-	pairValues[1] = cards[2].getValue();
-	let kicker = cards[4].getValue();
+	pairValues[0] = cards[0];
+	pairValues[1] = cards[2];
+	let kicker = cards[4];
 	
 	let self =
 	{
@@ -29,17 +29,17 @@ let TwoPair = (cards) =>
 		{
 			for (let i = 0; i < 2; i++)
 			{
-				if (pairValues[i] !== twoPair.getPairValue(i))
+				if (pairValues[i].getValue() !== twoPair.getPairValue(i))
 				{
-					return pairValues[i] - twoPair.getPairValue(i);
+					return pairValues[i].getValue() - twoPair.getPairValue(i);
 				}
 			}
 			
-			return kicker - twoPair.getKicker();
+			return kicker.getValue() - twoPair.getKicker();
 		},
-		getPairValue: (i) => pairValues[i],
-		getKicker: () => kicker,
-		toString: () => 'Two pair (' + pairValues[0] + "'s and " + pairValues[1] + "'s, " + kicker + ' kicker)'
+		getPairValue: (i) => pairValues[i].getValue(),
+		getKicker: () => kicker.getValue(),
+		toString: () => 'Two pair (' + pairValues[0].toValueString() + "'s and " + pairValues[1].toValueString() + "'s, " + kicker.toValueString() + ' kicker)'
 	}
 	
 	return self;

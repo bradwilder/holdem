@@ -6,8 +6,8 @@ let FullHouse = (cards) =>
 	
 	let rank = Rank(FULL_HOUSE);
 	
-	let threeKindValue = cards[0].getValue();
-	let pairValue = cards[3].getValue();
+	let threeKindValue = cards[0];
+	let pairValue = cards[3];
 	
 	let self =
 	{
@@ -25,16 +25,16 @@ let FullHouse = (cards) =>
 		},
 		compareSameRank: (fullHouse) =>
 		{
-			if (threeKindValue !== fullHouse.getThreeKindValue())
+			if (threeKindValue.getValue() !== fullHouse.getThreeKindValue())
 			{
-				return threeKindValue - fullHouse.getThreeKindValue();
+				return threeKindValue.getValue() - fullHouse.getThreeKindValue();
 			}
 			
-			return pairValue - fullHouse.getPairValue();
+			return pairValue.getValue() - fullHouse.getPairValue();
 		},
-		getThreeKindValue: () => threeKindValue,
-		getPairValue: () => pairValue,
-		toString: () => "Full house (" + threeKindValue + "'s full of " + pairValue + "'s)"
+		getThreeKindValue: () => threeKindValue.getValue(),
+		getPairValue: () => pairValue.getValue(),
+		toString: () => "Full house (" + threeKindValue.toValueString() + "'s full of " + pairValue.toValueString() + "'s)"
 	}
 	
 	return self;

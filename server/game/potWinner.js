@@ -1,8 +1,9 @@
-let PotWinner = (player, hand) =>
+let PotWinner = (player, hand, handDescription) =>
 {
 	return {
 		player: player,
-		hand: hand
+		hand: hand,
+		handDescription: handDescription
 	}
 }
 

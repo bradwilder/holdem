@@ -6,7 +6,7 @@ let StraightFlush = (cards) =>
 	
 	let rank = Rank(STRAIGHT_FLUSH);
 	
-	let highValue = cards[0].getValue();
+	let highValue = cards[0];
 	
 	let self =
 	{
@@ -24,10 +24,10 @@ let StraightFlush = (cards) =>
 		},
 		compareSameRank: (straightFlush) =>
 		{
-			return highValue - straightFlush.getHighValue();
+			return highValue.getValue() - straightFlush.getHighValue();
 		},
-		getHighValue: () => highValue,
-		toString: () => 'Straight flush (' + highValue + ' high)'
+		getHighValue: () => highValue.getValue(),
+		toString: () => 'Straight flush (' + highValue.toValueString() + ' high)'
 	}
 	
 	return self;

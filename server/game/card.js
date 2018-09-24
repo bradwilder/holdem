@@ -24,7 +24,7 @@ let Card = (code) =>
 		getSuit: () => suit,
 		getValue: () => value,
 		code: code,
-		toString: () =>
+		toValueString: () =>
 		{
 			let valueStr;
 			switch (value)
@@ -53,7 +53,10 @@ let Card = (code) =>
 					valueStr = 'Ace';
 					break;
 			}
-			
+			return valueStr;
+		},
+		toSuitString: () =>
+		{
 			let suitStr;
 			switch (suit)
 			{
@@ -70,7 +73,12 @@ let Card = (code) =>
 					suitStr = 'Spades';
 					break;
 			}
-			
+			return suitStr;
+		},
+		toString: () =>
+		{
+			let valueStr = self.toValueString();
+			let suitStr = self.toSuitString();
 			return valueStr + '/' + suitStr;
 		}
 	}

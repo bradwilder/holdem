@@ -6,8 +6,8 @@ let Pair = (cards) =>
 	
 	let rank = Rank(PAIR);
 	
-	let pairValue = cards[0].getValue();
-	let kickers = cards.map((card) => card.getValue()).slice(2);
+	let pairValue = cards[0];
+	let kickers = cards.slice(2);
 	
 	let self =
 	{
@@ -25,33 +25,33 @@ let Pair = (cards) =>
 		},
 		compareSameRank: (pair) =>
 		{
-			if (pairValue !== pair.getPairValue())
+			if (pairValue.getValue() !== pair.getPairValue())
 			{
-				return pairValue - pair.getPairValue();
+				return pairValue.getValue() - pair.getPairValue();
 			}
 			
 			for (let i = 0; i < 3; i++)
 			{
-				if (kickers[i] !== pair.getKicker(i))
+				if (kickers[i].getValue() !== pair.getKicker(i))
 				{
-					return kickers[i] - pair.getKicker(i);
+					return kickers[i].getValue() - pair.getKicker(i);
 				}
 			}
 			
 			return 0;
 		},
-		getPairValue: () => pairValue,
-		getKicker: (i) => kickers[i],
+		getPairValue: () => pairValue.getValue(),
+		getKicker: (i) => kickers[i].getValue(),
 		toString: () =>
 		{
 			let kickerStr = '';
 			for (let i = 0; i < 2; i++)
 			{
-				kickerStr += (kickers[i] + ', ');
+				kickerStr += (kickers[i].toValueString() + ', ');
 			}
-			kickerStr += kickers[2];
+			kickerStr += kickers[2].toValueString();
 			
-			return 'Pair (' + pairValue + "'s, [" + kickerStr + '] kickers)';
+			return 'Pair (' + pairValue.toValueString() + "'s, [" + kickerStr + '] kickers)';
 		}
 	}
 	

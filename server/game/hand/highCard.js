@@ -38,9 +38,9 @@ let HighCard = (cards) =>
 			let valuesStr = '';
 			for (let i = 0; i < 4; i++)
 			{
-				valuesStr += (cards[i].getValue() + ', ');
+				valuesStr += (cards[i].toValueString() + ', ');
 			}
-			valuesStr += cards[4].getValue();
+			valuesStr += cards[4].toValueString();
 			
 			return 'High card (' + valuesStr + ')';
 		}
