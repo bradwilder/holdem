@@ -46,10 +46,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		}
 	}
 	
-	let hasVisitor = (visitor) =>
-	{
-		return visitors.indexOf(visitor) !== -1;
-	}
+	let hasVisitor = (visitor) => visitors.indexOf(visitor) !== -1;
 	
 	let startGameOnTimer = (seconds = defaultWait) =>
 	{
@@ -103,18 +100,8 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 	
 	let removePlayerFromTable = (tablePlayer) =>
 	{
-		let index;
-		for (let i = 0; i < tablePlayers.length; i++)
-		{
-			if (tablePlayer === tablePlayers[i])
-			{
-				index = i;
-				break;
-			}
-		}
-		
 		holdEm.removePlayer(tablePlayer.getPlayer());
-		
+		let index = tablePlayers.indexOf(tablePlayer);
 		tablePlayers[index] = null;
 		updateRoomOccupants();
 	}
