@@ -112,13 +112,14 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			let player = players[i];
 			
 			let playerSimple;
+			let isDealer = dealerIndex === i;
 			if (player)
 			{
-				playerSimple = PlayerSimple(player.name, player.getChips(), player.hasHoleCards(), [], getOngoingRoundAction(player), dealerIndex === i);
+				playerSimple = PlayerSimple(player.name, player.getChips(), player.hasHoleCards(), [], getOngoingRoundAction(player), isDealer);
 			}
 			else
 			{
-				playerSimple = PlayerSimple(null, null, null, null, null, dealerIndex === i);
+				playerSimple = PlayerSimple(null, null, null, null, null, isDealer);
 			}
 			playersSimple.push(playerSimple);
 		}
@@ -392,6 +393,8 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			
 			changeDealer();
 			
+			pendingPlayers = [];
+			
 			let mainPlayers = getPlayersForMainPot();
 			if (mainPlayers.length < 2)
 			{
@@ -400,7 +403,6 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			pots = Pots(mainPlayers, newPlayers, bigBlind);
 			
 			newPlayers = [];
-			pendingPlayers = [];
 			
 			players.forEach((player) =>
 			{
