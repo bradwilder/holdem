@@ -28,7 +28,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	
 	let getNextPlayerAtTableNotNew = (i) =>
 	{
-		let playersCount = self.getPlayersCount();
+		let playersCount = getPlayersCount();
 		if (i >= playersCount)
 		{
 			throw 'Invalid index ' + i;
@@ -52,7 +52,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	
 	let getNextIndexAtTable = (i) =>
 	{
-		let playersCount = self.getPlayersCount();
+		let playersCount = getPlayersCount();
 		if (i >= playersCount)
 		{
 			throw 'Invalid index' + i;
@@ -66,6 +66,8 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		
 		return index;
 	}
+	
+	let getPlayersCount = () => players.length - pendingPlayers.length;
 	
 	let getPlayersForMainPot = () =>
 	{
@@ -297,11 +299,8 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	let self =
 	{
 		getLogEntries: () => actionLog.getEntries(),
-		getPlayersCount: () => players.length - pendingPlayers.length,
-		getPlayer: (i) => players[i],
 		getTotalPotSize: () => pots ? pots.getTotalSize() : 0,
 		getPotSizeWithoutRound: () => pots ? pots.getSizeWithoutRound() : 0,
-		getMainPot: () => pots.getMainPot(),
 		getGameState: () =>
 		{
 			if (!gameState)
