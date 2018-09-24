@@ -31,8 +31,6 @@ let Pots = (players, newPlayers, bigBlind) =>
 	
 	let getCurrentPot = () => potList[currentPotIndex];
 	
-	let getPotName = (i) => i == 0 ? 'Main Pot' : 'Side Pot ' + i;
-	
 	let getMainPlayersCount = () =>
 	{
 		let main = self.getMainPot();
