@@ -301,7 +301,6 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		getPlayer: (i) => players[i],
 		getTotalPotSize: () => pots ? pots.getTotalSize() : 0,
 		getPotSizeWithoutRound: () => pots ? pots.getSizeWithoutRound() : 0,
-		potsToString: () => pots.toString(),
 		getMainPot: () => pots.getMainPot(),
 		getGameState: () =>
 		{
