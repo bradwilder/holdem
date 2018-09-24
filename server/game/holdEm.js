@@ -19,6 +19,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	let board;
 	let actionLog = ActionLog();
 	
+	let gameState;
 	let winners = null;
 	
 	let changeDealer = () =>
@@ -296,6 +297,29 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	
 	let getActionPlayer = () => pots.getNextActionPlayer();
 	
+	let generateGameState = () =>
+	{
+		let nextAction = null;
+		let nextActionPlayer = null;
+		switch (state)
+		{
+			case HoldEmState().BLINDS:
+			case HoldEmState().BET_PREFLOP:
+			case HoldEmState().BET_FLOP:
+			case HoldEmState().BET_TURN:
+			case HoldEmState().BET_RIVER:
+				nextAction = NextAction(getCall(), getMinRaise(), getMaxRaise());
+				nextActionPlayer = getActionPlayer();
+				break;
+			case HoldEmState().WINNER:
+				awardPots();
+				break;
+			default:
+		}
+		
+		gameState = GameState(state, self.getPotSizeWithoutRound(), bigBlind, getBoard(), getPlayersSimple(), nextAction, nextActionPlayer, winners);
+	}
+	
 	let self =
 	{
 		getLogEntries: () => actionLog.getEntries(),
@@ -305,7 +329,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		{
 			if (!gameState)
 			{
-				gameState = generateGameState();
+				generateGameState();
 			}
 			return JSON.parse(JSON.stringify(gameState));
 		},
@@ -338,7 +362,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			
 			actionLog.addSystemEntry("Started hand");
 			
-			gameState = generateGameState();
+			generateGameState();
 			
 			if (autoPostBlinds)
 			{
@@ -360,7 +384,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 					player.fold();
 				});
 				
-				gameState = generateGameState();
+				generateGameState();
 			}
 		},
 		bet: (addition) =>
@@ -385,7 +409,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			
 			actionLog.addEntry(pots.addToPot(addition));
 			moveState();
-			gameState = generateGameState();
+			generateGameState();
 		},
 		call: () =>
 		{
@@ -399,7 +423,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 		{
 			actionLog.addEntries(pots.fold());
 			moveState();
-			gameState = generateGameState();
+			generateGameState();
 		},
 		foldOutOfTurn: (player) =>
 		{
@@ -415,7 +439,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 					self.setToNoGame();
 				}
 			}
-			gameState = generateGameState();
+			generateGameState();
 		},
 		removePlayer: (player) =>
 		{
@@ -461,34 +485,9 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 				dealerIndex++;
 			}
 			
-			gameState = generateGameState();
+			generateGameState();
 		}
 	}
-	
-	let generateGameState = () =>
-	{
-		let nextAction = null;
-		let nextActionPlayer = null;
-		switch (state)
-		{
-			case HoldEmState().BLINDS:
-			case HoldEmState().BET_PREFLOP:
-			case HoldEmState().BET_FLOP:
-			case HoldEmState().BET_TURN:
-			case HoldEmState().BET_RIVER:
-				nextAction = NextAction(getCall(), getMinRaise(), getMaxRaise());
-				nextActionPlayer = getActionPlayer();
-				break;
-			case HoldEmState().WINNER:
-				awardPots();
-				break;
-			default:
-		}
-		
-		return GameState(state, self.getPotSizeWithoutRound(), bigBlind, getBoard(), getPlayersSimple(), nextAction, nextActionPlayer, winners);
-	}
-	
-	let gameState = generateGameState();
 	
 	return self;
 }
