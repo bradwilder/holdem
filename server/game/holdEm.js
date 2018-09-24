@@ -20,7 +20,6 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	let actionLog = ActionLog();
 	
 	let gameState;
-	let winners = null;
 	
 	let changeDealer = () =>
 	{
@@ -275,10 +274,10 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 	
 	let awardPots = () =>
 	{
-		if (!winners)
+		if (!gameState.winners)
 		{
-			winners = pots.awardPots(getBoard());
-			winners.pots.forEach((pot) =>
+			gameState.winners = pots.awardPots(getBoard());
+			gameState.winners.pots.forEach((pot) =>
 			{
 				let action;
 				if (pot.winners.length == 1)
@@ -317,7 +316,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			default:
 		}
 		
-		gameState = GameState(state, self.getPotSizeWithoutRound(), bigBlind, getBoard(), getPlayersSimple(), nextAction, nextActionPlayer, winners);
+		gameState = GameState(state, self.getPotSizeWithoutRound(), bigBlind, getBoard(), getPlayersSimple(), nextAction, nextActionPlayer, gameState ? gameState.winners : null);
 	}
 	
 	let self =
@@ -349,7 +348,11 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			newPlayers = [];
 			pendingPlayers = [];
 			
-			winners = null;
+			// TODO: why the if?????????
+			if (gameState)
+			{
+				gameState.winners = null;
+			}
 			
 			players.forEach((player) =>
 			{
@@ -377,7 +380,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			if (state === HoldEmState().WINNER)
 			{
 				state = HoldEmState().NO_GAME;
-				winners = null;
+				gameState.winners = null;
 				
 				players.forEach((player) =>
 				{
