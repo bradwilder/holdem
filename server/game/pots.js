@@ -717,15 +717,6 @@ let Pots = (players, newPlayers, bigBlind) =>
 				potWinners.pots.push(PotSimple(pot.getSize(), players, winners));
 			}
 			return potWinners;
-		},
-		toString: () =>
-		{
-			let potsString = self.getMainPot().toString(getPotName(0));
-			for (let i = 1; i < potList.length; i++)
-			{
-				potsString += "   " + potList[i].toString(getPotName(i));
-			}
-			return potsString
 		}
 	}
 	

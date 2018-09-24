@@ -223,10 +223,6 @@ let Pot = (players = null) =>
 			{
 				totalSize += playerCount.value;
 			}
-		},
-		toString: (name) =>
-		{
-			return name + ' (' + totalSize + ')';
 		}
 	}
 	
