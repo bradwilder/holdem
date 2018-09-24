@@ -317,7 +317,7 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			default:
 		}
 		
-		gameState = GameState(gameState.state, self.getPotSizeWithoutRound(), bigBlind, getBoard(), getPlayersSimple(), nextAction, nextActionPlayer, gameState ? gameState.winners : null);
+		gameState = GameState(gameState.state, self.getPotSizeWithoutRound(), bigBlind, getBoard(), getPlayersSimple(), nextAction, nextActionPlayer, gameState.winners);
 	}
 	
 	let self =
