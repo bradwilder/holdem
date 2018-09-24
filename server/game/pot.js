@@ -119,40 +119,6 @@ let Pot = (players = null) =>
 			
 			return winners;
 		},
-		getBestHand: (boardCards) =>
-		{
-			if (self.getNumPlayers() === 0)
-			{
-				return null;
-			}
-			
-			let players = self.getPlayers();
-			if (players.length === 0)
-			{
-				return null;
-			}
-			
-			// Add the first player into the list; this will start as the best hand
-			let bestHand = HandFactory().createHandWithHoles(boardCards, players[0].getHoleCards());
-			
-			// If the best hand is null, that means there aren't enough board cards to make a hand, so return null
-			if (!bestHand)
-			{
-				return null;
-			}
-			
-			for (let i = 1; i < players.length; i++)
-			{
-				let playerHand = HandFactory().createHandWithHoles(boardCards, players[i].getHoleCards());
-				let compare = bestHand.compare(playerHand);
-				if (compare <= 0)
-				{
-					bestHand = playerHand;
-				}
-			}
-			
-			return bestHand;
-		},
 		add: (player, addition) =>
 		{
 			if (addition <= 0)
