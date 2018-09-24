@@ -307,8 +307,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 				gameState.nextAction = null;
 			}
 			
-			let winners = gameState.winners;
-			if (winners)
+			if (gameState.winners)
 			{
 				if (getNumPlayersAtTable() >= 2)
 				{
@@ -320,39 +319,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 				}
 			}
 			
-			let isPotContested = true;
-			if (winners && winners.pots[0] && winners.pots[0].players.length <= 1)
-			{
-				isPotContested = false;
-			}
-			
-			if (!isPotContested)
-			{
-				gameState.players.forEach((playerSimple) =>
-				{
-					if (playerSimple)
-					{
-						playerSimple.hasHoleCards = false;
-					}
-				});
-			}
-			else if (winners)
-			{
-				// TODO: Somehow set it up for hole card showdown depending on lastAggressor
-				
-				
-				
-				
-				
-				
-				
-			}
-			
-			if (gameState.board && !isPotContested)
-			{
-				gameState.board = [];
-			}
-			
+//			if (gameState.winners)
 //			console.log(JSON.stringify(gameState, null, 4));
 			return gameState;
 		},

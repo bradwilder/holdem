@@ -3,6 +3,7 @@ let HoldEmState = require('./holdEmState');
 let ActionLogEntry = require('./actionLogEntry');
 let OngoingRoundAction = require('./ongoingRoundAction');
 let PotSimple = require('./potSimple');
+//let PlayerSimple = require('./playerSimple');
 
 let Pots = (players, newPlayers, bigBlind) =>
 {
@@ -714,6 +715,17 @@ let Pots = (players, newPlayers, bigBlind) =>
 			{
 				let players = pot.getPlayers();
 				let winners = pot.getWinners(boardCards);
+				// TODO
+				// let playersSimple;
+				// if (lastAggressor)
+				// {
+					
+				// }
+				// else
+				// {
+				// 	//playersSimple = players.map((player) => PlayerSimple(player.name, player.getChips(), ));
+				// }
+				
 				potWinners.pots.push(PotSimple(pot.getSize(), players, winners));
 			}
 			return potWinners;

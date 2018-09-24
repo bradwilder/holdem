@@ -292,6 +292,36 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 				let entry = ActionLogEntry(action, pot.winners);
 				actionLog.addEntry(entry);
 			});
+			
+			let isPotContested = true;
+			if (gameState.winners.pots[0] && gameState.winners.pots[0].players.length <= 1)
+			{
+				isPotContested = false;
+			}
+			
+			if (!isPotContested)
+			{
+				gameState.players.forEach((player) =>
+				{
+					player.hasHoleCards = false;
+				});
+			}
+			else
+			{
+				// TODO: Somehow set it up for hole card showdown depending on lastAggressor
+				
+				
+				
+				
+				
+				
+				
+			}
+			
+			if (gameState.board && !isPotContested)
+			{
+				gameState.board = [];
+			}
 		}
 	}
 	
