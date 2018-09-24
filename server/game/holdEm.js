@@ -351,6 +351,21 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 				}
 			}
 		},
+		setToNoGame: () =>
+		{
+			if (state === HoldEmState().WINNER)
+			{
+				state = HoldEmState().NO_GAME;
+				winners = null;
+				
+				players.forEach((player) =>
+				{
+					player.fold();
+				});
+				
+				gameState = generateGameState();
+			}
+		},
 		bet: (addition) =>
 		{
 			let newGameState = self.getGameState();
@@ -398,7 +413,10 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 			}
 			else if (state === HoldEmState().WINNER)
 			{
-				state = HoldEmState().NO_GAME;
+				if (players.length === 0)
+				{
+					self.setToNoGame();
+				}
 			}
 			gameState = generateGameState();
 		},
@@ -410,15 +428,14 @@ let HoldEm = (tablePlayers, bigBlind, deck, autoPostBlinds = false) =>
 				throw "Can't remove player that doesn't exist";
 			}
 			
-			self.foldOutOfTurn(player);
-			
 			players.splice(index, 1);
 			
 			if (index <= dealerIndex)
 			{
 				dealerIndex--;
 			}
-			gameState = generateGameState();
+			
+			self.foldOutOfTurn(player);
 		},
 		addPlayer: (player, i) =>
 		{

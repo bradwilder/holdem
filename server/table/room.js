@@ -7,7 +7,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 	let tablePlayers = Array(maxPlayers).fill(null);
 	let visitors = [];
 	let holdEm = HoldEm([], bigBlind, Deck(), true);
-	let startTimeout;
+	let timeout;
 	
 	let getNumPlayersAtTable = () =>
 	{
@@ -98,26 +98,51 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 	
 	let startGameOnTimer = (seconds = defaultWait) =>
 	{
-		if (startTimeout)
+		if (timeout)
 		{
-			clearTimeout(startTimeout);
+			clearTimeout(timeout);
 		}
 		
 		let startHand = () =>
 		{
 //			console.log('startHand called');
 			holdEm.startHand();
-			startTimeout = null;
+			timeout = null;
 			updateRoomOccupants();
 		}
 		
 		if (seconds > 0)
 		{
-			startTimeout = setTimeout(() => startHand(), seconds * 1000);
+			timeout = setTimeout(() => startHand(), seconds * 1000);
 		}
 		else
 		{
 			startHand();
+		}
+	}
+	
+	let setToNoGameOnTimer = (seconds = defaultWait) =>
+	{
+		if (timeout)
+		{
+			clearTimeout(timeout);
+		}
+		
+		let setToNoGame = () =>
+		{
+//			console.log('setToNoGame called');
+			holdEm.setToNoGame();
+			timeout = null;
+			updateRoomOccupants();
+		}
+		
+		if (seconds > 0)
+		{
+			timeout = setTimeout(() => setToNoGame(), seconds * 1000);
+		}
+		else
+		{
+			setToNoGame();
 		}
 	}
 	
@@ -218,7 +243,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			
 			removeVisitor(tablePlayer.getSocket());
 			
-			let gameState = self.getGameState();
+			let gameState = holdEm.getGameState();
 			if (gameState.state === HoldEmState().NO_GAME && getNumPlayersAtTable() >= 2)
 			{
 				startGameOnTimer();
@@ -287,17 +312,12 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			{
 				if (getNumPlayersAtTable() >= 2)
 				{
-					startGameOnTimer(Math.max(winners.pots.length * 5, 10));
+					startGameOnTimer(defaultWait);
 				}
 				else
 				{
-					// TODO: timer to go into NO_GAME state
+					setToNoGameOnTimer(defaultWait);
 				}
-				
-				
-				
-				
-				
 			}
 			
 			let isPotContested = true;

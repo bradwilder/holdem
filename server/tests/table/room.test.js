@@ -157,17 +157,11 @@ describe('room', () =>
 		room.removeOccupant(visitor1);
 		
 		gameState = room.getGameState();
-		expect(gameState.state).toBe(HoldEmState().WINNER);
+		expect(gameState.state).toBe(HoldEmState().NO_GAME);
 		expect(gameState.potSize).toBe(0);
-		expect(gameState.board.length).toBe(0);
+		expect(gameState.board).toBeNull();
 		expect(gameState.nextAction).toBeNull();
 		expect(gameState.nextActionPlayer).toBeNull();
-		expect(gameState.winners.pots.length).toBe(1);
-		expect(gameState.winners.pots[0].players.length).toBe(1);
-		expect(gameState.winners.pots[0].players[0].name).toBe('2');
-		expect(gameState.winners.pots[0].winners.length).toBe(1);
-		expect(gameState.winners.pots[0].winners[0].player.name).toBe('2');
-		expect(gameState.winners.pots[0].size).toBe(30);
 		expect(gameState.players[4].name).toBe('2');
 	});
 	
@@ -316,12 +310,10 @@ describe('room', () =>
 		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
 		
 		room.removeOccupant(visitor1);
-		
 		gameState = room.getGameState();
-		expect(gameState.state).toBe(HoldEmState().WINNER);
+		expect(gameState.state).toBe(HoldEmState().NO_GAME);
 		
 		room.removeOccupant(visitor2);
-		
 		gameState = room.getGameState();
 		expect(gameState.state).toBe(HoldEmState().NO_GAME);
 	});
