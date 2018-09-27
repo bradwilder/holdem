@@ -205,12 +205,9 @@ let Pots = (players, newPlayers, bigBlind) =>
 			let currBet = self.getCurrentBet();
 			let incrAmount = chipsThisRound - currBet;
 			let raise = chipsThisRound - (currBet - shortStackOverraise);
-			let raised = false;
 			let action;
 			if (incrAmount > 0)
 			{
-				raised = true;
-				
 				if (gotBigBlind)
 				{
 					if (raise < currentRaise)
@@ -251,6 +248,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 				}
 				else
 				{
+					lastAggressor = player;
 					action = "raised to " + chipsThisRound;
 					ongoingRoundActions[player] = 'raise';
 				}
@@ -271,11 +269,6 @@ let Pots = (players, newPlayers, bigBlind) =>
 				action += " (all in)";
 			}
 			entry = ActionLogEntry(action, [player]);
-			
-			if (raised)
-			{
-				lastAggressor = player;
-			}
 			
 			addPlayerChipsToPot(player, addition, currentPotIndex);
 		}
