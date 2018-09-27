@@ -46,11 +46,11 @@ class Pair extends Hand
 		let kickerStr = '';
 		for (let i = 0; i < 2; i++)
 		{
-			kickerStr += (this.kickers[i].toValueString() + ', ');
+			kickerStr += (this.kickers[i].getValue().toString() + ', ');
 		}
-		kickerStr += this.kickers[2].toValueString();
+		kickerStr += this.kickers[2].getValue().toString();
 		
-		return 'Pair (' + this.pairValue.toValueString() + "'s, [" + kickerStr + '] kickers)';
+		return 'Pair (' + this.pairValue.getValue().toString() + "'s, [" + kickerStr + '] kickers)';
 	}
 }
 

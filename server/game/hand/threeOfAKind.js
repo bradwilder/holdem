@@ -43,8 +43,8 @@ class ThreeOfAKind extends Hand
 	
 	toString()
 	{
-		let kickerStr = this.kickers[0].toValueString() + ', ' + this.kickers[1].toValueString();
-		return 'Three of a kind (' + this.threeKindValue.toValueString() + "'s, [" + kickerStr + '] kickers)';
+		let kickerStr = this.kickers[0].getValue().toString() + ', ' + this.kickers[1].getValue().toString();
+		return 'Three of a kind (' + this.threeKindValue.getValue().toString() + "'s, [" + kickerStr + '] kickers)';
 	}
 }
 

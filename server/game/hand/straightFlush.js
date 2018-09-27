@@ -24,7 +24,7 @@ class StraightFlush extends Hand
 	
 	toString()
 	{
-		return 'Straight flush (' + this.highValue.toValueString() + ' high)';
+		return 'Straight flush (' + this.highValue.getValue().toString() + ' high)';
 	}
 }
 

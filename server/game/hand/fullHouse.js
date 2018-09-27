@@ -35,7 +35,7 @@ class FullHouse extends Hand
 	
 	toString()
 	{
-		return "Full house (" + this.threeKindValue.toValueString() + "'s full of " + this.pairValue.toValueString() + "'s)";
+		return "Full house (" + this.threeKindValue.getValue().toString() + "'s full of " + this.pairValue.getValue().toString() + "'s)";
 	}
 }
 
