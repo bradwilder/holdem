@@ -72,10 +72,7 @@ let LinkedHashMap = () =>
 				length--;
 			}
 		},
-		getIterator: () =>
-		{
-			return head;
-		},
+		getIterator: () => head,
 		itemSet: () =>
 		{
 			let items = [];
@@ -100,14 +97,8 @@ let LinkedHashMap = () =>
 			
 			return keys;
 		},
-		contains: (key) =>
-		{
-			return map.hasOwnProperty(key.name);
-		},
-		size: () =>
-		{
-			return length;
-		}
+		contains: (key) => map.hasOwnProperty(key.name),
+		size: () => length
 	}
 	
 	return self;
