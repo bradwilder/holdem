@@ -3,7 +3,6 @@ let HoldEmState = require('./holdEmState');
 let ActionLogEntry = require('./actionLogEntry');
 let OngoingRoundAction = require('./ongoingRoundAction');
 let PotSimple = require('./potSimple');
-//let PlayerSimple = require('./playerSimple');
 
 let Pots = (players, newPlayers, bigBlind) =>
 {
