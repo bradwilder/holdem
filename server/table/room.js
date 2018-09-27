@@ -152,64 +152,8 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			});
 			return count;
 		},
-		joinTable: (tablePlayer, newPosition) =>
+		joinTable: (tablePlayer, position) =>
 		{
-			let position = newPosition;
-			switch (maxPlayers)
-			{
-				case 2:
-					switch (newPosition)
-					{
-						case 0:
-							position = 0;
-							break;
-						case 5:
-							position = 1;
-							break;
-					}
-					break;
-				case 4:
-					switch (newPosition)
-					{
-						case 0:
-							position = 0;
-							break;
-						case 3:
-							position = 1;
-							break;
-						case 5:
-							position = 2;
-							break;
-						case 7:
-							position = 3;
-							break;
-					}
-					break;
-				case 6:
-					switch (newPosition)
-					{
-						case 0:
-							position = 0;
-							break;
-						case 2:
-							position = 1;
-							break;
-						case 3:
-							position = 2;
-							break;
-						case 5:
-							position = 3;
-							break;
-						case 7:
-							position = 4;
-							break;
-						case 8:
-							position = 5;
-							break;
-					}
-					break;
-			}
-			
 			if (position >= tablePlayers.length || position < 0)
 			{
 				throw "Can't seat player at position " + position + " with max players " + tablePlayers.length;
@@ -277,36 +221,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			{
 				playersSimple = gameState.players;
 			}
-			
-			let spreadPlayers;
-			switch (maxPlayers)
-			{
-				case 2:
-					spreadPlayers = Array(10).fill(null);
-					spreadPlayers[0] = playersSimple[0];
-					spreadPlayers[5] = playersSimple[1];
-					break;
-				case 4:
-					spreadPlayers = Array(10).fill(null);
-					spreadPlayers[0] = playersSimple[0];
-					spreadPlayers[3] = playersSimple[1];
-					spreadPlayers[5] = playersSimple[2];
-					spreadPlayers[7] = playersSimple[3];
-					break;
-				case 6:
-					spreadPlayers = Array(10).fill(null);
-					spreadPlayers[0] = playersSimple[0];
-					spreadPlayers[2] = playersSimple[1];
-					spreadPlayers[3] = playersSimple[2];
-					spreadPlayers[5] = playersSimple[3];
-					spreadPlayers[7] = playersSimple[4];
-					spreadPlayers[8] = playersSimple[5];
-					break;
-				case 10:
-					spreadPlayers = playersSimple;
-					break;
-			}
-			gameState.players = spreadPlayers;
+			gameState.players = playersSimple;
 			
 			if (tablePlayer)
 			{

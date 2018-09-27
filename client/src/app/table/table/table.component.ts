@@ -4,6 +4,7 @@ import { Player } from '../player/player.model';
 import { GameStateService } from '../../game-state.service';
 import { NextAction } from '../next-action/next-action.model';
 import { Room } from '../../room/room.model';
+import { GameState } from '../../game-state.model';
 
 @Component
 ({
@@ -47,7 +48,7 @@ export class TableComponent implements OnInit, OnDestroy
 			this.processGameState(gameState);
 		});
 		
-				
+		
 		
 		
 		// this.player0 = new Player('Ted', 25000);
@@ -93,24 +94,24 @@ export class TableComponent implements OnInit, OnDestroy
 		// this.player7.ongoingRoundAction = new OngoingRoundAction('small-blind', 30);
 	}
 	
-	processGameState(gameState)
+	processGameState(gameState: GameState)
 	{
 		console.log(gameState);
 		
-		if (gameState)
+		if (gameState && this.room)
 		{
-			let players = gameState.players;
+			let spreadPlayers = this.spreadPlayers(gameState);
 			
-			this.player0 = players[0];
-			this.player1 = players[1];
-			this.player2 = players[2];
-			this.player3 = players[3];
-			this.player4 = players[4];
-			this.player5 = players[5];
-			this.player6 = players[6];
-			this.player7 = players[7];
-			this.player8 = players[8];
-			this.player9 = players[9];
+			this.player0 = spreadPlayers[0];
+			this.player1 = spreadPlayers[1];
+			this.player2 = spreadPlayers[2];
+			this.player3 = spreadPlayers[3];
+			this.player4 = spreadPlayers[4];
+			this.player5 = spreadPlayers[5];
+			this.player6 = spreadPlayers[6];
+			this.player7 = spreadPlayers[7];
+			this.player8 = spreadPlayers[8];
+			this.player9 = spreadPlayers[9];
 			
 			this.board = gameState.board;
 			
@@ -123,6 +124,90 @@ export class TableComponent implements OnInit, OnDestroy
 			
 			
 			
+		}
+	}
+	
+	private spreadPlayers(gameState: GameState)
+	{
+		let spreadPlayers;
+		switch (this.room.maxPlayers)
+		{
+			case 2:
+				spreadPlayers = Array(10).fill(null);
+				spreadPlayers[0] = gameState.players[0];
+				spreadPlayers[5] = gameState.players[1];
+				break;
+			case 4:
+				spreadPlayers = Array(10).fill(null);
+				spreadPlayers[0] = gameState.players[0];
+				spreadPlayers[3] = gameState.players[1];
+				spreadPlayers[5] = gameState.players[2];
+				spreadPlayers[7] = gameState.players[3];
+				break;
+			case 6:
+				spreadPlayers = Array(10).fill(null);
+				spreadPlayers[0] = gameState.players[0];
+				spreadPlayers[2] = gameState.players[1];
+				spreadPlayers[3] = gameState.players[2];
+				spreadPlayers[5] = gameState.players[3];
+				spreadPlayers[7] = gameState.players[4];
+				spreadPlayers[8] = gameState.players[5];
+				break;
+			case 10:
+				spreadPlayers = gameState.players;
+				break;
+		}
+		return spreadPlayers;
+	}
+	
+	private translatePosition(positionIndex: number)
+	{
+		if (this.room)
+		{
+			switch (this.room.maxPlayers)
+			{
+				case 2:
+					switch (positionIndex)
+					{
+						case 0:
+							return 0;
+						case 5:
+							return 1;
+					}
+					break;
+				case 4:
+					switch (positionIndex)
+					{
+						case 0:
+							return 0;
+						case 3:
+							return 1;
+						case 5:
+							return 2;
+						case 7:
+							return 3;
+					}
+					break;
+				case 6:
+					switch (positionIndex)
+					{
+						case 0:
+							return 0;
+						case 2:
+							return 1;
+						case 3:
+							return 2;
+						case 5:
+							return 3;
+						case 7:
+							return 4;
+						case 8:
+							return 5;
+					}
+					break;
+				case 10:
+					return positionIndex;
+			}
 		}
 	}
 	
