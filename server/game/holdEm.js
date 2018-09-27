@@ -158,8 +158,6 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 					case HoldEmState().NO_GAME:
 						gameState.state = HoldEmState().BLINDS;
 						break;
-					default:
-						// TODO: throw exception here
 				}
 			}
 			else
@@ -195,21 +193,9 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			case HoldEmState().WINNER:
 			case HoldEmState().NO_GAME:
 				return 0;
-			default:
-				// TODO: throw exception here maybe?
 		}
 		
-		let call = 0;
-		try
-		{
-			call = pots.getCall(); 
-		}
-		catch (x)
-		{
-			// TODO: ???
-		}
-		
-		return call;
+		return pots.getCall();
 	}
 	
 	let getMinRaise = () =>
@@ -220,20 +206,9 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			case HoldEmState().WINNER:
 			case HoldEmState().NO_GAME:
 				return 0;
-			default:
-				// TODO: throw exception here maybe?
 		}
 		
-		let minRaise = 0;
-		try
-		{
-			minRaise = pots.getMinRaise(); 
-		}
-		catch (x)
-		{
-			// TODO: ???
-		}
-		return minRaise;
+		return pots.getMinRaise();
 	}
 	
 	let getMaxRaise = () =>
@@ -244,20 +219,9 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			case HoldEmState().WINNER:
 			case HoldEmState().NO_GAME:
 				return 0;
-			default:
-				// TODO: Throw exception here maybe?
 		}
 		
-		let maxRaise = 0;
-		try
-		{
-			maxRaise = pots.getMaxRaise(); 
-		}
-		catch (x)
-		{
-			// TODO: ???
-		}
-		return maxRaise;
+		return pots.getMaxRaise();
 	}
 	
 	let getBoard = () =>
