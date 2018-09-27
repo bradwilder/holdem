@@ -128,6 +128,125 @@ describe('room', () =>
 		expect(gameState.players[2].holeCards.length).toBe(0);
 	});
 	
+	it("should re-start a game after you add two players", () =>
+	{
+		let room = Room(0, 'my room', 20, 5, {sockets: {connected: []}}, 0);
+		
+		let visitor1 = 'a434dksdkadsfsdfasfalflkdsf1';
+		let player1 = Player('1', 444);
+		let tablePlayer1 = TablePlayer(player1, visitor1);
+		
+		let visitor2 = 'a434dksdkadsfsdfasfalflkdsf2';
+		let player2 = Player('2', 444);
+		let tablePlayer2 = TablePlayer(player2, visitor2);
+		
+		room.addVisitor(visitor1);
+		room.addVisitor(visitor2);
+		
+		room.joinTable(tablePlayer1, 2);
+		room.joinTable(tablePlayer2, 4);
+		
+		let gameState;
+		
+		gameState = room.getGameState();
+		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
+		expect(gameState.potSize).toBe(0);
+		expect(gameState.board.length).toBe(0);
+		expect(gameState.nextAction).toBeNull();
+		expect(gameState.nextActionPlayer.name).toBe('2');
+		expect(gameState.winners).toBeNull();
+		expect(gameState.players[4].name).toBe('2');
+		expect(gameState.players[4].holeCards.length).toBe(0);
+		expect(gameState.players[4].isDealer).toBe(false);
+		expect(gameState.players[2].name).toBe('1');
+		expect(gameState.players[2].holeCards.length).toBe(0);
+		expect(gameState.players[2].isDealer).toBe(true);
+		
+		gameState = room.getGameState(tablePlayer2);
+		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
+		expect(gameState.potSize).toBe(0);
+		expect(gameState.board.length).toBe(0);
+		expect(gameState.nextAction.call).toBe(10);
+		expect(gameState.nextAction.minRaise).toBe(30);
+		expect(gameState.nextAction.maxRaise).toBe(434);
+		expect(gameState.nextActionPlayer.name).toBe('2');
+		expect(gameState.winners).toBeNull();
+		expect(gameState.players[0].name).toBe('2');
+		expect(gameState.players[0].isDealer).toBe(false);
+		expect(gameState.players[0].holeCards.length).toBe(2);
+		expect(gameState.players[3].name).toBe('1');
+		expect(gameState.players[3].holeCards.length).toBe(0);
+		
+		gameState = room.getGameState(tablePlayer1);
+		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
+		expect(gameState.potSize).toBe(0);
+		expect(gameState.board.length).toBe(0);
+		expect(gameState.nextAction).toBeNull();
+		expect(gameState.nextActionPlayer.name).toBe('2');
+		expect(gameState.winners).toBeNull();
+		expect(gameState.players[0].name).toBe('1');
+		expect(gameState.players[0].isDealer).toBe(true);
+		expect(gameState.players[0].holeCards.length).toBe(2);
+		expect(gameState.players[2].name).toBe('2');
+		expect(gameState.players[2].holeCards.length).toBe(0);
+		
+		// TODO
+		// room.performGameAction(player2, 'call', 10);
+		// gameState = room.getGameState();
+		// expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
+		
+		// room.performGameAction(player1, 'check');
+		// gameState = room.getGameState();
+		// expect(gameState.state).toBe(HoldEmState().BET_FLOP);
+		
+		// room.leaveTable(tablePlayer1);
+		// gameState = room.getGameState();
+		// expect(gameState.state).toBe(HoldEmState().NO_GAME);
+		
+		// room.joinTable(tablePlayer1, 3);
+		
+		// gameState = room.getGameState();
+		// expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
+		// expect(gameState.potSize).toBe(0);
+		// expect(gameState.board.length).toBe(0);
+		// expect(gameState.nextAction).toBeNull();
+		// expect(gameState.nextActionPlayer.name).toBe('1');
+		// expect(gameState.winners).toBeNull();
+		// expect(gameState.players[4].name).toBe('2');
+		// expect(gameState.players[4].holeCards.length).toBe(0);
+		// expect(gameState.players[4].isDealer).toBe(true);
+		// expect(gameState.players[3].name).toBe('1');
+		// expect(gameState.players[3].holeCards.length).toBe(0);
+		// expect(gameState.players[3].isDealer).toBe(false);
+		
+		// gameState = room.getGameState(tablePlayer1);
+		// expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
+		// expect(gameState.potSize).toBe(0);
+		// expect(gameState.board.length).toBe(0);
+		// expect(gameState.nextAction.call).toBe(10);
+		// expect(gameState.nextAction.minRaise).toBe(30);
+		// expect(gameState.nextActionPlayer.name).toBe('1');
+		// expect(gameState.winners).toBeNull();
+		// expect(gameState.players[0].name).toBe('1');
+		// expect(gameState.players[0].isDealer).toBe(false);
+		// expect(gameState.players[0].holeCards.length).toBe(2);
+		// expect(gameState.players[1].name).toBe('1');
+		// expect(gameState.players[1].holeCards.length).toBe(0);
+		
+		// gameState = room.getGameState(tablePlayer2);
+		// expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
+		// expect(gameState.potSize).toBe(0);
+		// expect(gameState.board.length).toBe(0);
+		// expect(gameState.nextAction).toBeNull();
+		// expect(gameState.nextActionPlayer.name).toBe('1');
+		// expect(gameState.winners).toBeNull();
+		// expect(gameState.players[0].name).toBe('2');
+		// expect(gameState.players[0].isDealer).toBe(true);
+		// expect(gameState.players[0].holeCards.length).toBe(2);
+		// expect(gameState.players[4].name).toBe('1');
+		// expect(gameState.players[4].holeCards.length).toBe(0);
+	});
+	
 	it("should let you remove a player after a game has started", () =>
 	{
 		let room = Room(0, 'my room', 20, 5, {sockets: {connected: []}}, 0);
@@ -191,7 +310,7 @@ describe('room', () =>
 		expect(gameState.nextAction).toBeNull();
 		expect(gameState.nextActionPlayer).toBeNull();
 		expect(gameState.winners).toBeNull();
-		expect(gameState.players[2]).toBeNull();
+		expect(gameState.players[2].name).toBeNull();
 		
 		let visitor2 = 'a434dksdkadsfsdfasfalflkdsf2';
 		let player2 = Player('2', 444);
@@ -218,7 +337,7 @@ describe('room', () =>
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
 		expect(gameState.players[4].name).toBe('3');
-		expect(gameState.players[2]).toBeNull();
+		expect(gameState.players[2].name).toBeNull();
 	});
 	
 	it("should let you add and remove a player while a game is in progress", () =>
@@ -250,7 +369,7 @@ describe('room', () =>
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
 		expect(gameState.players[4].name).toBe('3');
-		expect(gameState.players[2]).toBeNull();
+		expect(gameState.players[2].name).toBeNull();
 		
 		let visitor1 = 'a434dksdkadsfsdfasfalflkdsf1';
 		let player1 = Player('1', 444);
@@ -280,7 +399,7 @@ describe('room', () =>
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
 		expect(gameState.players[4].name).toBe('3');
-		expect(gameState.players[2]).toBeNull();
+		expect(gameState.players[2].name).toBeNull();
 	});
 	
 	it("should let you remove the last player", () =>

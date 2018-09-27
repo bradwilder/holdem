@@ -194,15 +194,15 @@ let HandFactory = () =>
 				let straightFlushHighValue = findStraightFlush(cards, flushSuit);
 				if (straightFlushHighValue !== -1)
 				{
-					return StraightFlush(createStraight(cards.filter((card) => card.getSuit() === flushSuit), straightFlushHighValue));
+					return new StraightFlush(createStraight(cards.filter((card) => card.getSuit() === flushSuit), straightFlushHighValue));
 				}
-				return Flush(createFlush(cards, flushSuit));
+				return new Flush(createFlush(cards, flushSuit));
 			}
 			
 			let straightHigh = findStraight(cards);
 			if (straightHigh !== -1)
 			{
-				return Straight(createStraight(cards, straightHigh));
+				return new Straight(createStraight(cards, straightHigh));
 			}
 			
 			let valueCounts = getValueCounts(cards);
@@ -210,7 +210,7 @@ let HandFactory = () =>
 			let pairValues = findPairs(valueCounts);
 			if (pairValues.length === 0)
 			{
-				return HighCard(cards.sort(sortCardsDesc).slice(0, 5));
+				return new HighCard(cards.sort(sortCardsDesc).slice(0, 5));
 			}
 			
 			let tripValue = findTrip(valueCounts);
@@ -220,22 +220,22 @@ let HandFactory = () =>
 				
 				if (quadValue >= 0)
 				{
-					return FourOfAKind(createQuad(cards, quadValue));
+					return new FourOfAKind(createQuad(cards, quadValue));
 				}
 				
 				if (pairValues.length >= 2)
 				{
-					return FullHouse(createFullHouse(cards, tripValue, pairValues[1]));
+					return new FullHouse(createFullHouse(cards, tripValue, pairValues[1]));
 				}
 				
-				return ThreeOfAKind(createTrip(cards, tripValue));
+				return new ThreeOfAKind(createTrip(cards, tripValue));
 			}
 			else if (pairValues.length > 1)
 			{
-				return TwoPair(createTwoPair(cards, pairValues.slice(0, 2)));
+				return new TwoPair(createTwoPair(cards, pairValues.slice(0, 2)));
 			}
 			
-			return Pair(createPair(cards, pairValues[0]));
+			return new Pair(createPair(cards, pairValues[0]));
 		}
 	}
 	

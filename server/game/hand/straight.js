@@ -1,36 +1,31 @@
-let Rank = require('./rank');
+let Hand = require('./hand');
 
-let Straight = (cards) =>
+const STRAIGHT = 4;
+
+class Straight extends Hand
 {
-	const STRAIGHT = 4;
-	
-	let rank = Rank(STRAIGHT);
-	
-	let highValue = cards[0];
-	
-	let self =
+	constructor(cards)
 	{
-		cards: cards,
-		getRank: () => rank,
-		compare: (hand) =>
-		{
-			let rankCompare = rank.compare(hand.getRank());
-			if (rankCompare)
-			{
-				return rankCompare;
-			}
-			
-			return self.compareSameRank(hand);
-		},
-		compareSameRank: (straight) =>
-		{
-			return highValue.getValue() - straight.getHighValue();
-		},
-		getHighValue: () => highValue.getValue(),
-		toString: () => 'Straight (' + highValue.toValueString() + ' high)'
+		super(STRAIGHT);
+		
+		this.cards = cards;
+		this.highValue = cards[0];
 	}
 	
-	return self;
+	compareSameRank(straight)
+	{
+		return this.highValue.getValue() - straight.getHighValue();
+	}
+	
+	getHighValue()
+	{
+		return this.highValue.getValue();
+	}
+	
+	toString()
+	{
+		return 'Straight (' + this.highValue.toValueString() + ' high)';
+	}
 }
 
 module.exports = Straight;

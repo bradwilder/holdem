@@ -1,36 +1,31 @@
-let Rank = require('./rank');
+let Hand = require('./hand');
 
-let StraightFlush = (cards) =>
+const STRAIGHT_FLUSH = 8;
+
+class StraightFlush extends Hand
 {
-	const STRAIGHT_FLUSH = 8;
-	
-	let rank = Rank(STRAIGHT_FLUSH);
-	
-	let highValue = cards[0];
-	
-	let self =
+	constructor(cards)
 	{
-		cards: cards,
-		getRank: () => rank,
-		compare: (hand) =>
-		{
-			let rankCompare = rank.compare(hand.getRank());
-			if (rankCompare)
-			{
-				return rankCompare;
-			}
-			
-			return self.compareSameRank(hand);
-		},
-		compareSameRank: (straightFlush) =>
-		{
-			return highValue.getValue() - straightFlush.getHighValue();
-		},
-		getHighValue: () => highValue.getValue(),
-		toString: () => 'Straight flush (' + highValue.toValueString() + ' high)'
+		super(STRAIGHT_FLUSH);
+		
+		this.cards = cards;
+		this.highValue = cards[0];
 	}
 	
-	return self;
+	compareSameRank(straightFlush)
+	{
+		return this.highValue.getValue() - straightFlush.getHighValue();
+	}
+	
+	getHighValue()
+	{
+		return this.highValue.getValue();
+	}
+	
+	toString()
+	{
+		return 'Straight flush (' + this.highValue.toValueString() + ' high)';
+	}
 }
 
 module.exports = StraightFlush;

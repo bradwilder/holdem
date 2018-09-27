@@ -1,43 +1,42 @@
-let Rank = require('./rank');
+let Hand = require('./hand');
 
-let FullHouse = (cards) =>
+const FULL_HOUSE = 6;
+
+class FullHouse extends Hand
 {
-	const FULL_HOUSE = 6;
-	
-	let rank = Rank(FULL_HOUSE);
-	
-	let threeKindValue = cards[0];
-	let pairValue = cards[3];
-	
-	let self =
+	constructor(cards)
 	{
-		cards: cards,
-		getRank: () => rank,
-		compare: (hand) =>
-		{
-			let rankCompare = rank.compare(hand.getRank());
-			if (rankCompare)
-			{
-				return rankCompare;
-			}
-			
-			return self.compareSameRank(hand);
-		},
-		compareSameRank: (fullHouse) =>
-		{
-			if (threeKindValue.getValue() !== fullHouse.getThreeKindValue())
-			{
-				return threeKindValue.getValue() - fullHouse.getThreeKindValue();
-			}
-			
-			return pairValue.getValue() - fullHouse.getPairValue();
-		},
-		getThreeKindValue: () => threeKindValue.getValue(),
-		getPairValue: () => pairValue.getValue(),
-		toString: () => "Full house (" + threeKindValue.toValueString() + "'s full of " + pairValue.toValueString() + "'s)"
+		super(FULL_HOUSE);
+		
+		this.cards = cards;
+		this.threeKindValue = cards[0];
+		this.pairValue = cards[3];
 	}
 	
-	return self;
+	compareSameRank(fullHouse)
+	{
+		if (this.threeKindValue.getValue() !== fullHouse.getThreeKindValue())
+		{
+			return this.threeKindValue.getValue() - fullHouse.getThreeKindValue();
+		}
+		
+		return this.pairValue.getValue() - fullHouse.getPairValue();
+	}
+	
+	getThreeKindValue()
+	{
+		return this.threeKindValue.getValue();
+	}
+	
+	getPairValue()
+	{
+		return this.pairValue.getValue();
+	}
+	
+	toString()
+	{
+		return "Full house (" + this.threeKindValue.toValueString() + "'s full of " + this.pairValue.toValueString() + "'s)";
+	}
 }
 
 module.exports = FullHouse;

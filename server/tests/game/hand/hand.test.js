@@ -32,8 +32,8 @@ describe('comparing', () =>
 			Card(4)
 		];
 		
-		let pair1 = Pair(cards1);
-		let pair2 = Pair(cards2);
+		let pair1 = new Pair(cards1);
+		let pair2 = new Pair(cards2);
 		expect(pair1.compare(pair2)).toBeLessThan(0);
 	});
 	
@@ -57,8 +57,8 @@ describe('comparing', () =>
 			Card(5)
 		];
 		
-		let pair = Pair(pairCards);
-		let straight = Straight(straightCards);
+		let pair = new Pair(pairCards);
+		let straight = new Straight(straightCards);
 		expect(pair.compare(straight)).toBeLessThan(0);
 	});
 });

@@ -1,43 +1,42 @@
-let Rank = require('./rank');
+let Hand = require('./hand');
 
-let FourOfAKind = (cards) =>
+const FOUR_KIND = 7;
+
+class FourOfAKind extends Hand
 {
-	const FOUR_KIND = 7;
-	
-	let rank = Rank(FOUR_KIND);
-	
-	let fourKindValue = cards[0];
-	let kicker = cards[4];
-	
-	let self =
+	constructor(cards)
 	{
-		cards: cards,
-		getRank: () => rank,
-		compare: (hand) =>
-		{
-			let rankCompare = rank.compare(hand.getRank());
-			if (rankCompare)
-			{
-				return rankCompare;
-			}
-			
-			return self.compareSameRank(hand);
-		},
-		compareSameRank: (fourOfAKind) =>
-		{
-			if (fourKindValue.getValue() !== fourOfAKind.getFourKindValue())
-			{
-				return fourKindValue.getValue() - fourOfAKind.getourKindValue();
-			}
-			
-			return kicker.getValue() - fourOfAKind.getKicker();
-		},
-		getFourKindValue: () => fourKindValue.getValue(),
-		getKicker: () => kicker.getValue(),
-		toString: () => 'Four of a kind (' + fourKindValue.toValueString() + "'s, " + kicker.toValueString() + ' kicker)'
+		super(FOUR_KIND);
+		
+		this.cards = cards;
+		this.fourKindValue = cards[0];
+		this.kicker = cards[4];
 	}
 	
-	return self;
+	compareSameRank(fourOfAKind)
+	{
+		if (this.fourKindValue.getValue() !== fourOfAKind.getFourKindValue())
+		{
+			return this.fourKindValue.getValue() - fourOfAKind.getourKindValue();
+		}
+		
+		return this.kicker.getValue() - fourOfAKind.getKicker();
+	}
+	
+	getFourKindValue()
+	{
+		return this.fourKindValue.getValue();
+	}
+	
+	getKicker()
+	{
+		return this.kicker.getValue();
+	}
+	
+	toString()
+	{
+		return 'Four of a kind (' + this.fourKindValue.toValueString() + "'s, " + this.kicker.toValueString() + ' kicker)';
+	} 
 }
 
 module.exports = FourOfAKind;
