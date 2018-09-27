@@ -561,10 +561,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 			});
 			return potSize;
 		},
-		getSizeWithoutRound: () =>
-		{
-			return self.getTotalSize() - currentRoundSize;
-		},
+		getSizeWithoutRound: () => self.getTotalSize() - currentRoundSize,
 		getCurrentBet: () =>
 		{
 			let currentBet = 0;
@@ -584,12 +581,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 			}
 			return chips;
 		},
-		getOngoingActionThisRound: (player) =>
-		{
-			let chips = self.getChipsThisRound(player);
-			let roundAction = ongoingRoundActions[player];
-			return OngoingRoundAction(roundAction, chips);
-		},
+		getOngoingActionThisRound: (player) => OngoingRoundAction(ongoingRoundActions[player], self.getChipsThisRound(player)),
 		fold: () =>
 		{
 			let player = self.getNextActionPlayer();
