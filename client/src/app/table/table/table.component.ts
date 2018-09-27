@@ -3,6 +3,7 @@ import { Player } from '../player/player.model';
 // import { OngoingRoundAction } from '../player/player-action/ongoing-round-action.model';
 import { GameStateService } from '../../game-state.service';
 import { NextAction } from '../next-action/next-action.model';
+import { Room } from '../../room/room.model';
 
 @Component
 ({
@@ -13,7 +14,7 @@ import { NextAction } from '../next-action/next-action.model';
 })
 export class TableComponent implements OnInit, OnDestroy
 {
-	@Input() roomID: number;
+	@Input() room: Room;
 	
 	private player0: Player;
 	private player1: Player;

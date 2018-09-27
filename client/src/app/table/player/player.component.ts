@@ -2,8 +2,8 @@ import { Component, Input } from '@angular/core';
 import { Player } from './player.model';
 import { SocketService } from '../../socket.service';
 import { Subscription } from 'rxjs/Subscription';
-import { ActivatedRoute } from '@angular/router';
 import { CurrentPlayerService } from '../../current-player.service';
+import { Room } from '../../room/room.model';
 
 @Component
 ({
@@ -16,23 +16,17 @@ export class PlayerComponent
 	@Input() player: Player;
 	@Input() position: number;
 	@Input() nextActionPlayer: Player;
+	@Input() room: Room;
 	
-	private roomID: number;
-	private routeSubscription: Subscription;
 	private currentPlayer: Player;
 	private currentPlayerSubscription: Subscription;
 	private currentTable: number;
 	private currentTableSubscription: Subscription;
 	
-	constructor(private route: ActivatedRoute, private socketService: SocketService, private currentPlayerService: CurrentPlayerService) {}
+	constructor(private socketService: SocketService, private currentPlayerService: CurrentPlayerService) {}
 	
 	ngOnInit()
 	{
-		this.routeSubscription = this.route.params.subscribe(params =>
-		{
-			this.roomID = +params['id'];
-		});
-		
 		this.currentPlayer = this.currentPlayerService.getCurrentPlayer();
 		
 		this.currentPlayerSubscription = this.currentPlayerService.currentPlayerChanged.subscribe((currentPlayer) =>
@@ -50,13 +44,12 @@ export class PlayerComponent
 	
 	onJoinTable()
 	{
-		this.socketService.getSocket().emit('joinTable', this.roomID, this.position);
-		this.currentPlayerService.setCurrentTable(this.roomID);
+		this.socketService.getSocket().emit('joinTable', this.room.id, +this.position);
+		this.currentPlayerService.setCurrentTable(this.room.id);
 	}
 	
 	ngOnDestroy()
 	{
-		this.routeSubscription.unsubscribe();
 		this.currentPlayerSubscription.unsubscribe();
 		this.currentTableSubscription.unsubscribe();
 	}

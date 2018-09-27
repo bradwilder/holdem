@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { SocketService } from '../socket.service';
 import { MenuService } from '../menu/menu.service';
 import { LobbyService } from '../lobby/lobby.service';
+import { Room } from './room.model';
 
 @Component
 ({
@@ -14,6 +15,7 @@ import { LobbyService } from '../lobby/lobby.service';
 export class RoomComponent implements OnInit, OnDestroy
 {
 	private roomID: number;
+	private room: Room;
 	private routeSubscription: Subscription;
 	private lobbySubscription: Subscription;
 	
@@ -24,33 +26,47 @@ export class RoomComponent implements OnInit, OnDestroy
 		this.routeSubscription = this.route.params.subscribe(params =>
 		{
 			this.roomID = +params['id'];
-			this.socketService.getSocket().emit('enterRoom', this.roomID);
+			this.room = this.lobbyService.getRoom(this.roomID);
 			
-			let room = this.lobbyService.getRoom(this.roomID);
-			if (room)
+			if (this.room)
 			{
-				this.menuService.changeToRoom(room.name);
+				this.updateRoom();
 			}
 		});
 		
 		this.socketService.getSocket().on('serverStart', () =>
 		{
-			this.socketService.getSocket().emit('enterRoom', this.roomID);
+			if (this.room)
+			{
+				this.socketService.getSocket().emit('enterRoom', this.room.id);
+			}
 		});
 		
-		// TODO: what the hell is this?
 		this.lobbySubscription = this.lobbyService.roomsChanged.subscribe((rooms) =>
 		{
-			if (this.roomID >= 0)
+			if (!this.room)
 			{
-				this.menuService.changeToRoom(rooms.find((room) => room.id === this.roomID).name);
+				this.room = rooms.find((room) => room.id === this.roomID);
+				if (this.room)
+				{
+					this.updateRoom();
+				}
 			}
 		});
 	}
 	
+	private updateRoom()
+	{
+		this.socketService.getSocket().emit('enterRoom', this.room.id);
+		this.menuService.changeToRoom(this.room.name);
+	}
+	
 	ngOnDestroy()
 	{
-		this.socketService.getSocket().emit('leaveRoom', this.roomID);
+		if (this.room)
+		{
+			this.socketService.getSocket().emit('leaveRoom', this.room.id);
+		}
 		this.socketService.getSocket().off('serverStart');
 		this.routeSubscription.unsubscribe();
 		this.lobbySubscription.unsubscribe();

@@ -4,7 +4,10 @@ let Lobby = (io) =>
 {
 	let rooms =
 	[
-		Room(0, '10-handed table', 20, 10, io)
+		Room(0, '10-handed table', 20, 10, io),
+		Room(1, '6-handed table', 20, 6, io),
+		Room(2, '4-handed table', 20, 4, io),
+		Room(3, '2-handed table', 20, 2, io)
 	];
 	
 	let visitors = [];
