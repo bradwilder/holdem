@@ -135,23 +135,19 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 				switch (gameState.state)
 				{
 					case HoldEmState().BLINDS:
-					case HoldEmState().DEAL_HOLES:
 						dealCards();
 						actionLog.addSystemEntry('Dealt holes');
 						gameState.state = HoldEmState().BET_PREFLOP;
 						break;
 					case HoldEmState().BET_PREFLOP:
-					case HoldEmState().DEAL_FLOP:
 						actionLog.addSystemEntry('Dealt flop');
 						gameState.state = HoldEmState().BET_FLOP;
 						break;
 					case HoldEmState().BET_FLOP:
-					case HoldEmState().DEAL_TURN:
 						actionLog.addSystemEntry('Dealt turn');
 						gameState.state = HoldEmState().BET_TURN;
 						break;
 					case HoldEmState().BET_TURN:
-					case HoldEmState().DEAL_RIVER:
 						actionLog.addSystemEntry('Dealt river');
 						gameState.state = HoldEmState().BET_RIVER;
 						break;
@@ -196,10 +192,6 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 	{
 		switch (gameState.state)
 		{
-			case HoldEmState().DEAL_HOLES:
-			case HoldEmState().DEAL_FLOP:
-			case HoldEmState().DEAL_TURN:
-			case HoldEmState().DEAL_RIVER:
 			case HoldEmState().WINNER:
 			case HoldEmState().NO_GAME:
 				return 0;
@@ -225,10 +217,6 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		switch (gameState.state)
 		{
 			case HoldEmState().BLINDS:
-			case HoldEmState().DEAL_HOLES:
-			case HoldEmState().DEAL_FLOP:
-			case HoldEmState().DEAL_TURN:
-			case HoldEmState().DEAL_RIVER:
 			case HoldEmState().WINNER:
 			case HoldEmState().NO_GAME:
 				return 0;
@@ -253,10 +241,6 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		switch (gameState.state)
 		{
 			case HoldEmState().BLINDS:
-			case HoldEmState().DEAL_HOLES:
-			case HoldEmState().DEAL_FLOP:
-			case HoldEmState().DEAL_TURN:
-			case HoldEmState().DEAL_RIVER:
 			case HoldEmState().WINNER:
 			case HoldEmState().NO_GAME:
 				return 0;
@@ -281,18 +265,14 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		switch (gameState.state)
 		{
 			case HoldEmState().BLINDS:
-			case HoldEmState().DEAL_HOLES:
 			case HoldEmState().BET_PREFLOP:
 				return [];
-			case HoldEmState().DEAL_FLOP:
 			case HoldEmState().BET_FLOP:
 				return board.getFlop();
-			case HoldEmState().DEAL_TURN:
 			case HoldEmState().BET_TURN:
 				let flop = board.getFlop();
 				let turn = board.getTurn();
 				return flop.concat(turn);
-			case HoldEmState().DEAL_RIVER:
 			case HoldEmState().BET_RIVER:
 			case HoldEmState().WINNER:
 					return board.getBoard();
