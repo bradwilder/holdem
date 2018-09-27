@@ -1,84 +1,32 @@
+let Suit = require('./suit');
+let Value = require('./value');
+
 let Card = (code) =>
 {
 	const NUM_SUITS = 4;
 	const NUM_VALUES = 13;
-	const SPADES_INDEX = 0;
-	const HEARTS_INDEX = 1;
-	const CLUBS_INDEX = 2;
-	const DIAMONDS_INDEX = 3;
 	
 	let suit;
 	let value;
 	if (code < NUM_SUITS * NUM_VALUES)
 	{
-		suit = Math.floor(code / NUM_VALUES);
-		value = code % NUM_VALUES;
+		suit = Suit(Math.floor(code / NUM_VALUES));
+		value = Value(code % NUM_VALUES);
 	}
 	else
 	{
-		suit = -1;
-		value = -1;
+		suit = null;
+		value = null;
 	}
 	
 	return {
-		getSuit: () => suit,
-		getValue: () => value,
+		getSuit: () => suit ? suit.suit : null,
+		getValue: () => value ? value.value : null,
 		code: code,
-		toValueString: () =>
-		{
-			let valueStr;
-			switch (value)
-			{
-				case 0:
-				case 1:
-				case 2:
-				case 3:
-				case 4:
-				case 5:
-				case 6:
-				case 7:
-				case 8:
-					valueStr = value + 2;
-					break;
-				case 9:
-					valueStr = 'Jack';
-					break;
-				case 10:
-					valueStr = 'Queen';
-					break;
-				case 11:
-					valueStr = 'King';
-					break;
-				case 12:
-					valueStr = 'Ace';
-					break;
-			}
-			return valueStr;
-		},
-		toSuitString: () =>
-		{
-			let suitStr;
-			switch (suit)
-			{
-				case CLUBS_INDEX:
-					suitStr = 'Clubs';
-					break;
-				case DIAMONDS_INDEX:
-					suitStr = 'Diamonds';
-					break;
-				case HEARTS_INDEX:
-					suitStr = 'Hearts';
-					break;
-				case SPADES_INDEX:
-					suitStr = 'Spades';
-					break;
-			}
-			return suitStr;
-		},
 		toString: () =>
 		{
-			let valueStr = self.toValueString();
-			let suitStr = self.toSuitString();
+			let valueStr = value ? value.toString() : '';
+			let suitStr = suit ? suit.toString() : '';
 			return valueStr + '/' + suitStr;
 		}
 	}
