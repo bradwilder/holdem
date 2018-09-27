@@ -24,7 +24,7 @@ class Straight extends Hand
 	
 	toString()
 	{
-		return 'Straight (' + this.highValue.getValue().toString() + ' high)';
+		return 'Straight (' + this.highValue.getValueObject().toString() + ' high)';
 	}
 }
 

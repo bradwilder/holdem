@@ -34,9 +34,9 @@ class Flush extends Hand
 		let valuesStr = '';
 		for (let i = 0; i < 4; i++)
 		{
-			valuesStr += (this.cards[i].getValue().toString() + ', ');
+			valuesStr += (this.cards[i].getValueObject().toString() + ', ');
 		}
-		valuesStr += this.cards[4].getValue().toString();
+		valuesStr += this.cards[4].getValueObject().toString();
 		
 		return 'Flush (' + valuesStr + ')';
 	}

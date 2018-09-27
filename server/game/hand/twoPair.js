@@ -40,7 +40,7 @@ class TwoPair extends Hand
 	
 	toString()
 	{
-		return 'Two pair (' + this.pairValues[0].getValue().toString() + "'s and " + this.pairValues[1].getValue().toString() + "'s, " + this.kicker.getValue().toString() + ' kicker)';
+		return 'Two pair (' + this.pairValues[0].getValueObject().toString() + "'s and " + this.pairValues[1].getValueObject().toString() + "'s, " + this.kicker.getValueObject().toString() + ' kicker)';
 	}
 }
 

@@ -15,7 +15,7 @@ let Value = (value) =>
 				case 6:
 				case 7:
 				case 8:
-					return value + '' + 2;
+					return '' + (value + 2);
 				case 9:
 					return 'Jack';
 				case 10:

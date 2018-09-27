@@ -22,6 +22,8 @@ let Card = (code) =>
 	return {
 		getSuit: () => suit ? suit.suit : null,
 		getValue: () => value ? value.value : null,
+		getSuitObject: () => suit,
+		getValueObject: () => value,
 		code: code,
 		toString: () =>
 		{

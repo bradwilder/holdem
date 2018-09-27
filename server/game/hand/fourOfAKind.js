@@ -35,7 +35,7 @@ class FourOfAKind extends Hand
 	
 	toString()
 	{
-		return 'Four of a kind (' + this.fourKindValue.getValue().toString() + "'s, " + this.kicker.getValue().toString() + ' kicker)';
+		return 'Four of a kind (' + this.fourKindValue.getValueObject().toString() + "'s, " + this.kicker.getValueObject().toString() + ' kicker)';
 	} 
 }
 
