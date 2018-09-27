@@ -6,6 +6,7 @@ export class GameState
 	holdEmState: number;
 	potSize: number;
 	bigBlind: number;
+	dealerIndex: number;
 	players: Player[];
 	nextAction: NextAction;
 	nextActionPlayer: Player;

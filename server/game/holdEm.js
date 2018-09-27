@@ -112,14 +112,13 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			let player = players[i];
 			
 			let playerSimple;
-			let isDealer = dealerIndex === i;
 			if (player)
 			{
-				playerSimple = PlayerSimple(player.name, player.getChips(), player.hasHoleCards(), [], getOngoingRoundAction(player), isDealer);
+				playerSimple = PlayerSimple(player.name, player.getChips(), player.hasHoleCards(), [], getOngoingRoundAction(player));
 			}
 			else
 			{
-				playerSimple = PlayerSimple(null, null, null, null, null, isDealer);
+				playerSimple = PlayerSimple(null, null, null, null, null);
 			}
 			playersSimple.push(playerSimple);
 		}
@@ -319,7 +318,7 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			default:
 		}
 		
-		gameState = GameState(gameState.state, self.getPotSizeWithoutRound(), bigBlind, getBoard(), getPlayersSimple(), nextAction, nextActionPlayer, gameState.winners);
+		gameState = GameState(gameState.state, self.getPotSizeWithoutRound(), bigBlind, dealerIndex, getBoard(), getPlayersSimple(), nextAction, nextActionPlayer, gameState.winners);
 	}
 	
 	let self =

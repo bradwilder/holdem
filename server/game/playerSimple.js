@@ -1,12 +1,11 @@
-let PlayerSimple = (name, chips, hasHoleCards, holeCards, ongoingRoundAction, isDealer) =>
+let PlayerSimple = (name, chips, hasHoleCards, holeCards, ongoingRoundAction) =>
 {
 	return {
 		name: name,
 		chips: chips,
 		hasHoleCards: hasHoleCards,
 		holeCards: holeCards ? holeCards.slice() : null,
-		ongoingRoundAction: Object.assign({}, ongoingRoundAction),
-		isDealer: isDealer
+		ongoingRoundAction: Object.assign({}, ongoingRoundAction)
 	}
 }
 
