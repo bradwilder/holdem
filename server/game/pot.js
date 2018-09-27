@@ -204,10 +204,7 @@ let Pot = (players = null) =>
 			let count = playerCounts.get(player);
 			return count ? count : 0;
 		},
-		getRoundOwed: (player) =>
-		{
-			return self.getCurrentBet() - self.getRoundCount(player);
-		},
+		getRoundOwed: (player) => self.getCurrentBet() - self.getRoundCount(player),
 		clearRound: () =>
 		{
 			for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
