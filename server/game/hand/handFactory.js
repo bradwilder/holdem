@@ -225,7 +225,12 @@ let HandFactory = () =>
 				
 				if (pairValues.length >= 2)
 				{
-					return new FullHouse(createFullHouse(cards, tripValue, pairValues[1]));
+					let pairIndex = 0;
+					while (pairValues[pairIndex] === tripValue)
+					{
+						pairIndex++;
+					}
+					return new FullHouse(createFullHouse(cards, tripValue, pairValues[pairIndex]));
 				}
 				
 				return new ThreeOfAKind(createTrip(cards, tripValue));
