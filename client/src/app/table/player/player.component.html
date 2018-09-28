@@ -4,7 +4,7 @@
 
 <ng-template #player_box>
 	<p>{{ player.name }}</p>
-	<p>{{ player.chips }}</p>
+	<p>{{ player.chips !== 0 ? player.chips : 'All-In' }}</p>
 </ng-template>
 
 <ng-template #player_box_empty>
