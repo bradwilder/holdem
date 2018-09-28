@@ -11,4 +11,8 @@
 	&.face-down {
 		visibility: hidden;
 	}
+	
+	&.non-winner {
+		filter: brightness(30%);
+	}
 }

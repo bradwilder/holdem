@@ -216,6 +216,9 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			if (tablePlayer)
 			{
 				playersSimple = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, gameState.players);
+				
+				let indexOrigin = tablePlayers.indexOf(tablePlayer);
+				gameState.dealerIndex = (gameState.dealerIndex - indexOrigin + maxPlayers) % maxPlayers;
 			}
 			else
 			{

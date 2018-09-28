@@ -157,10 +157,9 @@ describe('room', () =>
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[4].name).toBe('2');
 		expect(gameState.players[4].holeCards.length).toBe(0);
-		expect(gameState.players[4].isDealer).toBe(false);
 		expect(gameState.players[2].name).toBe('1');
 		expect(gameState.players[2].holeCards.length).toBe(0);
-		expect(gameState.players[2].isDealer).toBe(true);
+		expect(gameState.dealerIndex).toBe(2);
 		
 		gameState = room.getGameState(tablePlayer2);
 		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
@@ -172,10 +171,10 @@ describe('room', () =>
 		expect(gameState.nextActionPlayer.name).toBe('2');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('2');
-		expect(gameState.players[0].isDealer).toBe(false);
 		expect(gameState.players[0].holeCards.length).toBe(2);
 		expect(gameState.players[3].name).toBe('1');
 		expect(gameState.players[3].holeCards.length).toBe(0);
+		expect(gameState.dealerIndex).toBe(3);
 		
 		gameState = room.getGameState(tablePlayer1);
 		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
@@ -185,10 +184,10 @@ describe('room', () =>
 		expect(gameState.nextActionPlayer.name).toBe('2');
 		expect(gameState.winners).toBeNull();
 		expect(gameState.players[0].name).toBe('1');
-		expect(gameState.players[0].isDealer).toBe(true);
 		expect(gameState.players[0].holeCards.length).toBe(2);
 		expect(gameState.players[2].name).toBe('2');
 		expect(gameState.players[2].holeCards.length).toBe(0);
+		expect(gameState.dealerIndex).toBe(0);
 		
 		// TODO
 		// room.performGameAction(player2, 'call', 10);

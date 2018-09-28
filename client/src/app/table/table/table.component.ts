@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { Player } from '../player/player.model';
-// import { OngoingRoundAction } from '../player/player-action/ongoing-round-action.model';
 import { GameStateService } from '../../game-state.service';
 import { NextAction } from '../next-action/next-action.model';
 import { Room } from '../../room/room.model';
@@ -37,6 +36,8 @@ export class TableComponent implements OnInit, OnDestroy
 	
 	private bigBlind: number;
 	
+	private winningCards: number[];
+	
 	constructor(private gameStateService: GameStateService) {}
 	
 	ngOnInit()
@@ -47,54 +48,9 @@ export class TableComponent implements OnInit, OnDestroy
 		{
 			this.processGameState(gameState);
 		});
-		
-		
-		
-		
-		// this.player0 = new Player('Ted', 25000);
-		// //this.player1 = new Player('Poon dog', 25000);
-		// this.player2 = new Player('player2', 25000);
-		// //this.player3 = new Player('Dodgers fan', 25000);
-		// this.player4 = new Player('Seth', 25000);
-		// this.player5 = new Player('Jose', 25000);
-		// //this.player6 = new Player('Sally', 25000);
-		// this.player7 = new Player('stupid', 333838);
-		// this.player8 = new Player('mark', 25000);
-		// this.player9 = new Player('cheech', 25000);
-		
-		// //this.currentPlayer = this.player0;
-		
-		// this.player0.hasHoleCards = true;
-		// //this.player1.hasHoleCards = true;
-		// this.player2.hasHoleCards = true;
-		// //this.player3.hasHoleCards = true;
-		// this.player4.hasHoleCards = true;
-		// this.player5.hasHoleCards = true;
-		// //this.player6.hasHoleCards = true;
-		// this.player7.hasHoleCards = true;
-		// this.player8.hasHoleCards = true;
-		
-		// this.player0.isDealer = true;
-		
-		// this.player0.holeCards = [14, 26];
-		// //this.player1.holeCards = [19, 46];
-		// this.player2.holeCards = [19, 46];
-		// //this.player3.holeCards = [19, 46];
-		// this.player4.holeCards = [19, 46];
-		// this.player5.holeCards = [19, 46];
-		// //this.player6.holeCards = [19, 46];
-		// //this.player7.holeCards = [19, 46];
-		// //this.player8.holeCards = [19, 46];
-		// //this.player9.holeCards = [19, 46];
-		
-		// this.player0.ongoingRoundAction = new OngoingRoundAction('raise', 499990);
-		// this.player2.ongoingRoundAction = new OngoingRoundAction('call', 50);
-		// this.player4.ongoingRoundAction = new OngoingRoundAction('check', 999999);
-		// this.player5.ongoingRoundAction = new OngoingRoundAction('fold', 5350);
-		// this.player7.ongoingRoundAction = new OngoingRoundAction('small-blind', 30);
 	}
 	
-	processGameState(gameState: GameState)
+	private processGameState(gameState: GameState)
 	{
 		console.log(gameState);
 		
@@ -122,9 +78,82 @@ export class TableComponent implements OnInit, OnDestroy
 			
 			this.bigBlind = gameState.bigBlind;
 			
-			
-			
+			if (gameState.winners)
+			{
+				// TODO: show winners
+				let numPots = gameState.winners.pots.length;
+				let delayPerPot = 10 / numPots;
+				let currentDelay = 0;
+				gameState.winners.pots.forEach((pot) =>
+				{
+					setTimeout(() => {this.updateWinningCards(pot)}, currentDelay * 1000);
+					currentDelay += delayPerPot;
+				});
+			}
+			else
+			{
+				this.winningCards = null;
+			}
 		}
+	}
+	
+	private updateWinningCards(pot)
+	{
+		this.winningCards = [];
+		pot.winners.forEach((winner) =>
+		{
+			winner.hand.cards.forEach((card) =>
+			{
+				if (this.winningCards.indexOf(card.code) === -1)
+				{
+					this.winningCards.push(card.code);
+				}
+			});
+		});
+		
+		pot.players.forEach((player) =>
+		{
+			if (this.player0 && this.player0.name === player.name)
+			{
+				this.player0.holeCards = player.holeCards;
+			}
+			else if (this.player1 && this.player1.name === player.name)
+			{
+				this.player1.holeCards = player.holeCards;
+			}
+			else if (this.player2 && this.player2.name === player.name)
+			{
+				this.player2.holeCards = player.holeCards;
+			}
+			else if (this.player3 && this.player3.name === player.name)
+			{
+				this.player3.holeCards = player.holeCards;
+			}
+			else if (this.player4 && this.player4.name === player.name)
+			{
+				this.player4.holeCards = player.holeCards;
+			}
+			else if (this.player5 && this.player5.name === player.name)
+			{
+				this.player5.holeCards = player.holeCards;
+			}
+			else if (this.player6 && this.player6.name === player.name)
+			{
+				this.player6.holeCards = player.holeCards;
+			}
+			else if (this.player7 && this.player7.name === player.name)
+			{
+				this.player7.holeCards = player.holeCards;
+			}
+			else if (this.player8 && this.player8.name === player.name)
+			{
+				this.player8.holeCards = player.holeCards;
+			}
+			else if (this.player9 && this.player9.name === player.name)
+			{
+				this.player9.holeCards = player.holeCards;
+			}
+		});
 	}
 	
 	private spreadPlayers(gameState: GameState)

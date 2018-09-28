@@ -1,16 +1,16 @@
 <div class="table-wrapper">
 	<div class="table">
-		<app-player *ngIf="player0" [player]="player0" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(0)" class="player-0"></app-player>
-		<app-player *ngIf="player1 && room.maxPlayers === 10" [player]="player1" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(1)" class="player-1"></app-player>
-		<app-player *ngIf="player2 && room.maxPlayers >= 6" [player]="player2" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(2)" class="player-2"></app-player>
-		<app-player *ngIf="player3 && room.maxPlayers >= 4" [player]="player3" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(3)" class="player-3"></app-player>
-		<app-player *ngIf="player4 && room.maxPlayers === 10" [player]="player4" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(4)" class="player-4"></app-player>
-		<app-player *ngIf="player5" [player]="player5" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(5)" class="player-5"></app-player>
-		<app-player *ngIf="player6 && room.maxPlayers === 10" [player]="player6" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(6)" class="player-6"></app-player>
-		<app-player *ngIf="player7 && room.maxPlayers >= 4" [player]="player7" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(7)" class="player-7"></app-player>
-		<app-player *ngIf="player8 && room.maxPlayers >= 6" [player]="player8" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(8)" class="player-8"></app-player>
-		<app-player *ngIf="player9 && room.maxPlayers === 10" [player]="player9" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(9)" class="player-9"></app-player>
-		<app-board [cards]="board"></app-board>
+		<app-player *ngIf="player0" [player]="player0" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(0)" [winningCards]="winningCards" class="player-0"></app-player>
+		<app-player *ngIf="player1 && room.maxPlayers === 10" [player]="player1" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(1)" [winningCards]="winningCards" class="player-1"></app-player>
+		<app-player *ngIf="player2 && room.maxPlayers >= 6" [player]="player2" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(2)" [winningCards]="winningCards" class="player-2"></app-player>
+		<app-player *ngIf="player3 && room.maxPlayers >= 4" [player]="player3" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(3)" [winningCards]="winningCards" class="player-3"></app-player>
+		<app-player *ngIf="player4 && room.maxPlayers === 10" [player]="player4" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(4)" [winningCards]="winningCards" class="player-4"></app-player>
+		<app-player *ngIf="player5" [player]="player5" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(5)" [winningCards]="winningCards" class="player-5"></app-player>
+		<app-player *ngIf="player6 && room.maxPlayers === 10" [player]="player6" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(6)" [winningCards]="winningCards" class="player-6"></app-player>
+		<app-player *ngIf="player7 && room.maxPlayers >= 4" [player]="player7" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(7)" [winningCards]="winningCards" class="player-7"></app-player>
+		<app-player *ngIf="player8 && room.maxPlayers >= 6" [player]="player8" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(8)" [winningCards]="winningCards" class="player-8"></app-player>
+		<app-player *ngIf="player9 && room.maxPlayers === 10" [player]="player9" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(9)" [winningCards]="winningCards" class="player-9"></app-player>
+		<app-board [cards]="board"  [winningCards]="winningCards"></app-board>
 		<app-pot [potSize]="potSize"></app-pot>
 	</div>
 	<app-next-action [action]="nextAction" [bigBlind]="bigBlind" [roomID]="room ? room.id : null"></app-next-action>

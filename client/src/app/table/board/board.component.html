@@ -1,10 +1,10 @@
 <div class="board">
 	<!-- TODO: use a card class to get alts -->
-	<img *ngIf="cards && cards[0] && cards[0].code >= 0; else card_empty" class="board-card" [src]="'assets/cards/' + cards[0].code + '.svg'">
-	<img *ngIf="cards && cards[1] && cards[1].code >= 0; else card_empty" class="board-card" [src]="'assets/cards/' + cards[1].code + '.svg'">
-	<img *ngIf="cards && cards[2] && cards[2].code >= 0; else card_empty" class="board-card" [src]="'assets/cards/' + cards[2].code + '.svg'">
-	<img *ngIf="cards && cards[3] && cards[3].code >= 0; else card_empty" class="board-card" [src]="'assets/cards/' + cards[3].code + '.svg'">
-	<img *ngIf="cards && cards[4] && cards[4].code >= 0; else card_empty" class="board-card" [src]="'assets/cards/' + cards[4].code + '.svg'">
+	<img *ngIf="cards && cards[0] && cards[0].code >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[0].code) === -1}" class="board-card" [src]="'assets/cards/' + cards[0].code + '.svg'">
+	<img *ngIf="cards && cards[1] && cards[1].code >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[1].code) === -1}" class="board-card" [src]="'assets/cards/' + cards[1].code + '.svg'">
+	<img *ngIf="cards && cards[2] && cards[2].code >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[2].code) === -1}" class="board-card" [src]="'assets/cards/' + cards[2].code + '.svg'">
+	<img *ngIf="cards && cards[3] && cards[3].code >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[3].code) === -1}" class="board-card" [src]="'assets/cards/' + cards[3].code + '.svg'">
+	<img *ngIf="cards && cards[4] && cards[4].code >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[4].code) === -1}" class="board-card" [src]="'assets/cards/' + cards[4].code + '.svg'">
 </div>
 
 <ng-template #card_empty>

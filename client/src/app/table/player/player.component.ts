@@ -17,6 +17,7 @@ export class PlayerComponent
 	@Input() position: number;
 	@Input() nextActionPlayer: Player;
 	@Input() room: Room;
+	@Input() winningCards: number[];
 	
 	private currentPlayer: Player;
 	private currentPlayerSubscription: Subscription;

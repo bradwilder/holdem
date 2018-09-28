@@ -72,6 +72,10 @@
 		position: absolute;
 		box-shadow: 0 -3px 15px 0 #111;
 	}
+	
+	&.non-winner {
+		filter: brightness(30%);
+	}
 }
 
 p {

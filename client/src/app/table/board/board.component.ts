@@ -9,4 +9,5 @@ import { Component, Input } from '@angular/core';
 export class BoardComponent
 {
 	@Input() cards: number[];
+	@Input() winningCards: number[];
 }

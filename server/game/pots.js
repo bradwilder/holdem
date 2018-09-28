@@ -3,6 +3,7 @@ let HoldEmState = require('./holdEmState');
 let ActionLogEntry = require('./actionLogEntry');
 let OngoingRoundAction = require('./ongoingRoundAction');
 let PotSimple = require('./potSimple');
+let PlayerSimple = require('./playerSimple');
 
 let Pots = (players, newPlayers, bigBlind) =>
 {
@@ -467,6 +468,41 @@ let Pots = (players, newPlayers, bigBlind) =>
 		return pot;
 	}
 	
+	let potPlayersToShowdownPlayers = (potPlayers, winners, originIndex) =>
+	{
+		let playersSimple = [];
+		let i;
+		let startedLoop = false;
+		for (i = originIndex; i != originIndex || !startedLoop; i = (i + 1) % potPlayers.length)
+		{
+			startedLoop = true;
+			let player = potPlayers[i];
+			playersSimple.push(PlayerSimple(player.name, player.getChips(), true, player.getHoleCards(), null));
+			
+			if (winners.find((winner) => winner.player.name === player.name))
+			{
+				break;
+			}
+		}
+		
+		for (i = (i + 1) % potPlayers.length; i != originIndex; i = (i + 1) % potPlayers.length)
+		{
+			let player = potPlayers[i];
+			let playerSimple;
+			if (winners.find((winner) => winner.player.name === player.name))
+			{
+				playerSimple = PlayerSimple(player.name, player.getChips(), true, player.getHoleCards(), null);
+			}
+			else
+			{
+				playerSimple = PlayerSimple(player.name, player.getChips(), true, [], null);
+			}
+			playersSimple.push(playerSimple);
+		}
+		
+		return playersSimple;
+	}
+	
 	let self =
 	{
 		getMainPot: () => potList[0],
@@ -581,7 +617,18 @@ let Pots = (players, newPlayers, bigBlind) =>
 			}
 			return chips;
 		},
-		getOngoingActionThisRound: (player) => OngoingRoundAction(ongoingRoundActions[player], self.getChipsThisRound(player)),
+		getOngoingActionThisRound: (player) =>
+		{
+			let action = ongoingRoundActions[player];
+			let chips = self.getChipsThisRound(player);
+			
+			if (action || chips > 0)
+			{
+				return OngoingRoundAction(action, chips);
+			}
+			
+			return null;
+		},
 		fold: () =>
 		{
 			let player = self.getNextActionPlayer();
@@ -689,28 +736,47 @@ let Pots = (players, newPlayers, bigBlind) =>
 		},
 		awardPots: (boardCards) =>
 		{
-			let potWinners = {};
-			potWinners.lastAggressor = lastAggressor;
-			potWinners.pots = [];
+			let awardedPots = {};
+			awardedPots.pots = [];
 			let pot;
 			while (pot = awardPot(boardCards))
 			{
-				let players = pot.getPlayers();
+				let potPlayers = pot.getPlayers();
 				let winners = pot.getWinners(boardCards);
-				// TODO
-				// let playersSimple;
-				// if (lastAggressor)
-				// {
-					
-				// }
-				// else
-				// {
-				// 	//playersSimple = players.map((player) => PlayerSimple(player.name, player.getChips(), ));
-				// }
 				
-				potWinners.pots.push(PotSimple(pot.getSize(), players, winners));
+				let playersSimple;
+				if (lastAggressor)
+				{
+					let lastAggressorIndex = potPlayers.indexOf(lastAggressor);
+					if (lastAggressorIndex > 0)
+					{
+						playersSimple = potPlayersToShowdownPlayers(potPlayers, winners, lastAggressorIndex);
+					}
+					else
+					{
+						playersSimple = potPlayersToShowdownPlayers(potPlayers, winners, 0);
+					}
+				}
+				else
+				{
+					playersSimple = potPlayersToShowdownPlayers(potPlayers, winners, 0);
+				}
+				
+				awardedPots.pots.push(PotSimple(pot.getSize(), playersSimple, winners));
 			}
-			return potWinners;
+			
+			let isPotContested = true;
+			if (awardedPots.pots[0] && awardedPots.pots[0].players.length <= 1)
+			{
+				isPotContested = false;
+			}
+			
+			
+			
+			
+//			if (!lastAggressor)
+//			console.log(JSON.stringify(awardedPots, null, 4));
+			return awardedPots;
 		}
 	}
 	

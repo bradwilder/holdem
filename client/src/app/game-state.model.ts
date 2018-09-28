@@ -11,4 +11,5 @@ export class GameState
 	nextAction: NextAction;
 	nextActionPlayer: Player;
 	board: number[];
+	winners;
 }
