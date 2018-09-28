@@ -99,10 +99,7 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		return mainPlayers;
 	}
 	
-	let getOngoingRoundAction = (player) =>
-	{
-		return pots ? pots.getOngoingActionThisRound(player) : null;
-	}
+	let getOngoingRoundAction = (player) => pots ? pots.getOngoingActionThisRound(player) : null;
 	
 	let getPlayersSimple = () =>
 	{
