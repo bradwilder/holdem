@@ -35,11 +35,6 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		return count;
 	}
 	
-	let changeDealer = () =>
-	{
-		dealerIndex = getNextPlayerAtTableNotNew(dealerIndex);
-	}
-	
 	let getNextPlayerAtTableNotNew = (i) =>
 	{
 		let playersCount = maxPlayers;
@@ -80,7 +75,7 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		}
 		
 		let index = (i + 1) % playersCount;
-		while (!players[index] || pendingPlayers.indexOf(players[index]) !== -1)
+		while (!players[index])
 		{
 			index = (index + 1) % playersCount;
 		}
@@ -331,7 +326,7 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		{
 			deck.shuffle();
 			
-			changeDealer();
+			dealerIndex = getNextPlayerAtTableNotNew(dealerIndex);
 			
 			pendingPlayers = [];
 			
