@@ -24,7 +24,6 @@ let Player = (name, chips = 0) =>
 		{
 			chips -= betChips;
 		},
-		isAllIn: () => chips == 0 && self.hasHoleCards(),
 		toString: () => name + '\n' + chips
 	}
 	
