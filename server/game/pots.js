@@ -64,7 +64,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 		{
 			for (let i = 0; i < currentPot.getNumPlayers(); i++)
 			{
-				if (!currentPot.getPlayer(i).getChips() === 0)
+				if (!currentPot.getPlayer(i).isAllIn())
 				{
 					count++;
 				}
