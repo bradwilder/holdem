@@ -270,6 +270,14 @@ describe('betting', () =>
 		holdEm.foldOutOfTurn(player1);
 		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 40, 100, 20, 50);
 		expect(player1.hasHoleCards()).toBe(false);
+		
+		holdEm.foldOutOfTurn(player2);
+		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 40, 100, 20, 50);
+		expect(player2.hasHoleCards()).toBe(false);
+		
+		holdEm.foldOutOfTurn(player5);
+		verifyPlayerAction(holdEm, HoldEmState().BET_PREFLOP, player3, 40, 100, 20, 50);
+		expect(player5.hasHoleCards()).toBe(false);
 	});
 	
 	it('should throw on bet less than call and not all in', () =>
