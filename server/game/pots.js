@@ -392,7 +392,8 @@ let Pots = (players, newPlayers, bigBlind) =>
 	{
 		let entries = [];
 		
-		let playerIndex = self.getMainPot().getIndex(player);
+		let playerIndex = players.indexOf(player);
+		players.splice(playerIndex, 1);
 		
 		delete playersActed[player.name];
 		
