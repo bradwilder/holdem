@@ -2,15 +2,15 @@ let LinkedHashMap = require('./linkedHashMap');
 let HandFactory = require('./hand/handFactory');
 let PotWinner = require('./potWinner');
 
-let Pot = (players = null) =>
+let Pot = (playersToAdd = null) =>
 {
 	let totalSize = 0;
 	let bettingCapped = false;
 	let playerCounts = LinkedHashMap();
 	
-	if (players)
+	if (playersToAdd)
 	{
-		players.forEach(player =>
+		playersToAdd.forEach(player =>
 		{
 			playerCounts.set(player, 0);
 		});
