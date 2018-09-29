@@ -19,7 +19,7 @@ let Pot = (players = null) =>
 	let capBetting = (cap) =>
 	{
 		let newPlayerCounts = LinkedHashMap();
-		for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
+		playerCounts.itemSet().forEach((playerCount) =>
 		{
 			let player = playerCount.key;
 			let count = playerCount.value ? playerCount.value : 0;
@@ -36,7 +36,7 @@ let Pot = (players = null) =>
 			{
 				newPlayerCounts.set(player, deduction);
 			}
-		}
+		});
 		
 		let newPot;
 		if (newPlayerCounts.size() >= 2)
@@ -54,15 +54,7 @@ let Pot = (players = null) =>
 	{
 		getSize: () => totalSize,
 		isBettingCapped: () => bettingCapped,
-		getCurrentBet: () =>
-		{
-			let maxBet = 0;
-			for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
-			{
-				maxBet = Math.max(maxBet, playerCount.value);
-			}
-			return maxBet;
-		},
+		getCurrentBet: () => Math.max(...playerCounts.itemSet().map((item) => item.value)),
 		getNumPlayers: () => playerCounts.size(),
 		isContested: () => self.getNumPlayers() >= 2,
 		getPlayers: () => playerCounts.keySet(),
@@ -189,8 +181,10 @@ let Pot = (players = null) =>
 		isEven: () =>
 		{
 			let currentBet = self.getCurrentBet();
-			for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
+			let items = playerCounts.itemSet();
+			for (let i = 0; i < items.length; i++)
 			{
+				let playerCount = items[i];
 				let player = playerCount.key;
 				if (currentBet != self.getRoundCount(player))
 				{
@@ -207,19 +201,19 @@ let Pot = (players = null) =>
 		getRoundOwed: (player) => self.getCurrentBet() - self.getRoundCount(player),
 		clearRound: () =>
 		{
-			for (let playerCount = playerCounts.getIterator(); playerCount; playerCount = playerCount.next)
+			playerCounts.itemSet().forEach((playerCount) =>
 			{
 				playerCounts.set(playerCount.key, 0);
-			}
+			});
 		},
 		initialize: (newPlayerCounts, isBettingCapped) =>
 		{
 			playerCounts = newPlayerCounts;
 			bettingCapped = isBettingCapped;
-			for (let playerCount = newPlayerCounts.getIterator(); playerCount; playerCount = playerCount.next)
+			playerCounts.itemSet().forEach((playerCount) =>
 			{
 				totalSize += playerCount.value;
-			}
+			});
 		}
 	}
 	
