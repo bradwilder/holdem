@@ -18,6 +18,11 @@ class Hand
 		return this.rank;
 	}
 	
+	getCards()
+	{
+		return this.cards;
+	}
+	
 	compare(hand)
 	{
 		let rankCompare = this.rank.compare(hand.getRank());
