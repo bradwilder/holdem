@@ -6,9 +6,8 @@ class TwoPair extends Hand
 {
 	constructor(cards)
 	{
-		super(TWO_PAIR);
+		super(cards, TWO_PAIR);
 		
-		this.cards = cards;
 		this.pairValues = [];
 		this.pairValues[0] = cards[0];
 		this.pairValues[1] = cards[2];

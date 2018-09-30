@@ -2,7 +2,7 @@ let Rank = require('./rank');
 
 class Hand
 {
-	constructor(rankValue)
+	constructor(cards, rankValue)
 	{
 		if (new.target === Hand)
 		{
@@ -10,6 +10,7 @@ class Hand
 		}
 		
 		this.rank = Rank(rankValue);
+		this.cards = cards;
 	}
 	
 	getRank()
@@ -31,6 +32,11 @@ class Hand
 	compareSameRank(hand)
 	{
 		throw 'Not implemented'
+	}
+	
+	toJSON()
+	{
+		return this.cards;
 	}
 }
 

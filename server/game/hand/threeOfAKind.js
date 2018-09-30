@@ -6,9 +6,8 @@ class ThreeOfAKind extends Hand
 {
 	constructor(cards)
 	{
-		super(THREE_KIND);
+		super(cards, THREE_KIND);
 		
-		this.cards = cards;
 		this.threeKindValue = cards[0];
 		this.kickers = cards.slice(3);
 	}

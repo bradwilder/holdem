@@ -6,9 +6,8 @@ class FullHouse extends Hand
 {
 	constructor(cards)
 	{
-		super(FULL_HOUSE);
+		super(cards, FULL_HOUSE);
 		
-		this.cards = cards;
 		this.threeKindValue = cards[0];
 		this.pairValue = cards[3];
 	}

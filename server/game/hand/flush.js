@@ -6,9 +6,7 @@ class Flush extends Hand
 {
 	constructor(cards)
 	{
-		super(FLUSH);
-		
-		this.cards = cards;
+		super(cards, FLUSH);
 	}
 	
 	compareSameRank(flush)

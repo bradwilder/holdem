@@ -6,9 +6,8 @@ class FourOfAKind extends Hand
 {
 	constructor(cards)
 	{
-		super(FOUR_KIND);
+		super(cards, FOUR_KIND);
 		
-		this.cards = cards;
 		this.fourKindValue = cards[0];
 		this.kicker = cards[4];
 	}

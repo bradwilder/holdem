@@ -6,9 +6,8 @@ class Pair extends Hand
 {
 	constructor(cards)
 	{
-		super(PAIR);
+		super(cards, PAIR);
 		
-		this.cards = cards;
 		this.pairValue = cards[0];
 		this.kickers = cards.slice(2);
 	}

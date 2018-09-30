@@ -6,9 +6,7 @@ class HighCard extends Hand
 {
 	constructor(cards)
 	{
-		super(HIGH_CARD);
-		
-		this.cards = cards;
+		super(cards, HIGH_CARD);
 	}
 	
 	compareSameRank(highCard)

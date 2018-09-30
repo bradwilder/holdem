@@ -6,9 +6,8 @@ class StraightFlush extends Hand
 {
 	constructor(cards)
 	{
-		super(STRAIGHT_FLUSH);
+		super(cards, STRAIGHT_FLUSH);
 		
-		this.cards = cards;
 		this.highValue = cards[0];
 	}
 	

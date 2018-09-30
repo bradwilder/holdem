@@ -6,9 +6,8 @@ class Straight extends Hand
 {
 	constructor(cards)
 	{
-		super(STRAIGHT);
+		super(cards, STRAIGHT);
 		
-		this.cards = cards;
 		this.highValue = cards[0];
 	}
 	
