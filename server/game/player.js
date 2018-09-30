@@ -12,8 +12,9 @@ let Player = (name, chips = 0) =>
 		{
 			holeCards = cards.slice();
 		},
+		getName: () => name,
 		getChips: () => chips,
-		name: name,
+		name: name, // TODO: remove
 		getHoleCards: () => holeCards,
 		hasHoleCards: () => holeCards.length == 2,
 		awardChips: (newChips) =>
@@ -24,7 +25,8 @@ let Player = (name, chips = 0) =>
 		{
 			chips -= betChips;
 		},
-		toString: () => name + '\n' + chips
+		toString: () => name + '\n' + chips,
+		toJSON: () => ({name: name, chips: chips, holeCards: holeCards})
 	}
 	
 	return self;
