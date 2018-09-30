@@ -2,8 +2,7 @@ let Pot = require('./pot');
 let HoldEmState = require('./holdEmState');
 let ActionLogEntry = require('./actionLogEntry');
 let OngoingRoundAction = require('./ongoingRoundAction');
-let PotSimple = require('./potSimple');
-let PlayerSimple = require('./playerSimple');
+let AwardedPots = require('./awardedPots');
 
 let Pots = (players, newPlayers, bigBlind) =>
 {
@@ -39,16 +38,6 @@ let Pots = (players, newPlayers, bigBlind) =>
 			return 0;
 		}
 		return main.getNumPlayers();
-	}
-	
-	let getMainPlayer = (i) =>
-	{
-		let count = getMainPlayersCount();
-		if (count == 0 || count <= i)
-		{
-			return null;
-		}
-		return getMainPot().getPlayers()[i];
 	}
 	
 	let moveActionIndex = () =>
@@ -350,35 +339,6 @@ let Pots = (players, newPlayers, bigBlind) =>
 		return maxChips;
 	}
 	
-	let getFirstPlayersInPotByPosition = (pot, playersNeeded) =>
-	{
-		if (playersNeeded > pot.getNumPlayers())
-		{
-			return null;
-		}
-		
-		let players = [];
-		let numPlayers = getMainPlayersCount();
-		let playersFound = 0;
-		let i = 0;
-		while (i < numPlayers)
-		{
-			let player = getMainPlayer(i);
-			if (pot.contains(player))
-			{
-				players.push(player);
-				playersFound++;
-				if (playersFound == playersNeeded)
-				{
-					return players;
-				}
-			}
-			
-			i++;
-		}
-		return null;
-	}
-	
 	let removePot = (pot) =>
 	{
 		let potIndex = potList.indexOf(pot);
@@ -433,78 +393,6 @@ let Pots = (players, newPlayers, bigBlind) =>
 		}
 		
 		return entries;
-	}
-	
-	let awardPot = (boardCards) =>
-	{
-		let pot = getLastPot();
-		if (pot)
-		{
-			let winners = pot.getWinners(boardCards);
-			if (winners)
-			{
-				let numWinners = winners.length;
-				let potSize = pot.getSize();
-				if (numWinners == 1)
-				{
-					winners[0].player.awardChips(potSize);
-				}
-				else
-				{
-					let rem = potSize % numWinners;
-					let chipsPerWinner = Math.floor(potSize / numWinners);
-					winners.forEach((winner) =>
-					{
-						winner.player.awardChips(chipsPerWinner);
-					});
-					if (rem > 0)
-					{
-						let players = getFirstPlayersInPotByPosition(pot, iRem);
-						players.forEach((player) =>
-						{
-							player.awardChips(1);
-						});
-					}
-				}
-				removePot(pot);
-			}
-		}
-		return pot;
-	}
-	
-	let potPlayersToShowdownPlayers = (potPlayers, winners, originIndex) =>
-	{
-		let playersSimple = [];
-		let i;
-		let startedLoop = false;
-		for (i = originIndex; i != originIndex || !startedLoop; i = (i + 1) % potPlayers.length)
-		{
-			startedLoop = true;
-			let player = potPlayers[i];
-			playersSimple.push(PlayerSimple(player.name, player.getChips(), true, player.getHoleCards(), null));
-			
-			if (winners.find((winner) => winner.player.name === player.name))
-			{
-				break;
-			}
-		}
-		
-		for (i = (i + 1) % potPlayers.length; i != originIndex; i = (i + 1) % potPlayers.length)
-		{
-			let player = potPlayers[i];
-			let playerSimple;
-			if (winners.find((winner) => winner.player.name === player.name))
-			{
-				playerSimple = PlayerSimple(player.name, player.getChips(), true, player.getHoleCards(), null);
-			}
-			else
-			{
-				playerSimple = PlayerSimple(player.name, player.getChips(), true, [], null);
-			}
-			playersSimple.push(playerSimple);
-		}
-		
-		return playersSimple;
 	}
 	
 	let self =
@@ -740,50 +628,26 @@ let Pots = (players, newPlayers, bigBlind) =>
 		},
 		awardPots: (boardCards) =>
 		{
-			let awardedPots = {};
-			awardedPots.pots = [];
+			let awardedPots = [];
 			let pot;
-			while (pot = awardPot(boardCards))
+			
+			while (pot = getLastPot())
 			{
+				let awardedPot = pot.award(boardCards);
+				if (awardedPot)
+				{
+					removePot(pot);
+				}
+				
 				if (pot.getSize() !== 0)
 				{
-					let potPlayers = pot.getPlayers();
-					let winners = pot.getWinners(boardCards);
-					
-					let playersSimple;
-					if (lastAggressor)
-					{
-						let lastAggressorIndex = potPlayers.indexOf(lastAggressor);
-						if (lastAggressorIndex > 0)
-						{
-							playersSimple = potPlayersToShowdownPlayers(potPlayers, winners, lastAggressorIndex);
-						}
-						else
-						{
-							playersSimple = potPlayersToShowdownPlayers(potPlayers, winners, 0);
-						}
-					}
-					else
-					{
-						playersSimple = potPlayersToShowdownPlayers(potPlayers, winners, 0);
-					}
-					
-					awardedPots.pots.push(PotSimple(pot.getSize(), playersSimple, winners));
+					awardedPots.push(awardedPot);
 				}
 			}
 			
-			let isPotContested = true;
-			if (awardedPots.pots[0] && awardedPots.pots[0].players.length <= 1)
-			{
-				isPotContested = false;
-			}
-			
-			
-			
-			
 //			if (!lastAggressor)
-//			console.log(JSON.stringify(awardedPots, null, 4));
-			return awardedPots;
+//			console.log(JSON.stringify(AwardedPots(lastAggressor, awardedPots), null, 4));
+			return AwardedPots(lastAggressor, awardedPots);
 		}
 	}
 	

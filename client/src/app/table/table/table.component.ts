@@ -187,60 +187,7 @@ export class TableComponent implements OnInit, OnDestroy
 				break;
 		}
 		
-		let spreadDealerIndex = this.spreadServerIndex(gameState.dealerIndex);
-		spreadPlayers[spreadDealerIndex].isDealer = true;
-		
 		return spreadPlayers;
-	}
-	
-	private spreadServerIndex(serverIndex)
-	{
-		switch (this.room.maxPlayers)
-		{
-			case 2:
-				switch (serverIndex)
-				{
-					case 0:
-						return 0;
-					case 1:
-						return 5;
-				}
-				break;
-			case 4:
-			case 4:
-				switch (serverIndex)
-				{
-					case 0:
-						return 0;
-					case 1:
-						return 3;
-					case 2:
-						return 5;
-					case 3:
-						return 7;
-				}
-				break;
-			case 6:
-			case 6:
-				switch (serverIndex)
-				{
-					case 0:
-						return 0;
-					case 1:
-						return 2;
-					case 2:
-						return 3;
-					case 3:
-						return 5;
-					case 4:
-						return 7;
-					case 5:
-						return 8;
-				}
-				break;
-			case 10:
-				return serverIndex;
-		}
 	}
 	
 	private translatePosition(positionIndex: number)

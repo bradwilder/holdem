@@ -1,6 +1,7 @@
 let LinkedHashMap = require('./linkedHashMap');
 let HandFactory = require('./hand/handFactory');
-let PotWinner = require('./potWinner');
+let AwardedPot = require('./awardedPot');
+let WinningHandClient = require('./winningHandClient');
 
 let Pot = (playersToAdd = null) =>
 {
@@ -14,6 +15,34 @@ let Pot = (playersToAdd = null) =>
 		{
 			playerCounts.set(player, 0);
 		});
+	}
+	
+	let getFirstPlayersByPosition = (playersNeeded) =>
+	{
+		if (playersNeeded > self.getNumPlayers())
+		{
+			return null;
+		}
+		
+		let firstPlayers = [];
+		let players = self.getPlayers();
+		let playersFound = 0;
+		let i = 0;
+		while (i < players.length)
+		{
+			let player = players[i];
+			if (self.contains(player))
+			{
+				firstPlayers.push(player);
+				playersFound++;
+				if (playersFound == playersNeeded)
+				{
+					return firstPlayers;
+				}
+			}
+			i++;
+		}
+		return null;
 	}
 	
 	let capBetting = (cap) =>
@@ -60,15 +89,10 @@ let Pot = (playersToAdd = null) =>
 		getPlayers: () => playerCounts.keySet(),
 		getPlayer: (i) => self.getPlayers()[i],
 		contains: (player) => playerCounts.contains(player),
-		getWinners: (boardCards) =>
+		award: (boardCards) =>
 		{
-			if (self.getNumPlayers() === 0 || !self.isEven())
-			{
-				return null;
-			}
-			
 			let players = self.getPlayers();
-			if (players.length === 0)
+			if (players.length === 0 || !self.isEven())
 			{
 				return null;
 			}
@@ -77,19 +101,12 @@ let Pot = (playersToAdd = null) =>
 			let winners = [];
 			let firstPlayer = players[0];
 			let bestHand = HandFactory().createHandWithHoles(boardCards, firstPlayer.getHoleCards());
-			winners.push(PotWinner(firstPlayer, bestHand, bestHand.toString()));
+			winners.push({player: firstPlayer, bestHand: bestHand});
 			
 			// If the best hand is null, we must be pre-flop; there's only a winner if there's only 1 player left
-			if (!bestHand)
+			if (!bestHand && players.length > 1)
 			{
-				if (players.length === 1)
-				{
-					return winners;
-				}
-				else
-				{
-					return null;
-				}
+				return null;
 			}
 			
 			for (let i = 1; i < players.length; i++)
@@ -104,11 +121,47 @@ let Pot = (playersToAdd = null) =>
 						winners = [];
 					}
 					bestHand = playerHand;
-					winners.push(PotWinner(player, playerHand, playerHand.toString()));
+					winners.push({player: player, bestHand: playerHand});
 				}
 			}
 			
-			return winners;
+			let numWinners = winners.length;
+			let potSize = self.getSize();
+			if (numWinners == 1)
+			{
+				winners[0].player.awardChips(potSize);
+			}
+			else
+			{
+				let rem = potSize % numWinners;
+				let chipsPerWinner = Math.floor(potSize / numWinners);
+				winners.forEach((winner) =>
+				{
+					winner.player.awardChips(chipsPerWinner);
+				});
+				if (rem > 0)
+				{
+					let players = getFirstPlayersByPosition(rem);
+					players.forEach((player) =>
+					{
+						player.awardChips(1);
+					});
+				}
+			}
+			
+			let winningCards = [];
+			winners.forEach((winner) =>
+			{
+				winner.bestHand.getCards().forEach((card) =>
+				{
+					if (winningCards.indexOf(card) === -1)
+					{
+						winningCards.push(card);
+					}
+				});
+			});
+			
+			return AwardedPot(players, winners.map((winner) => winner.player), WinningHandClient(winningCards, bestHand.toString()), potSize);
 		},
 		add: (player, addition) =>
 		{

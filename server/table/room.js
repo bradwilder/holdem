@@ -27,9 +27,8 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		let indexOrigin = tablePlayers.indexOf(tablePlayerOrigin);
 		if (indexOrigin > 0)
 		{
-			let playersSimple = gamePlayers.slice();
-			playersSimple = playersSimple.splice(indexOrigin % maxPlayers, maxPlayers).concat(playersSimple);
-			return playersSimple;
+			gamePlayers = gamePlayers.splice(indexOrigin % maxPlayers, maxPlayers).concat(gamePlayers);
+			return gamePlayers;
 		}
 		else
 		{
@@ -58,6 +57,15 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		let startHand = () =>
 		{
 //			console.log('startHand called');
+			// TODO: leaving table
+			// tablePlayers.forEach((tablePlayer) =>
+			// {
+			// 	if (tablePlayer && tablePlayer.getPlayer().getChips() === 0)
+			// 	{
+			// 		self.leaveTable(tablePlayer);
+			// 	}
+			// });
+			
 			holdEm.startHand();
 			timeout = null;
 			updateRoomOccupants();
@@ -98,6 +106,47 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		}
 	}
 	
+	let sendWinnersOnTimer = (winners, seconds = defaultWait / 2) =>
+	{
+		if (timeout)
+		{
+			clearTimeout(timeout);
+		}
+		
+		let i = 0;
+		
+		let sendWinner = () =>
+		{
+//			console.log('sendWinner called');
+			if (i < winners.length)
+			{
+				sendWinnerToAll(winners[i]);
+				i++;
+				timeout = setTimeout(() => sendWinner(), seconds * 1000);
+			}
+			else
+			{
+				if (getNumPlayersAtTable() >= 2)
+				{
+					startGameOnTimer(0);
+				}
+				else
+				{
+					setToNoGameOnTimer(0);
+				}
+			}
+		}
+		
+		if (seconds > 0)
+		{
+			timeout = setTimeout(() => sendWinner(), seconds * 1000);
+		}
+		else
+		{
+			sendWinner();
+		}
+	}
+	
 	let removePlayerFromTable = (tablePlayer) =>
 	{
 		holdEm.removePlayer(tablePlayer.getPlayer());
@@ -115,21 +164,86 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		}
 	}
 	
-	let updateRoomOccupants = () =>
+	let sendWinnerToAll = (gameState) =>
 	{
-		let gameState = self.getGameState();
 		self.getVisitors().forEach((roomVisitor) =>
 		{
-			sendGameState(roomVisitor, gameState);
+			sendGameState(roomVisitor, translateWinner(gameState));
 		});
 		
 		self.getTablePlayers().forEach((tablePlayer) =>
 		{
 			if (tablePlayer)
 			{
-				sendGameState(tablePlayer.getSocket(), self.getGameState(tablePlayer));
+				sendGameState(tablePlayer.getSocket(), translateWinner(gameState, tablePlayer));
 			}
 		});
+	}
+	
+	let updateRoomOccupants = () =>
+	{
+		let gameState = holdEm.getGameState();
+		self.getVisitors().forEach((roomVisitor) =>
+		{
+			sendGameState(roomVisitor, translateGameState(gameState));
+		});
+		
+		self.getTablePlayers().forEach((tablePlayer) =>
+		{
+			if (tablePlayer)
+			{
+				sendGameState(tablePlayer.getSocket(), translateGameState(gameState, tablePlayer));
+			}
+		});
+	}
+	
+	let translateGameState = (gameState, tablePlayer = null) =>
+	{
+		let newGameState = gameState.clone();
+//		console.log(JSON.stringify(newGameState, null, 4));
+		
+		if (tablePlayer)
+		{
+			newGameState.players = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, newGameState.players);
+		}
+		
+		if (!tablePlayer || (!newGameState.players.find((playerClient) => playerClient.player.name === tablePlayer.getPlayer().getName()).isActive))
+		{
+			newGameState.nextAction = null;
+		}
+		
+		newGameState.nextActionPlayer = null;
+		
+		let playerName = tablePlayer ? tablePlayer.getPlayer().getName() : null;
+		newGameState.players.forEach((playerClient) =>
+		{
+			if (playerClient.player && playerClient.player.name !== playerName)
+			{
+				playerClient.player.holeCards = [];
+			}
+		});
+		
+		
+		
+		
+		
+		
+		return newGameState;
+	}
+	
+	let translateWinner = (gameState, tablePlayer = null) =>
+	{
+		let newGameState = gameState.clone();
+		console.log(JSON.stringify(newGameState, null, 4));
+		
+		if (tablePlayer)
+		{
+			newGameState.players = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, newGameState.players);
+		}
+		
+		newGameState.nextActionPlayer = null;
+		
+		return newGameState;
 	}
 	
 	let self =
@@ -175,8 +289,8 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			
 			removeVisitor(tablePlayer.getSocket());
 			
-			let gameState = holdEm.getGameState();
-			if (gameState.state === HoldEmState().NO_GAME && getNumPlayersAtTable() >= 2)
+			let state = holdEm.getState();
+			if (state === HoldEmState().NO_GAME && getNumPlayersAtTable() >= 2)
 			{
 				startGameOnTimer();
 			}
@@ -193,7 +307,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			if (visitors.indexOf(visitor) === -1)
 			{
 				visitors.push(visitor);
-				sendGameState(visitor, self.getGameState());
+				sendGameState(visitor, translateGameState(holdEm.getGameState()));
 			}
 		},
 		removeOccupant: (visitor) =>
@@ -211,50 +325,62 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		},
 		getGameState: (tablePlayer = null) =>
 		{
-			let gameState = holdEm.getGameState();
-			let playersSimple;
-			if (tablePlayer)
-			{
-				playersSimple = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, gameState.players);
+			// let gameState = holdEm.getGameState();
+			// if (tablePlayer)
+			// {
+			// 	gameState.players = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, gameState.players);
 				
-				let indexOrigin = tablePlayers.indexOf(tablePlayer);
-				gameState.dealerIndex = (gameState.dealerIndex - indexOrigin + maxPlayers) % maxPlayers;
-			}
-			else
-			{
-				playersSimple = gameState.players;
-			}
-			gameState.players = playersSimple;
+			// 	let indexOrigin = tablePlayers.indexOf(tablePlayer);
+			// 	gameState.dealerIndex = (gameState.dealerIndex - indexOrigin + maxPlayers) % maxPlayers;
+			// }
 			
-			if (tablePlayer)
-			{
-				gameState.players.forEach((gamePlayer) =>
-				{
-					if (gamePlayer && gamePlayer.name === tablePlayer.getPlayer().name)
-					{
-						gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards();
-					}
-				});
-			}
+			// if (tablePlayer)
+			// {
+			// 	gameState.players.forEach((gamePlayer) =>
+			// 	{
+			// 		if (gamePlayer && gamePlayer.name === tablePlayer.getPlayer().name)
+			// 		{
+			// 			gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards();
+			// 		}
+			// 	});
+			// }
 			
-			if (!tablePlayer || (!gameState.nextActionPlayer || gameState.nextActionPlayer.name !== tablePlayer.getPlayer().name))
-			{
-				gameState.nextAction = null;
-			}
+			// if (!tablePlayer || (!gameState.nextActionPlayer || gameState.nextActionPlayer.name !== tablePlayer.getPlayer().name))
+			// {
+			// 	gameState.nextAction = null;
+			// }
+			// //gameState.nextActionPlayer = null;
 			
-			if (gameState.winners)
-			{
-				if (getNumPlayersAtTable() >= 2)
-				{
-					startGameOnTimer(defaultWait);
-				}
-				else
-				{
-					setToNoGameOnTimer(defaultWait);
-				}
-			}
+			// if (gameState.winners)
+			// {
+			// 	if (getNumPlayersAtTable() >= 2)
+			// 	{
+			// 		startGameOnTimer(defaultWait);
+			// 	}
+			// 	else
+			// 	{
+			// 		setToNoGameOnTimer(defaultWait);
+			// 	}
+			// }
 			
 //			if (gameState.winners)
+//			console.log(JSON.stringify(gameState, null, 4));
+			
+			
+			
+			let gameState = translateGameState(holdEm.getGameState(), tablePlayer);
+			
+			let state = holdEm.getState();
+			if (state === HoldEmState().WINNER)
+			{
+				let winners = holdEm.getWinners();
+//				console.log(JSON.stringify(winners, null, 4));
+				// TODO
+				//sendWinnersOnTimer(winners);
+				
+			}
+			
+			
 //			console.log(JSON.stringify(gameState, null, 4));
 			return gameState;
 		},
