@@ -22,20 +22,6 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		return count;
 	}
 	
-	let tablePlayersToPlayersSimpleWithOrigin = (tablePlayerOrigin, gamePlayers) =>
-	{
-		let indexOrigin = tablePlayers.indexOf(tablePlayerOrigin);
-		if (indexOrigin > 0)
-		{
-			gamePlayers = gamePlayers.splice(indexOrigin % maxPlayers, maxPlayers).concat(gamePlayers);
-			return gamePlayers;
-		}
-		else
-		{
-			return gamePlayers;
-		}
-	}
-	
 	let removeVisitor = (visitor) =>
 	{
 		let index = visitors.indexOf(visitor);
@@ -106,7 +92,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		}
 	}
 	
-	let sendWinnersOnTimer = (winners, seconds = defaultWait / 2) =>
+	let sendWinnersOnTimer = (gameState, winners, seconds = defaultWait / 2) =>
 	{
 		if (timeout)
 		{
@@ -120,31 +106,24 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 //			console.log('sendWinner called');
 			if (i < winners.length)
 			{
-				sendWinnerToAll(winners[i]);
+				sendWinnerToAll(gameState, winners[i]);
 				i++;
 				timeout = setTimeout(() => sendWinner(), seconds * 1000);
 			}
 			else
 			{
-				if (getNumPlayersAtTable() >= 2)
-				{
-					startGameOnTimer(0);
-				}
-				else
-				{
-					setToNoGameOnTimer(0);
-				}
+				// if (getNumPlayersAtTable() >= 2)
+				// {
+				// 	startGameOnTimer(0);
+				// }
+				// else
+				// {
+				// 	setToNoGameOnTimer(0);
+				// }
 			}
 		}
 		
-		if (seconds > 0)
-		{
-			timeout = setTimeout(() => sendWinner(), seconds * 1000);
-		}
-		else
-		{
-			sendWinner();
-		}
+		sendWinner();
 	}
 	
 	let removePlayerFromTable = (tablePlayer) =>
@@ -164,18 +143,18 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		}
 	}
 	
-	let sendWinnerToAll = (gameState) =>
+	let sendWinnerToAll = (gameState, winner) =>
 	{
 		self.getVisitors().forEach((roomVisitor) =>
 		{
-			sendGameState(roomVisitor, translateWinner(gameState));
+			sendGameState(roomVisitor, gameState.cloneWinner(winner));
 		});
 		
 		self.getTablePlayers().forEach((tablePlayer) =>
 		{
 			if (tablePlayer)
 			{
-				sendGameState(tablePlayer.getSocket(), translateWinner(gameState, tablePlayer));
+				sendGameState(tablePlayer.getSocket(), gameState.cloneWinner(winner, tablePlayer.getPlayer()));
 			}
 		});
 	}
@@ -185,65 +164,16 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		let gameState = holdEm.getGameState();
 		self.getVisitors().forEach((roomVisitor) =>
 		{
-			sendGameState(roomVisitor, translateGameState(gameState));
+			sendGameState(roomVisitor, gameState.cloneForVisitor());
 		});
 		
 		self.getTablePlayers().forEach((tablePlayer) =>
 		{
 			if (tablePlayer)
 			{
-				sendGameState(tablePlayer.getSocket(), translateGameState(gameState, tablePlayer));
+				sendGameState(tablePlayer.getSocket(), gameState.cloneForPlayer(tablePlayer.getPlayer()));
 			}
 		});
-	}
-	
-	let translateGameState = (gameState, tablePlayer = null) =>
-	{
-		let newGameState = gameState.clone();
-//		console.log(JSON.stringify(newGameState, null, 4));
-		
-		if (tablePlayer)
-		{
-			newGameState.players = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, newGameState.players);
-		}
-		
-		if (!tablePlayer || (!newGameState.players.find((playerClient) => playerClient.player.name === tablePlayer.getPlayer().getName()).isActive))
-		{
-			newGameState.nextAction = null;
-		}
-		
-		newGameState.nextActionPlayer = null;
-		
-		let playerName = tablePlayer ? tablePlayer.getPlayer().getName() : null;
-		newGameState.players.forEach((playerClient) =>
-		{
-			if (playerClient.player && playerClient.player.name !== playerName)
-			{
-				playerClient.player.holeCards = [];
-			}
-		});
-		
-		
-		
-		
-		
-		
-		return newGameState;
-	}
-	
-	let translateWinner = (gameState, tablePlayer = null) =>
-	{
-		let newGameState = gameState.clone();
-		console.log(JSON.stringify(newGameState, null, 4));
-		
-		if (tablePlayer)
-		{
-			newGameState.players = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, newGameState.players);
-		}
-		
-		newGameState.nextActionPlayer = null;
-		
-		return newGameState;
 	}
 	
 	let self =
@@ -307,7 +237,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			if (visitors.indexOf(visitor) === -1)
 			{
 				visitors.push(visitor);
-				sendGameState(visitor, translateGameState(holdEm.getGameState()));
+				sendGameState(visitor, holdEm.getGameState().cloneForVisitor());
 			}
 		},
 		removeOccupant: (visitor) =>
@@ -322,6 +252,8 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 					removePlayerFromTable(tablePlayer);
 				}
 			}
+			
+			self.getGameState();
 		},
 		getGameState: (tablePlayer = null) =>
 		{
@@ -338,14 +270,14 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			// {
 			// 	gameState.players.forEach((gamePlayer) =>
 			// 	{
-			// 		if (gamePlayer && gamePlayer.name === tablePlayer.getPlayer().name)
+			// 		if (gamePlayer && gamePlayer.getName() === tablePlayer.getPlayer().getName())
 			// 		{
 			// 			gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards();
 			// 		}
 			// 	});
 			// }
 			
-			// if (!tablePlayer || (!gameState.nextActionPlayer || gameState.nextActionPlayer.name !== tablePlayer.getPlayer().name))
+			// if (!tablePlayer || (!gameState.nextActionPlayer || gameState.nextActionPlayer.getName() !== tablePlayer.getPlayer().getName()))
 			// {
 			// 	gameState.nextAction = null;
 			// }
@@ -367,8 +299,8 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 //			console.log(JSON.stringify(gameState, null, 4));
 			
 			
+			let gameState = holdEm.getGameState();
 			
-			let gameState = translateGameState(holdEm.getGameState(), tablePlayer);
 			
 			let state = holdEm.getState();
 			if (state === HoldEmState().WINNER)
@@ -376,18 +308,18 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 				let winners = holdEm.getWinners();
 //				console.log(JSON.stringify(winners, null, 4));
 				// TODO
-				//sendWinnersOnTimer(winners);
+				sendWinnersOnTimer(gameState, winners);
 				
 			}
 			
 			
 //			console.log(JSON.stringify(gameState, null, 4));
-			return gameState;
+			return gameState.cloneState(tablePlayer? tablePlayer.getPlayer() : null);
 		},
 		performGameAction: (player, action, value = null) =>
 		{
 			let gameState = holdEm.getGameState();
-			if (gameState.nextActionPlayer.name === player.name)
+			if (gameState.nextActionPlayer.getName() === player.getName())
 			{
 				switch (action)
 				{
@@ -405,6 +337,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 						break;
 				}
 				updateRoomOccupants();
+				self.getGameState();
 				
 				return true;
 			}

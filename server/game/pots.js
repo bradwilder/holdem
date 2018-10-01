@@ -170,7 +170,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 		{
 			if (player.getChips() > 0)
 			{
-				playersActed[player.name] = false;
+				playersActed[player.getName()] = false;
 			}
 		});
 	}
@@ -181,7 +181,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 		
 		if (state !== HoldEmState().BLINDS)
 		{
-			playersActed[player.name] = true;
+			playersActed[player.getName()] = true;
 		}
 		
 		if (addition == 0)
@@ -355,7 +355,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 		let playerIndex = players.indexOf(player);
 		players.splice(playerIndex, 1);
 		
-		delete playersActed[player.name];
+		delete playersActed[player.getName()];
 		
 		if (lastAggressor === player)
 		{

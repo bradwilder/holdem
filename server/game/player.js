@@ -10,12 +10,11 @@ let Player = (name, chips = 0) =>
 		},
 		deal: (cards) =>
 		{
-			holeCards = cards.slice();
+			holeCards = cards ? cards.map((card) => card.clone()) : [];
 		},
 		getName: () => name,
 		getChips: () => chips,
-		name: name, // TODO: remove
-		getHoleCards: () => holeCards,
+		getHoleCards: () => holeCards.map((card) => card.clone()),
 		hasHoleCards: () => holeCards.length == 2,
 		awardChips: (newChips) =>
 		{

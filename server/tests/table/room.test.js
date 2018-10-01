@@ -58,7 +58,7 @@ describe('room', () =>
 		expect(gameState.nextAction).toBeNull();
 //		expect(gameState.nextActionPlayer).toBeNull();
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[4].player.name).toBe('1');
+		expect(gameState.players[4].player.getName()).toBe('1');
 		
 		room.removeOccupant(visitor1);
 		expect(room.getNumPlayers()).toBe(0);
@@ -94,12 +94,12 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-//		expect(gameState.nextActionPlayer.name).toBe('2');
+//		expect(gameState.nextActionPlayer.getName()).toBe('2');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[4].player.name).toBe('2');
-		expect(gameState.players[4].player.holeCards.length).toBe(0);
-		expect(gameState.players[2].player.name).toBe('1');
-		expect(gameState.players[2].player.holeCards.length).toBe(0);
+		expect(gameState.players[4].player.getName()).toBe('2');
+		expect(gameState.players[4].player.getHoleCards().length).toBe(0);
+		expect(gameState.players[2].player.getName()).toBe('1');
+		expect(gameState.players[2].player.getHoleCards().length).toBe(0);
 		
 		gameState = room.getGameState(tablePlayer2);
 //		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
@@ -108,24 +108,24 @@ describe('room', () =>
 		expect(gameState.nextAction.call).toBe(10);
 		expect(gameState.nextAction.minRaise).toBe(30);
 		expect(gameState.nextAction.maxRaise).toBe(434);
-//		expect(gameState.nextActionPlayer.name).toBe('2');
+//		expect(gameState.nextActionPlayer.getName()).toBe('2');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[0].player.name).toBe('2');
-		expect(gameState.players[0].player.holeCards.length).toBe(2);
-		expect(gameState.players[3].player.name).toBe('1');
-		expect(gameState.players[3].player.holeCards.length).toBe(0);
+		expect(gameState.players[0].player.getName()).toBe('2');
+		expect(gameState.players[0].player.getHoleCards().length).toBe(2);
+		expect(gameState.players[3].player.getName()).toBe('1');
+		expect(gameState.players[3].player.getHoleCards().length).toBe(0);
 		
 		gameState = room.getGameState(tablePlayer1);
 //		expect(gameState.state).toBe(HoldEmState().BET_PREFLOP);
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-//		expect(gameState.nextActionPlayer.name).toBe('2');
+//		expect(gameState.nextActionPlayer.getName()).toBe('2');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[0].player.name).toBe('1');
-		expect(gameState.players[0].player.holeCards.length).toBe(2);
-		expect(gameState.players[2].player.name).toBe('2');
-		expect(gameState.players[2].player.holeCards.length).toBe(0);
+		expect(gameState.players[0].player.getName()).toBe('1');
+		expect(gameState.players[0].player.getHoleCards().length).toBe(2);
+		expect(gameState.players[2].player.getName()).toBe('2');
+		expect(gameState.players[2].player.getHoleCards().length).toBe(0);
 	});
 	
 	it("should re-start a game after you add two players", () =>
@@ -153,12 +153,12 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-//		expect(gameState.nextActionPlayer.name).toBe('2');
+//		expect(gameState.nextActionPlayer.getName()).toBe('2');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[4].player.name).toBe('2');
-		expect(gameState.players[4].player.holeCards.length).toBe(0);
-		expect(gameState.players[2].player.name).toBe('1');
-		expect(gameState.players[2].player.holeCards.length).toBe(0);
+		expect(gameState.players[4].player.getName()).toBe('2');
+		expect(gameState.players[4].player.getHoleCards().length).toBe(0);
+		expect(gameState.players[2].player.getName()).toBe('1');
+		expect(gameState.players[2].player.getHoleCards().length).toBe(0);
 //		expect(gameState.dealerIndex).toBe(2);
 		
 		gameState = room.getGameState(tablePlayer2);
@@ -168,12 +168,12 @@ describe('room', () =>
 		expect(gameState.nextAction.call).toBe(10);
 		expect(gameState.nextAction.minRaise).toBe(30);
 		expect(gameState.nextAction.maxRaise).toBe(434);
-//		expect(gameState.nextActionPlayer.name).toBe('2');
+//		expect(gameState.nextActionPlayer.getName()).toBe('2');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[0].player.name).toBe('2');
-		expect(gameState.players[0].player.holeCards.length).toBe(2);
-		expect(gameState.players[3].player.name).toBe('1');
-		expect(gameState.players[3].player.holeCards.length).toBe(0);
+		expect(gameState.players[0].player.getName()).toBe('2');
+		expect(gameState.players[0].player.getHoleCards().length).toBe(2);
+		expect(gameState.players[3].player.getName()).toBe('1');
+		expect(gameState.players[3].player.getHoleCards().length).toBe(0);
 //		expect(gameState.dealerIndex).toBe(3);
 		
 		gameState = room.getGameState(tablePlayer1);
@@ -181,12 +181,12 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-//		expect(gameState.nextActionPlayer.name).toBe('2');
+//		expect(gameState.nextActionPlayer.getName()).toBe('2');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[0].player.name).toBe('1');
-		expect(gameState.players[0].player.holeCards.length).toBe(2);
-		expect(gameState.players[2].player.name).toBe('2');
-		expect(gameState.players[2].player.holeCards.length).toBe(0);
+		expect(gameState.players[0].player.getName()).toBe('1');
+		expect(gameState.players[0].player.getHoleCards().length).toBe(2);
+		expect(gameState.players[2].player.getName()).toBe('2');
+		expect(gameState.players[2].player.getHoleCards().length).toBe(0);
 //		expect(gameState.dealerIndex).toBe(0);
 		
 		// TODO
@@ -209,12 +209,12 @@ describe('room', () =>
 		// expect(gameState.potSize).toBe(0);
 		// expect(gameState.board.length).toBe(0);
 		// expect(gameState.nextAction).toBeNull();
-		// expect(gameState.nextActionPlayer.name).toBe('1');
+		// expect(gameState.nextActionPlayer.getName()).toBe('1');
 		// expect(gameState.winners).toBeNull();
-		// expect(gameState.players[4].name).toBe('2');
+		// expect(gameState.players[4].getName()).toBe('2');
 		// expect(gameState.players[4].holeCards.length).toBe(0);
 		// expect(gameState.players[4].isDealer).toBe(true);
-		// expect(gameState.players[3].name).toBe('1');
+		// expect(gameState.players[3].getName()).toBe('1');
 		// expect(gameState.players[3].holeCards.length).toBe(0);
 		// expect(gameState.players[3].isDealer).toBe(false);
 		
@@ -224,12 +224,12 @@ describe('room', () =>
 		// expect(gameState.board.length).toBe(0);
 		// expect(gameState.nextAction.call).toBe(10);
 		// expect(gameState.nextAction.minRaise).toBe(30);
-		// expect(gameState.nextActionPlayer.name).toBe('1');
+		// expect(gameState.nextActionPlayer.getName()).toBe('1');
 		// expect(gameState.winners).toBeNull();
-		// expect(gameState.players[0].name).toBe('1');
+		// expect(gameState.players[0].getName()).toBe('1');
 		// expect(gameState.players[0].isDealer).toBe(false);
 		// expect(gameState.players[0].holeCards.length).toBe(2);
-		// expect(gameState.players[1].name).toBe('1');
+		// expect(gameState.players[1].getName()).toBe('1');
 		// expect(gameState.players[1].holeCards.length).toBe(0);
 		
 		// gameState = room.getGameState(tablePlayer2);
@@ -237,12 +237,12 @@ describe('room', () =>
 		// expect(gameState.potSize).toBe(0);
 		// expect(gameState.board.length).toBe(0);
 		// expect(gameState.nextAction).toBeNull();
-		// expect(gameState.nextActionPlayer.name).toBe('1');
+		// expect(gameState.nextActionPlayer.getName()).toBe('1');
 		// expect(gameState.winners).toBeNull();
-		// expect(gameState.players[0].name).toBe('2');
+		// expect(gameState.players[0].getName()).toBe('2');
 		// expect(gameState.players[0].isDealer).toBe(true);
 		// expect(gameState.players[0].holeCards.length).toBe(2);
-		// expect(gameState.players[4].name).toBe('1');
+		// expect(gameState.players[4].getName()).toBe('1');
 		// expect(gameState.players[4].holeCards.length).toBe(0);
 	});
 	
@@ -280,7 +280,7 @@ describe('room', () =>
 //		expect(gameState.board).toBeNull(); // TODO: add this back
 		expect(gameState.nextAction).toBeNull();
 //		expect(gameState.nextActionPlayer).toBeNull();
-		expect(gameState.players[4].player.name).toBe('2');
+		expect(gameState.players[4].player.getName()).toBe('2');
 	});
 	
 	it("should let you remove a player before a game has started", () =>
@@ -332,10 +332,10 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-//		expect(gameState.nextActionPlayer.name).toBe('3');
+//		expect(gameState.nextActionPlayer.getName()).toBe('3');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[0].player.name).toBe('2');
-		expect(gameState.players[4].player.name).toBe('3');
+		expect(gameState.players[0].player.getName()).toBe('2');
+		expect(gameState.players[4].player.getName()).toBe('3');
 		expect(gameState.players[2].player).toBeNull();
 	});
 	
@@ -364,10 +364,10 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-//		expect(gameState.nextActionPlayer.name).toBe('3');
+//		expect(gameState.nextActionPlayer.getName()).toBe('3');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[0].player.name).toBe('2');
-		expect(gameState.players[4].player.name).toBe('3');
+		expect(gameState.players[0].player.getName()).toBe('2');
+		expect(gameState.players[4].player.getName()).toBe('3');
 		expect(gameState.players[2].player).toBeNull();
 		
 		let visitor1 = 'a434dksdkadsfsdfasfalflkdsf1';
@@ -382,11 +382,11 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-//		expect(gameState.nextActionPlayer.name).toBe('3');
+//		expect(gameState.nextActionPlayer.getName()).toBe('3');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[0].player.name).toBe('2');
-		expect(gameState.players[4].player.name).toBe('3');
-		expect(gameState.players[2].player.name).toBe('1');
+		expect(gameState.players[0].player.getName()).toBe('2');
+		expect(gameState.players[4].player.getName()).toBe('3');
+		expect(gameState.players[2].player.getName()).toBe('1');
 		
 		room.removeOccupant(visitor1);
 		gameState = room.getGameState();
@@ -394,10 +394,10 @@ describe('room', () =>
 		expect(gameState.potSize).toBe(0);
 		expect(gameState.board.length).toBe(0);
 		expect(gameState.nextAction).toBeNull();
-//		expect(gameState.nextActionPlayer.name).toBe('3');
+//		expect(gameState.nextActionPlayer.getName()).toBe('3');
 //		expect(gameState.winners).toBeNull();
-		expect(gameState.players[0].player.name).toBe('2');
-		expect(gameState.players[4].player.name).toBe('3');
+		expect(gameState.players[0].player.getName()).toBe('2');
+		expect(gameState.players[4].player.getName()).toBe('3');
 		expect(gameState.players[2].player).toBeNull();
 	});
 	

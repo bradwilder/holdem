@@ -69,7 +69,7 @@ export class TableComponent implements OnInit, OnDestroy
 			this.player8 = spreadPlayers[8];
 			this.player9 = spreadPlayers[9];
 			
-			this.board = gameState.board;
+			this.board = gameState.board ? gameState.board.map((card) => card.code) : [];
 			
 			this.potSize = gameState.potSize;
 			
@@ -78,82 +78,8 @@ export class TableComponent implements OnInit, OnDestroy
 			
 			this.bigBlind = gameState.bigBlind;
 			
-			if (gameState.winners)
-			{
-				// TODO: show winners
-				let numPots = gameState.winners.pots.length;
-				let delayPerPot = 10 / numPots;
-				let currentDelay = 0;
-				gameState.winners.pots.forEach((pot) =>
-				{
-					setTimeout(() => {this.updateWinningCards(pot)}, currentDelay * 1000);
-					currentDelay += delayPerPot;
-				});
-			}
-			else
-			{
-				this.winningCards = null;
-			}
+			this.winningCards = gameState.winningHand ? gameState.winningHand.winningCards.map((card) => card.code) : null;
 		}
-	}
-	
-	private updateWinningCards(pot)
-	{
-		this.winningCards = [];
-		pot.winners.forEach((winner) =>
-		{
-			winner.hand.cards.forEach((card) =>
-			{
-				if (this.winningCards.indexOf(card.code) === -1)
-				{
-					this.winningCards.push(card.code);
-				}
-			});
-		});
-		
-		pot.players.forEach((player) =>
-		{
-			if (this.player0 && this.player0.name === player.name)
-			{
-				this.player0.holeCards = player.holeCards;
-			}
-			else if (this.player1 && this.player1.name === player.name)
-			{
-				this.player1.holeCards = player.holeCards;
-			}
-			else if (this.player2 && this.player2.name === player.name)
-			{
-				this.player2.holeCards = player.holeCards;
-			}
-			else if (this.player3 && this.player3.name === player.name)
-			{
-				this.player3.holeCards = player.holeCards;
-			}
-			else if (this.player4 && this.player4.name === player.name)
-			{
-				this.player4.holeCards = player.holeCards;
-			}
-			else if (this.player5 && this.player5.name === player.name)
-			{
-				this.player5.holeCards = player.holeCards;
-			}
-			else if (this.player6 && this.player6.name === player.name)
-			{
-				this.player6.holeCards = player.holeCards;
-			}
-			else if (this.player7 && this.player7.name === player.name)
-			{
-				this.player7.holeCards = player.holeCards;
-			}
-			else if (this.player8 && this.player8.name === player.name)
-			{
-				this.player8.holeCards = player.holeCards;
-			}
-			else if (this.player9 && this.player9.name === player.name)
-			{
-				this.player9.holeCards = player.holeCards;
-			}
-		});
 	}
 	
 	private spreadPlayers(gameState: GameState)

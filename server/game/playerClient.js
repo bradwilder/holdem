@@ -6,7 +6,8 @@ let PlayerClient = (isDealer, player = null, hasHoleCards = false, ongoingRoundA
 		hasHoleCards: hasHoleCards,
 		isDealer: isDealer,
 		ongoingRoundAction: ongoingRoundAction,
-		isActive: isActive
+		isActive: isActive,
+		clone: () => PlayerClient(isDealer, player ? player.clone() : null, hasHoleCards, ongoingRoundAction, isActive)
 	}
 	
 	return self;

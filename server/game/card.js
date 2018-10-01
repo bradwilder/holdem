@@ -24,13 +24,14 @@ let Card = (code) =>
 		getValue: () => value ? value.value : null,
 		getSuitObject: () => suit,
 		getValueObject: () => value,
-		code: code,
 		toString: () =>
 		{
 			let valueStr = value ? value.toString() : '';
 			let suitStr = suit ? suit.toString() : '';
 			return valueStr + '/' + suitStr;
-		}
+		},
+		toJSON: () => ({code: code}),
+		clone: () => Card(code)
 	}
 }
 

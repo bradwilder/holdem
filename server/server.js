@@ -103,7 +103,7 @@ io.sockets.on('connection', function(socket)
 		for (let i = 0; i < tablePlayers.length; i++)
 		{
 			let tablePlayer = tablePlayers[i];
-			if (tablePlayer && tablePlayer.getPlayer().name === name)
+			if (tablePlayer && tablePlayer.getPlayer().getName() === name)
 			{
 				return true;
 			}

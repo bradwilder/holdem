@@ -246,7 +246,7 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		let originIndex = players.indexOf(lastAggressor);
 		if (originIndex === -1)
 		{
-			originIndex = 0;
+			originIndex = (dealerIndex + 1) % players.length;
 		}
 		
 		for (i = originIndex; i != originIndex || !startedLoop; i = (i + 1) % players.length)
@@ -351,7 +351,7 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 				let entry = ActionLogEntry(action, pot.winners);
 				actionLog.addEntry(entry);
 				
-				winners.push(potPlayersToShowdownPlayers(pot.players, pot.winners, awardedPots.lastAggressor, foldedPlayers));
+				winners.push({players: potPlayersToShowdownPlayers(pot.players, pot.winners, awardedPots.lastAggressor, foldedPlayers), hand: pot.winningHand, potSize: pot.potSize});
 			});
 			
 			
@@ -411,7 +411,6 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		}
 		
 		gameState = GameStateClient(getPlayerClients(nextActionPlayer), bigBlind, nextAction, nextActionPlayer, self.getPotSizeWithoutRound(), getBoard(), null);
-//		console.log(JSON.stringify(gameState, null, 4));
 	}
 	
 	let self =

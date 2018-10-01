@@ -10,6 +10,6 @@ export class GameState
 	players: Player[];
 	nextAction: NextAction;
 	nextActionPlayer: Player;
-	board: number[];
-	winners;
+	board: {code: number}[];
+	winningHand;
 }

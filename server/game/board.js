@@ -1,12 +1,14 @@
 let Board = (cards) =>
 {
-	let board = cards.slice();
+	let board = cards.map((card) => card.clone());
+	
+	let cloneBoard = () => board.map((card) => card.clone());
 	
 	return {
-		getFlop: () => board.slice(0, 3),
-		getTurn: () => board.slice(3, 4),
-		getRiver: () => board.slice(4, 5),
-		getBoard: () => board.slice()
+		getFlop: () => cloneBoard().slice(0, 3),
+		getTurn: () => cloneBoard().slice(3, 4),
+		getRiver: () => cloneBoard().slice(4, 5),
+		getBoard: () => cloneBoard()
 	}
 }
 

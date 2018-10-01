@@ -6,7 +6,7 @@ export class Player
 	chips: number;
 	hasHoleCards = false;
 	isDealer = false;
-	holeCards: number[] = [];
+	holeCards: {code: number}[] = [];
 	ongoingRoundAction: OngoingRoundAction;
 	
 	constructor(name: string, chips: number)
