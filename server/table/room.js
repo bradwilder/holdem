@@ -92,7 +92,7 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		}
 	}
 	
-	let sendWinnersOnTimer = (gameState, winners, seconds = defaultWait / 2) =>
+	let sendWinnersOnTimer = (gameState, winners, seconds = defaultWait) =>
 	{
 		if (timeout)
 		{
@@ -112,14 +112,14 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 			}
 			else
 			{
-				// if (getNumPlayersAtTable() >= 2)
-				// {
-				// 	startGameOnTimer(0);
-				// }
-				// else
-				// {
-				// 	setToNoGameOnTimer(0);
-				// }
+				if (getNumPlayersAtTable() >= 2)
+				{
+					startGameOnTimer(0);
+				}
+				else
+				{
+					setToNoGameOnTimer(0);
+				}
 			}
 		}
 		
@@ -257,63 +257,15 @@ let Room = (id, name, bigBlind, maxPlayers, io, defaultWait = 10) =>
 		},
 		getGameState: (tablePlayer = null) =>
 		{
-			// let gameState = holdEm.getGameState();
-			// if (tablePlayer)
-			// {
-			// 	gameState.players = tablePlayersToPlayersSimpleWithOrigin(tablePlayer, gameState.players);
-				
-			// 	let indexOrigin = tablePlayers.indexOf(tablePlayer);
-			// 	gameState.dealerIndex = (gameState.dealerIndex - indexOrigin + maxPlayers) % maxPlayers;
-			// }
-			
-			// if (tablePlayer)
-			// {
-			// 	gameState.players.forEach((gamePlayer) =>
-			// 	{
-			// 		if (gamePlayer && gamePlayer.getName() === tablePlayer.getPlayer().getName())
-			// 		{
-			// 			gamePlayer.holeCards = tablePlayer.getPlayer().getHoleCards();
-			// 		}
-			// 	});
-			// }
-			
-			// if (!tablePlayer || (!gameState.nextActionPlayer || gameState.nextActionPlayer.getName() !== tablePlayer.getPlayer().getName()))
-			// {
-			// 	gameState.nextAction = null;
-			// }
-			// //gameState.nextActionPlayer = null;
-			
-			// if (gameState.winners)
-			// {
-			// 	if (getNumPlayersAtTable() >= 2)
-			// 	{
-			// 		startGameOnTimer(defaultWait);
-			// 	}
-			// 	else
-			// 	{
-			// 		setToNoGameOnTimer(defaultWait);
-			// 	}
-			// }
-			
-//			if (gameState.winners)
-//			console.log(JSON.stringify(gameState, null, 4));
-			
-			
 			let gameState = holdEm.getGameState();
-			
 			
 			let state = holdEm.getState();
 			if (state === HoldEmState().WINNER)
 			{
 				let winners = holdEm.getWinners();
-//				console.log(JSON.stringify(winners, null, 4));
-				// TODO
 				sendWinnersOnTimer(gameState, winners);
-				
 			}
 			
-			
-//			console.log(JSON.stringify(gameState, null, 4));
 			return gameState.cloneState(tablePlayer? tablePlayer.getPlayer() : null);
 		},
 		performGameAction: (player, action, value = null) =>

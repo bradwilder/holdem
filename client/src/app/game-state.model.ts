@@ -11,5 +11,5 @@ export class GameState
 	nextAction: NextAction;
 	nextActionPlayer: Player;
 	board: {code: number}[];
-	winningHand;
+	winnerState;
 }

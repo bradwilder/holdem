@@ -127,21 +127,24 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 				switch (state)
 				{
 					case HoldEmState().BLINDS:
-						dealCards();
 						actionLog.addSystemEntry('Dealt holes');
 						state = HoldEmState().BET_PREFLOP;
+						dealCards();
 						break;
 					case HoldEmState().BET_PREFLOP:
 						actionLog.addSystemEntry('Dealt flop');
 						state = HoldEmState().BET_FLOP;
+						dealCards();
 						break;
 					case HoldEmState().BET_FLOP:
 						actionLog.addSystemEntry('Dealt turn');
 						state = HoldEmState().BET_TURN;
+						dealCards();
 						break;
 					case HoldEmState().BET_TURN:
 						actionLog.addSystemEntry('Dealt river');
 						state = HoldEmState().BET_RIVER;
+						dealCards();
 						break;
 					case HoldEmState().BET_RIVER:
 						state = HoldEmState().WINNER;
@@ -154,6 +157,7 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			}
 			else
 			{
+				dealRemainingCards();
 				state = HoldEmState().WINNER;
 			}
 			
@@ -169,13 +173,43 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 	
 	let dealCards = () =>
 	{
-		let mainPlayers = pots.getMainPot().getPlayers();
-		mainPlayers.forEach((mainPlayer) =>
+		switch (state)
 		{
-			mainPlayer.deal(deck.dealCards(2));
-		});
-		
-		board = Board(deck.dealCards(5));
+			case HoldEmState().BET_PREFLOP:
+				let mainPlayers = pots.getMainPot().getPlayers();
+				mainPlayers.forEach((mainPlayer) =>
+				{
+					mainPlayer.deal(deck.dealCards(2));
+				});
+				break;
+			case HoldEmState().BET_FLOP:
+				board.addFlop(deck.dealCards(3));
+				break;
+			case HoldEmState().BET_TURN:
+			case HoldEmState().BET_RIVER:
+				board.addTurnRiver(deck.deal());
+				break;
+		}
+	}
+	
+	let dealRemainingCards = () =>
+	{
+		switch (state)
+		{
+			case HoldEmState().BET_PREFLOP:
+				let mainPlayers = pots.getMainPot().getPlayers();
+				mainPlayers.forEach((mainPlayer) =>
+				{
+					mainPlayer.deal(deck.dealCards(2));
+				});
+			case HoldEmState().BET_FLOP:
+				board.addFlop(deck.dealCards(3));
+			case HoldEmState().BET_TURN:
+				board.addTurnRiver(deck.deal());
+			case HoldEmState().BET_RIVER:
+				board.addTurnRiver(deck.deal());
+				break;
+		}
 	}
 	
 	let getCall = () =>
@@ -216,26 +250,7 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		return pots.getMaxRaise();
 	}
 	
-	let getBoard = () =>
-	{
-		switch (state)
-		{
-			case HoldEmState().BLINDS:
-			case HoldEmState().BET_PREFLOP:
-				return [];
-			case HoldEmState().BET_FLOP:
-				return board.getFlop();
-			case HoldEmState().BET_TURN:
-				let flop = board.getFlop();
-				let turn = board.getTurn();
-				return flop.concat(turn);
-			case HoldEmState().BET_RIVER:
-			case HoldEmState().WINNER:
-					return board.getBoard();
-			default:
-				return null;
-		}
-	}
+	let getBoard = () => board ? board.getBoard() : null;
 	
 	let potPlayersToShowdownPlayers = (potPlayers, potWinners, lastAggressor, foldedPlayers) =>
 	{
@@ -271,6 +286,12 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 					{
 						newPlayer.fold();
 					}
+					
+					if (potPlayers.length == 1)
+					{
+						newPlayer.fold();
+					}
+					
 					playerClient = PlayerClient(isDealer, newPlayer, hasHoleCards);
 				}
 			}
@@ -311,7 +332,7 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 					hasHoleCards = false;
 				}
 				
-				if (potPlayers.indexOf(player) !== -1 && foldedPlayers.indexOf(player) !== -1)
+				if (potPlayers.indexOf(player) !== -1 && foldedPlayers.indexOf(player) === -1)
 				{
 					foldedPlayers.push(player);
 				}
@@ -336,57 +357,24 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 		{
 			winners = [];
 			let awardedPots = pots.awardPots(getBoard());
+			
 			let foldedPlayers = [];
 			awardedPots.pots.forEach((pot) =>
 			{
 				let action;
-				if (pot.winners.length == 1)
+				if (pot.winnerState.winners.length == 1)
 				{
-					action = "won pot of " + pot.size;
+					action = "won pot of " + pot.potSize;
 				}
 				else
 				{
-					action = "split pot of " + pot.size;
+					action = "split pot of " + pot.potSize;
 				}
-				let entry = ActionLogEntry(action, pot.winners);
+				let entry = ActionLogEntry(action, pot.winnerState.winners);
 				actionLog.addEntry(entry);
 				
-				winners.push({players: potPlayersToShowdownPlayers(pot.players, pot.winners, awardedPots.lastAggressor, foldedPlayers), hand: pot.winningHand, potSize: pot.potSize});
+				winners.push({players: potPlayersToShowdownPlayers(pot.players, pot.winnerState.winners, awardedPots.lastAggressor, foldedPlayers), hand: pot.winnerState, potSize: pot.potSize});
 			});
-			
-			
-			
-			
-			// TODO
-			// let isPotContested = true;
-			// if (gameState.winners[0] && gameState.winners[0].players.length <= 1)
-			// {
-			// 	isPotContested = false;
-			// }
-			
-			// if (!isPotContested)
-			// {
-			// 	gameState.players.forEach((player) =>
-			// 	{
-			// 		player.hasHoleCards = false;
-			// 	});
-			// }
-			// else
-			// {
-			// 	// TODO: Somehow set it up for hole card showdown depending on lastAggressor
-				
-				
-				
-				
-				
-				
-				
-			// }
-			
-			// if (gameState.board && !isPotContested)
-			// {
-			// 	gameState.board = [];
-			// }
 		}
 	}
 	
@@ -437,6 +425,8 @@ let HoldEm = (maxPlayers, bigBlind, deck, autoPostBlinds = false) =>
 			dealerIndex = getNextPlayerAtTableNotNew(dealerIndex);
 			
 			pendingPlayers = [];
+			
+			board = Board();
 			
 			let mainPlayers = getPlayersForMainPot();
 			if (mainPlayers.length < 2)

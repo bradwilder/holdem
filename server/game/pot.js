@@ -1,7 +1,7 @@
 let LinkedHashMap = require('./linkedHashMap');
 let HandFactory = require('./hand/handFactory');
 let AwardedPot = require('./awardedPot');
-let WinningHandClient = require('./winningHandClient');
+let WinnerStateClient = require('./winnerStateClient');
 
 let Pot = (playersToAdd = null) =>
 {
@@ -150,18 +150,24 @@ let Pot = (playersToAdd = null) =>
 			}
 			
 			let winningCards = [];
-			winners.forEach((winner) =>
+			let winningHandStr;
+			if (players.length > 1)
 			{
-				winner.bestHand.getCards().forEach((card) =>
+				winners.forEach((winner) =>
 				{
-					if (winningCards.indexOf(card) === -1)
+					winner.bestHand.getCards().forEach((card) =>
 					{
-						winningCards.push(card);
-					}
+						if (winningCards.indexOf(card) === -1)
+						{
+							winningCards.push(card);
+						}
+					});
 				});
-			});
+				
+				winningHandStr = bestHand.toString();
+			}
 			
-			return AwardedPot(players, winners.map((winner) => winner.player), WinningHandClient(winningCards, bestHand.toString()), potSize);
+			return AwardedPot(players, WinnerStateClient(winningCards, winningHandStr, winners.map((winner) => winner.player)), potSize);
 		},
 		add: (player, addition) =>
 		{

@@ -78,7 +78,7 @@ export class TableComponent implements OnInit, OnDestroy
 			
 			this.bigBlind = gameState.bigBlind;
 			
-			this.winningCards = gameState.winningHand ? gameState.winningHand.winningCards.map((card) => card.code) : null;
+			this.winningCards = gameState.winnerState && gameState.winnerState.winningCards.length > 0 ? gameState.winnerState.winningCards.map((card) => card.code) : null;
 		}
 	}
 	

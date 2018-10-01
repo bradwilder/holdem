@@ -1,4 +1,4 @@
-let GameStateClient = (players, bigBlind, nextAction, nextActionPlayer, potSize, board, winningHand = null) =>
+let GameStateClient = (players, bigBlind, nextAction, nextActionPlayer, potSize, board, winnerState = null) =>
 {
 	let rotatePlayersByOrigin = (playerOrigin, gamePlayers) =>
 	{
@@ -32,8 +32,8 @@ let GameStateClient = (players, bigBlind, nextAction, nextActionPlayer, potSize,
 		nextActionPlayer: nextActionPlayer,
 		potSize: potSize,
 		board: board,
-		winningHand: winningHand,
-		clone: () => GameStateClient(players.map((playerClient) => playerClient.clone()), bigBlind, nextAction, nextActionPlayer, potSize, board, winningHand),
+		winnerState: winnerState,
+		clone: () => GameStateClient(players.map((playerClient) => playerClient.clone()), bigBlind, nextAction, nextActionPlayer, potSize, board, winnerState),
 		cloneForVisitor: () =>
 		{
 			let newPlayers = players.map((playerClient) => playerClient.clone()).map((playerClient) =>
@@ -44,12 +44,12 @@ let GameStateClient = (players, bigBlind, nextAction, nextActionPlayer, potSize,
 				}
 				return playerClient;
 			});
-			return GameStateClient(newPlayers, bigBlind, null, null, potSize, board, winningHand)
+			return GameStateClient(newPlayers, bigBlind, null, null, potSize, board, winnerState);
 		},
 		cloneForPlayer: (player) =>
 		{
 			let newPlayers = rotatePlayersByOrigin(player, players.map((playerClient) => playerClient.clone()));
-			let gameState = GameStateClient(newPlayers, bigBlind, nextAction, null, potSize, board, winningHand);
+			let gameState = GameStateClient(newPlayers, bigBlind, nextAction, null, potSize, board, winnerState);
 			
 			if (!gameState.players.find((playerClient) => playerClient.player && playerClient.player.getName() === player.getName()).isActive)
 			{
