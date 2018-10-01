@@ -1,4 +1,4 @@
-let GameStateClient = (players, bigBlind, nextAction, nextActionPlayer, potSize, board, winnerState = null) =>
+let GameStateClient = (players, bigBlind, nextAction, nextActionPlayer, potSize, board, winnerState = null, lastAction = null) =>
 {
 	let rotatePlayersByOrigin = (playerOrigin, gamePlayers) =>
 	{
@@ -33,7 +33,8 @@ let GameStateClient = (players, bigBlind, nextAction, nextActionPlayer, potSize,
 		potSize: potSize,
 		board: board,
 		winnerState: winnerState,
-		clone: () => GameStateClient(players.map((playerClient) => playerClient.clone()), bigBlind, nextAction, nextActionPlayer, potSize, board, winnerState),
+		lastAction: lastAction,
+		clone: () => GameStateClient(players.map((playerClient) => playerClient.clone()), bigBlind, nextAction, nextActionPlayer, potSize, board, winnerState, lastAction),
 		cloneForVisitor: () =>
 		{
 			let newPlayers = players.map((playerClient) => playerClient.clone()).map((playerClient) =>
@@ -44,12 +45,12 @@ let GameStateClient = (players, bigBlind, nextAction, nextActionPlayer, potSize,
 				}
 				return playerClient;
 			});
-			return GameStateClient(newPlayers, bigBlind, null, null, potSize, board, winnerState);
+			return GameStateClient(newPlayers, bigBlind, null, null, potSize, board, winnerState, lastAction);
 		},
 		cloneForPlayer: (player) =>
 		{
 			let newPlayers = rotatePlayersByOrigin(player, players.map((playerClient) => playerClient.clone()));
-			let gameState = GameStateClient(newPlayers, bigBlind, nextAction, null, potSize, board, winnerState);
+			let gameState = GameStateClient(newPlayers, bigBlind, nextAction, null, potSize, board, winnerState, lastAction);
 			
 			if (!gameState.players.find((playerClient) => playerClient.player && playerClient.player.getName() === player.getName()).isActive)
 			{
@@ -76,7 +77,14 @@ let GameStateClient = (players, bigBlind, nextAction, nextActionPlayer, potSize,
 			{
 				newWinners = rotatePlayersByOrigin(player, newWinners);
 			}
-			return GameStateClient(newWinners, bigBlind, null, null, winners.potSize, board, winners.hand);
+			
+			let winAction = winners.potSize >= 50 * bigBlind ? 'winLargePot' : 'winSmallPot';
+			if (lastAction.indexOf(winAction) === -1)
+			{
+				lastAction.push(winAction);
+			}
+			
+			return GameStateClient(newWinners, bigBlind, null, null, winners.potSize, board, winners.hand, lastAction);
 		}
 	}
 	

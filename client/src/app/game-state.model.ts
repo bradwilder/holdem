@@ -12,4 +12,5 @@ export class GameState
 	nextActionPlayer: Player;
 	board: {code: number}[];
 	winnerState;
+	lastAction: string[];
 }

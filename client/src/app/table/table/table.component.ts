@@ -4,6 +4,7 @@ import { GameStateService } from '../../game-state.service';
 import { NextAction } from '../next-action/next-action.model';
 import { Room } from '../../room/room.model';
 import { GameState } from '../../game-state.model';
+import { Howl } from 'howler';
 
 @Component
 ({
@@ -38,6 +39,8 @@ export class TableComponent implements OnInit, OnDestroy
 	
 	private winningCards: number[];
 	
+	private timeout;
+	
 	constructor(private gameStateService: GameStateService) {}
 	
 	ngOnInit()
@@ -48,6 +51,30 @@ export class TableComponent implements OnInit, OnDestroy
 		{
 			this.processGameState(gameState);
 		});
+	}
+	
+	private playAudioOnTimer(audioValues: string[], millis = 200)
+	{
+		if (this.timeout)
+		{
+			clearTimeout(this.timeout);
+		}
+		
+		let i = 0;
+		
+		let playAudio = () =>
+		{
+			if (i < audioValues.length)
+			{
+				this.timeout = null;
+				let sound = new Howl({src: ["./assets/sounds/" + audioValues[i] + ".mp3"]});
+				sound.play();
+				i++;
+				this.timeout = setTimeout(() => playAudio(), millis);
+			}
+		}
+		
+		playAudio();
 	}
 	
 	private processGameState(gameState: GameState)
@@ -79,6 +106,11 @@ export class TableComponent implements OnInit, OnDestroy
 			this.bigBlind = gameState.bigBlind;
 			
 			this.winningCards = gameState.winnerState && gameState.winnerState.winningCards.length > 0 ? gameState.winnerState.winningCards.map((card) => card.code) : null;
+			
+			if (gameState.lastAction.length > 0)
+			{
+				this.playAudioOnTimer(gameState.lastAction);
+			}
 		}
 	}
 	
