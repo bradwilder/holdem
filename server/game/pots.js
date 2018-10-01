@@ -645,8 +645,6 @@ let Pots = (players, newPlayers, bigBlind) =>
 				}
 			}
 			
-//			if (!lastAggressor)
-//			console.log(JSON.stringify(AwardedPots(lastAggressor, awardedPots), null, 4));
 			return AwardedPots(lastAggressor, awardedPots);
 		}
 	}
