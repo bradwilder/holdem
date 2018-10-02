@@ -187,7 +187,14 @@ let Pots = (players, newPlayers, bigBlind) =>
 		if (addition == 0)
 		{
 			entry = ActionLogEntry("checked", [player]);
-			ongoingRoundActions[player] = 'check';
+			if (ongoingRoundActions[player])
+			{
+				ongoingRoundActions[player].type = 'check';
+			}
+			else
+			{
+				ongoingRoundActions[player] = OngoingRoundAction('check');
+			}
 		}
 		else
 		{
@@ -198,6 +205,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 			let incrAmount = chipsThisRound - currBet;
 			let raise = chipsThisRound - (currBet - shortStackOverraise);
 			let action;
+			let ongoingAction;
 			if (incrAmount > 0)
 			{
 				if (gotBigBlind)
@@ -223,12 +231,12 @@ let Pots = (players, newPlayers, bigBlind) =>
 						addition -= smallBlind;
 						getCurrentPot().addDeadChips(smallBlind);
 						action = "bought the button for " + chipsThisRound;
-						ongoingRoundActions[player] = 'big-blind';
+						ongoingAction = 'big-blind';
 					}
 					else
 					{
 						action = "called " + chipsThisRound + " small blind";
-						ongoingRoundActions[player] = 'small-blind';
+						ongoingAction = 'big-blind';
 					}
 				}
 				else if (!gotBigBlind)
@@ -236,13 +244,13 @@ let Pots = (players, newPlayers, bigBlind) =>
 					gotBigBlind = true;
 					
 					action = "called " + chipsThisRound + " big blind";
-					ongoingRoundActions[player] = 'big-blind';
+					ongoingAction = 'big-blind';
 				}
 				else
 				{
 					lastAggressor = player;
 					action = "raised to " + chipsThisRound;
-					ongoingRoundActions[player] = 'raise';
+					ongoingAction = 'raise';
 				}
 			}
 			else
@@ -253,7 +261,16 @@ let Pots = (players, newPlayers, bigBlind) =>
 					action += " " + addition;
 				}
 				
-				ongoingRoundActions[player] = 'call';
+				ongoingAction = 'call';
+			}
+			if (ongoingRoundActions[player])
+			{
+				ongoingRoundActions[player].type = ongoingAction;
+				ongoingRoundActions[player].value += addition;
+			}
+			else
+			{
+				ongoingRoundActions[player] = OngoingRoundAction(ongoingAction, addition);
 			}
 			
 			if (player.getChips() == 0)
@@ -377,7 +394,14 @@ let Pots = (players, newPlayers, bigBlind) =>
 			entries.push(refund);
 		}
 		
-		ongoingRoundActions[player] = 'fold';
+		if (ongoingRoundActions[player])
+		{
+			ongoingRoundActions[player].type = 'fold';
+		}
+		else
+		{
+			ongoingRoundActions[player] = OngoingRoundAction('fold');
+		}
 		
 		if (playerIndex < actionIndex)
 		{
@@ -509,18 +533,7 @@ let Pots = (players, newPlayers, bigBlind) =>
 			}
 			return chips;
 		},
-		getOngoingActionThisRound: (player) =>
-		{
-			let action = ongoingRoundActions[player];
-			let chips = self.getChipsThisRound(player);
-			
-			if (action || chips > 0)
-			{
-				return OngoingRoundAction(action, chips);
-			}
-			
-			return null;
-		},
+		getOngoingActionThisRound: (player) => ongoingRoundActions[player],
 		fold: () =>
 		{
 			let player = self.getNextActionPlayer();

@@ -1,4 +1,4 @@
-let OngoingRoundAction = (type, value) =>
+let OngoingRoundAction = (type, value = 0) =>
 {
 	return {
 		type: type,
