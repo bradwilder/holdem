@@ -19,7 +19,7 @@ let Board = (cards = null) =>
 		},
 		addTurnRiver: (card) =>
 		{
-			if (board.length == 5)
+			if (board.length === 5)
 			{
 				throw 'Cannot add another card'
 			}
