@@ -61,12 +61,20 @@ export class NextActionComponent
 		if (!this.showingRaiseDialogue)
 		{
 			this.raiseAmount = this.action.minRaise;
+			if (this.action.minRaise === this.action.maxRaise)
+			{
+				this.socketService.getSocket().emit('tableAction', this.roomID, 'raise', this.raiseAmount);
+			}
 		}
 		else
 		{
 			this.socketService.getSocket().emit('tableAction', this.roomID, 'raise', this.raiseAmount);
 		}
-		this.showingRaiseDialogue = !this.showingRaiseDialogue;
+		
+		if (this.action.minRaise !== this.action.maxRaise)
+		{
+			this.showingRaiseDialogue = !this.showingRaiseDialogue;
+		}
 	}
 	
 	onRaiseIncrease()

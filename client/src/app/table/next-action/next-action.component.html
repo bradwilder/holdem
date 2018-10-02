@@ -6,7 +6,7 @@
 	<ng-container *ngIf="action.call === 0; then check; else call"></ng-container>
 	<span *ngIf="action.minRaise > 0" class="action-btn-group">
 		<p class="label raise-label">Raise</p>
-		<button class="action-btn raise-btn"><span [ngClass]="{fa: !showingRaiseDialogue, 'fa-chevron-up': !showingRaiseDialogue, 'action-btn-label': showingRaiseDialogue}" (click)="raiseClicked()">{{ showingRaiseDialogue ? getFormattedValue(raiseAmount) : '' }}</span></button>
+		<button class="action-btn raise-btn"><span [ngClass]="{fa: !showingRaiseDialogue && action.minRaise !== action.maxRaise, 'fa-chevron-up': !showingRaiseDialogue && action.minRaise !== action.maxRaise, 'action-btn-label': showingRaiseDialogue || action.minRaise === action.maxRaise}" (click)="raiseClicked()">{{ showingRaiseDialogue || action.minRaise === action.maxRaise ? (raiseAmount ? getFormattedValue(raiseAmount) : getFormattedValue(action.minRaise)) : '' }}</span></button>
 		
 		<div *ngIf="showingRaiseDialogue" class="raise-dialogue">
 			<div class="label plus-minus-container">
