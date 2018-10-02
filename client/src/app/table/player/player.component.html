@@ -1,4 +1,4 @@
-<div [ngClass]="{empty: !player.player, 'next-action': player.isActive}" class="player-box">
+<div [ngClass]="{empty: !player.player, 'next-action': player.isActive}" class="player-box type__desc">
 	<ng-container *ngIf="player.player; then player_box; else player_box_empty"></ng-container>
 </div>
 
@@ -43,4 +43,4 @@
 	<app-player-action [ongoingRoundAction]='player.ongoingRoundAction'></app-player-action>
 </div>
 
-<div *ngIf="player.isDealer" class="dealer-button">D</div>
+<div *ngIf="player.isDealer" class="dealer-button type__desc">D</div>

@@ -38,6 +38,7 @@ export class TableComponent implements OnInit, OnDestroy
 	private bigBlind: number;
 	
 	private winningCards: number[];
+	private bestHand: string;
 	
 	private timeout;
 	
@@ -106,6 +107,7 @@ export class TableComponent implements OnInit, OnDestroy
 			this.bigBlind = gameState.bigBlind;
 			
 			this.winningCards = gameState.winnerState && gameState.winnerState.winningCards.length > 0 ? gameState.winnerState.winningCards.map((card) => card.code) : null;
+			this.bestHand = gameState.winnerState ? gameState.winnerState.handDescription : null;
 			
 			if (gameState.lastAction.length > 0)
 			{

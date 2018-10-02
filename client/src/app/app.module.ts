@@ -20,6 +20,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PotComponent } from './table/pot/pot.component';
 import { NextActionComponent } from './table/next-action/next-action.component';
+import { BestHandComponent } from './table/best-hand/best-hand.component';
 
 @NgModule
 ({
@@ -36,7 +37,8 @@ import { NextActionComponent } from './table/next-action/next-action.component';
 		LoginComponent,
 		LoginModalComponent,
 		PotComponent,
-		NextActionComponent
+		NextActionComponent,
+		BestHandComponent
 	],
 	imports:
 	[

@@ -12,6 +12,7 @@
 		<app-player *ngIf="player9 && room.maxPlayers === 10" [player]="player9" [room]="room" [nextActionPlayer]="nextActionPlayer" [position]="translatePosition(9)" [winningCards]="winningCards" class="player-9"></app-player>
 		<app-board [cards]="board"  [winningCards]="winningCards"></app-board>
 		<app-pot [potSize]="potSize"></app-pot>
+		<app-best-hand [bestHand]="bestHand"></app-best-hand>
 	</div>
 	<app-next-action [action]="nextAction" [bigBlind]="bigBlind" [roomID]="room ? room.id : null"></app-next-action>
 </div>

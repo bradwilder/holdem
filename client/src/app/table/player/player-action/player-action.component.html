@@ -1,4 +1,4 @@
-<div *ngIf="ongoingRoundAction" [ngClass]="ongoingRoundAction.type" class="action">
+<div *ngIf="ongoingRoundAction" [ngClass]="ongoingRoundAction.type" class="action type__desc">
 	<div class="action-circle"><span class="fa action-circle-label"></span></div>
 	<div *ngIf="ongoingRoundAction.value" class="action-dialogue">{{ formatValue(ongoingRoundAction.value) }}</div>
 </div>
