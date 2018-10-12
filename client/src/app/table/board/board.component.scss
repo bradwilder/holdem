@@ -2,11 +2,16 @@
 	position: absolute;
 	left: 50%;
 	top: 50%;
+	width: 60%;
 	transform: translate(-50%, -50%);
 }
 
+.board--inner {
+	text-align: center;
+}
+
 .board-card {
-	width: 110px;
+	width: 18%;
 	
 	&.face-down {
 		visibility: hidden;

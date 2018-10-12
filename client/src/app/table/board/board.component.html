@@ -1,10 +1,12 @@
 <div class="board">
-	<!-- TODO: use a card class to get alts -->
-	<img *ngIf="cards && cards[0] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[0]) === -1}" class="board-card" [src]="'assets/cards/' + cards[0] + '.svg'">
-	<img *ngIf="cards && cards[1] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[1]) === -1}" class="board-card" [src]="'assets/cards/' + cards[1] + '.svg'">
-	<img *ngIf="cards && cards[2] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[2]) === -1}" class="board-card" [src]="'assets/cards/' + cards[2] + '.svg'">
-	<img *ngIf="cards && cards[3] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[3]) === -1}" class="board-card" [src]="'assets/cards/' + cards[3] + '.svg'">
-	<img *ngIf="cards && cards[4] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[4]) === -1}" class="board-card" [src]="'assets/cards/' + cards[4] + '.svg'">
+	<div class="board--inner">
+		<!-- TODO: use a card class to get alts -->
+		<img *ngIf="cards && cards[0] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[0]) === -1}" class="board-card" [src]="'assets/cards/' + cards[0] + '.svg'">
+		<img *ngIf="cards && cards[1] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[1]) === -1}" class="board-card" [src]="'assets/cards/' + cards[1] + '.svg'">
+		<img *ngIf="cards && cards[2] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[2]) === -1}" class="board-card" [src]="'assets/cards/' + cards[2] + '.svg'">
+		<img *ngIf="cards && cards[3] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[3]) === -1}" class="board-card" [src]="'assets/cards/' + cards[3] + '.svg'">
+		<img *ngIf="cards && cards[4] >= 0; else card_empty" [ngClass]="{'non-winner': winningCards && winningCards.indexOf(cards[4]) === -1}" class="board-card" [src]="'assets/cards/' + cards[4] + '.svg'">
+	</div>
 </div>
 
 <ng-template #card_empty>

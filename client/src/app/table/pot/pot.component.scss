@@ -1,8 +1,8 @@
 .pot {
 	position: absolute;
 	left: 50%;
-	top: 30%;
-	transform: translateX(-50%);
+	top: 28%;
+	transform: translate(-50%, -50%);
 }
 
 .pot-inner {
@@ -29,4 +29,5 @@
 	background: #111;
 	font-weight: bold;
 	color: #E64C3C;
+	font-size: 20px;
 }
