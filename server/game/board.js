@@ -1,14 +1,14 @@
 let Board = (cards = null) =>
 {
-	let board = cards ? cards.map((card) => card.clone()) : [];
+	let cloneCards = (cards) => cards.map((card) => card.clone());
 	
-	let cloneBoard = () => board.map((card) => card.clone());
+	let board = cards ? cloneCards(cards) : [];
 	
 	return {
-		getFlop: () => board.length >= 3 ? cloneBoard().slice(0, 3) : [],
-		getTurn: () => board.length >= 4 ? cloneBoard().slice(0, 4) : [],
-		getRiver: () => board.length >= 4 ? cloneBoard().slice(0, 5) : [],
-		getBoard: () => cloneBoard(),
+		getFlop: () => board.length >= 3 ? cloneCards(board).slice(0, 3) : [],
+		getTurn: () => board.length >= 4 ? cloneCards(board).slice(0, 4) : [],
+		getRiver: () => board.length >= 4 ? cloneCards(board).slice(0, 5) : [],
+		getBoard: () => cloneCards(board),
 		addFlop: (cards) =>
 		{
 			if (cards.length !== 3)
