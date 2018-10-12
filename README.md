@@ -4,7 +4,7 @@ HoldEm is a web implementation of Texas HoldEm.
 
 ## Features
 
-* Supports 2-, 6-, or 10-handed action
+* Supports 2-, 4-, 6-, or 10-handed action
 
 ## Getting Started
 
