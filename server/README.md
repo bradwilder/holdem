@@ -1,6 +1,6 @@
 # Server
 
-This is the server to which client will connect.
+This is the server to which clients will connect.
 
 ## Getting Started
 
