@@ -6,8 +6,8 @@ let Board = (cards = null) =>
 	
 	return {
 		getFlop: () => board.length >= 3 ? cloneBoard().slice(0, 3) : [],
-		getTurn: () => board.length >= 4 ? cloneBoard().slice(3, 4) : [],
-		getRiver: () => board.length >= 4 ? cloneBoard().slice(4, 5) : [],
+		getTurn: () => board.length >= 4 ? cloneBoard().slice(0, 4) : [],
+		getRiver: () => board.length >= 4 ? cloneBoard().slice(0, 5) : [],
 		getBoard: () => cloneBoard(),
 		addFlop: (cards) =>
 		{

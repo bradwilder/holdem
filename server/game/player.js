@@ -22,6 +22,10 @@ let Player = (name, chips = 0) =>
 		},
 		bet: (betChips) =>
 		{
+			if (betChips > chips)
+			{
+				throw 'Cannot remove ' + betChips + ' from ' + chips;
+			}
 			chips -= betChips;
 		},
 		toString: () => name + '\n' + chips,

@@ -15,11 +15,11 @@ let Card = (code) =>
 	}
 	else
 	{
-		suit = null;
-		value = null;
+		throw 'Code ' + code + ' is invalid'
 	}
 	
 	return {
+		getCode: () => code,
 		getSuit: () => suit ? suit.suit : null,
 		getValue: () => value ? value.value : null,
 		getSuitObject: () => suit,
@@ -28,7 +28,7 @@ let Card = (code) =>
 		{
 			let valueStr = value ? value.toString() : '';
 			let suitStr = suit ? suit.toString() : '';
-			return valueStr + '/' + suitStr;
+			return valueStr + ' of ' + suitStr;
 		},
 		toJSON: () => ({code: code}),
 		clone: () => Card(code)

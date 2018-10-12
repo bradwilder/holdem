@@ -7,9 +7,9 @@ let verifyPlayerAction = (holdEm, expectedHoldEmState, expectedPlayer, expectedM
 {
 	let gameState = holdEm.getGameState();
 	let nextAction = gameState.nextAction;
-//	let nextActionPlayer = gameState.nextActionPlayer;
+	let nextActionPlayer = gameState.nextActionPlayer;
 	
-//	expect(nextActionPlayer.getName()).toBe(expectedPlayer.getName());
+	expect(nextActionPlayer.getName()).toBe(expectedPlayer.getName());
 	expect(nextAction.minRaise).toBe(expectedMinRaise);
 	expect(nextAction.maxRaise).toBe(expectedMaxRaise);
 	expect(nextAction.call).toBe(expectedCall);
